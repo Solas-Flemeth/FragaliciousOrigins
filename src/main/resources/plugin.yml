@@ -1,0 +1,11 @@
+name: FragaliciousOrigins
+version: '${project.version}'
+main: org.originsreborn.fragaliciousorigins.FragaliciousOrigins
+api-version: '1.20'
+commands:
+  originreload:
+    description: Reloads the Origins for a player
+    usage: /originreload
+  originset:
+    description: Sets the players origin
+    usage: /originset <username> <origin> <state>
