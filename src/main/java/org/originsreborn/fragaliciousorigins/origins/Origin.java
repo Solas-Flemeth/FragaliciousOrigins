@@ -2,48 +2,69 @@ package org.originsreborn.fragaliciousorigins.origins;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.apache.logging.log4j.message.Message;
-import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
-import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
-import org.originsreborn.fragaliciousorigins.origins.configs.GeneralOriginConfig;
+import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
+import org.originsreborn.fragaliciousorigins.util.DamageUtil;
+import org.originsreborn.fragaliciousorigins.util.PermissionsUtil;
 
 import java.util.UUID;
 
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
 
 public abstract class Origin {
-    private int primaryCooldown;
-    private int secondaryCooldown;
     private final UUID uuid;
     private final OriginType type;
     private final OriginState state;
-    private boolean primaryEnabled;
-    private boolean secondaryEnabled;
+    private int primaryCooldown = 0;
+    private int secondaryCooldown = 0;
+    private boolean primaryEnabled = false;
+    private boolean secondaryEnabled = false;
+
     //Initial creation
     public Origin(UUID uuid, OriginType type, OriginState state) {
         this.uuid = uuid;
         this.type = type;
         this.state = state;
-        this.primaryCooldown = 0;
-        this.secondaryCooldown = 0;
-        this.secondaryEnabled = false;
+        setDefaultStats();
         getPlayer().sendMessage("You are now a " + getType().getDisplay());
     }
+
     public Origin(UUID uuid, OriginType type, OriginState state, String customDataString) {
         this.uuid = uuid;
         this.type = type;
         this.state = state;
+        setDefaultStats();
         deserializeCustomData(customDataString);
         getPlayer().sendMessage("You are now a " + getType().getDisplay());
     }
+
+    public static void onReload() {
+
+    }
+
+    public static TextColor errorColor() {
+        return TextColor.color(0xFF0029);
+    }
+
+    public static TextColor textColor() {
+        return TextColor.color(0xFFD700);
+    }
+
+    public static TextColor enableColor() {
+        return TextColor.color(0x18FF00);
+    }
+
+    public void updateStats() {
+
+    }
+
     public UUID getUuid() {
         return uuid;
     }
@@ -52,41 +73,65 @@ public abstract class Origin {
         return state;
     }
 
-    public abstract void originTick(int tickNum);
-    public abstract void updateStats();
-    public void setDefaultStats(GeneralOriginConfig generalOriginConfig) {
+    public abstract MainOriginConfig getConfig();
+
+    /**
+     * Runs logic that the origin may need to perform at set intervals
+     *
+     * @param tickNum
+     */
+    public abstract void originTick(long tickNum);
+
+    /**
+     * Generates the Origin particle of the said origin
+     *
+     * @param tickNum
+     */
+    public abstract void originParticle(long tickNum);
+
+    /**
+     * Sets the players default stats as suggested in the config
+     */
+    public void setDefaultStats() {
         Player player = this.getPlayer();
-        setAttribute(player, Attribute.GENERIC_ARMOR, generalOriginConfig.getArmor());
-        setAttribute(player, Attribute.GENERIC_ARMOR_TOUGHNESS, generalOriginConfig.getArmorToughness());
-        setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, generalOriginConfig.getAttackDamage());
-        setAttribute(player, Attribute.GENERIC_ATTACK_KNOCKBACK, generalOriginConfig.getAttackKnockback());
-        setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, generalOriginConfig.getAttackDamage());
-        setAttribute(player, Attribute.GENERIC_FLYING_SPEED, generalOriginConfig.getFlyingSpeed());
-        setAttribute(player, Attribute.GENERIC_KNOCKBACK_RESISTANCE, generalOriginConfig.getKnockbackResistance());
-        setAttribute(player, Attribute.GENERIC_LUCK, generalOriginConfig.getLuck());
-        setAttribute(player, Attribute.GENERIC_SCALE, generalOriginConfig.getScale());
-        setAttribute(player, Attribute.GENERIC_STEP_HEIGHT, generalOriginConfig.getStepHeight());
-        setAttribute(player, Attribute.GENERIC_JUMP_STRENGTH, generalOriginConfig.getJumpStrength());
-        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, generalOriginConfig.getBlockInteractRange());
-        setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, generalOriginConfig.getBlockBreakSpeed());
-        setAttribute(player, Attribute.GENERIC_GRAVITY, generalOriginConfig.getGravity());
-        setAttribute(player, Attribute.GENERIC_SAFE_FALL_DISTANCE, generalOriginConfig.getSafeFallDistance());
-        setAttribute(player, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, generalOriginConfig.getFallDamageMultiplier());
+        MainOriginConfig config = getConfig();
+        //permissions
+        PermissionsUtil.resetPermissions(player);
+        if (getConfig().getPermissions() != null && !config.getPermissions().isEmpty()) {
+            PermissionsUtil.registerPermission(player, config.getPermissions());
+        }
+        //config
+        setAttribute(player, Attribute.GENERIC_ARMOR, config.getArmor());
+        setAttribute(player, Attribute.GENERIC_ARMOR_TOUGHNESS, config.getArmorToughness());
+        setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, config.getAttackDamage());
+        setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, config.getAttackDamage());
+        setAttribute(player, Attribute.GENERIC_KNOCKBACK_RESISTANCE, config.getKnockbackResistance());
+        setAttribute(player, Attribute.GENERIC_LUCK, config.getLuck());
+        setAttribute(player, Attribute.GENERIC_MAX_HEALTH, config.getMaxHealth());
+        setAttribute(player, Attribute.GENERIC_SCALE, config.getScale());
+        setAttribute(player, Attribute.GENERIC_STEP_HEIGHT, config.getStepHeight());
+        setAttribute(player, Attribute.GENERIC_JUMP_STRENGTH, config.getJumpStrength());
+        setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, config.getMovementSpeed());
+        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, config.getBlockInteractRange());
+        setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, config.getPlayerEntityInteractRange());
+        setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, config.getBlockBreakSpeed());
+        setAttribute(player, Attribute.GENERIC_GRAVITY, config.getGravity());
+        setAttribute(player, Attribute.GENERIC_SAFE_FALL_DISTANCE, config.getSafeFallDistance());
+        setAttribute(player, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, config.getFallDamageMultiplier());
     }
 
-    public abstract void onDeath(PlayerDeathEvent event);
-
-    public static void onReload(){}
-
+    public void onDeath(PlayerDeathEvent event) {
+        setDefaultStats();
+    }
 
     public abstract String serializeCustomData();
+
     public abstract void deserializeCustomData(String customData);
 
     public OriginType getType() {
         return type;
     }
 
-    @Nullable
     public Player getPlayer() {
         return FragaliciousOrigins.INSTANCE.getServer().getPlayer(uuid);
     }
@@ -95,41 +140,72 @@ public abstract class Origin {
         return this.uuid;
     }
 
-    public abstract String primaryAbilityName();
+    public String primaryAbilityName() {
+        return getConfig().getPlaceholdersPrimaryAbilityName();
+    }
 
-    public abstract String secondaryAbilityName();
+    public String secondaryAbilityName() {
+        return getConfig().getPlaceholdersSecondaryAbilityName();
+    }
 
+    /**
+     * Please override this if you have a primary ability
+     */
     public void primaryAbility() {
-        getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(0xcc0000)));
+        getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
     }
 
+    /**
+     * Please override this if you have a secondary ability
+     */
     public void secondaryAbility() {
-        getPlayer().sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(0xcc0000)));
+        getPlayer().sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
     }
+
 
     public int getPrimaryCooldown() {
         return primaryCooldown;
+    }
+
+    public void setPrimaryCooldown(int cooldown) {
+        if (cooldown < 0) {
+            this.primaryCooldown = 0;
+        } else {
+            this.primaryCooldown = cooldown;
+        }
     }
 
     public int getSecondaryCooldown() {
         return secondaryCooldown;
     }
 
-    public void setPrimaryCooldown(int cooldown) {
-        if (cooldown < 0) {
-            this.primaryCooldown = 0;
-        } else this.primaryCooldown = Math.min(cooldown, getPrimaryMaxCooldown());
-    }
-
     public void setSecondaryCooldown(int cooldown) {
         if (cooldown < 0) {
             this.secondaryCooldown = 0;
-        } else this.secondaryCooldown = Math.min(cooldown, getSecondaryMaxCooldown());
+        } else {
+            this.secondaryCooldown = cooldown;
+        }
     }
-    public abstract int getPrimaryMaxCooldown();
 
-    public abstract int getSecondaryMaxCooldown();
+    public void cooldownTick() {
+        if (getPrimaryCooldown() > 0) {
+            setPrimaryCooldown(getPrimaryCooldown() - 1);
+        }
+        if (getSecondaryCooldown() > 0) {
+            setSecondaryCooldown(getSecondaryCooldown() - 1);
+        }
+    }
+
+    public int getPrimaryMaxCooldown() {
+        return getConfig().getPrimaryMaxCooldown();
+    }
+
+    public int getSecondaryMaxCooldown() {
+        return getConfig().getSecondaryMaxCooldown();
+    }
+
     public abstract OriginDifficulty getDifficulty();
+
     //////////////////////
     // Player Events
     // See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/player/package-summary.html
@@ -159,6 +235,10 @@ public abstract class Origin {
     }
 
     public void harvestBlock(PlayerHarvestBlockEvent event) {
+    }
+
+    public void onIgnite(EntityCombustEvent event) {
+        event.setDuration((int)(((double)event.getDuration()) * getConfig().getBurnDurationMultiplier()));
     }
 
     public void interactStaticEntity(PlayerInteractAtEntityEvent event) {
@@ -223,9 +303,14 @@ public abstract class Origin {
     }
 
     public void onDamage(EntityDamageEvent event) {
+            event.setCancelled(Math.random() < getConfig().getDodgeChance());
+            if(!event.isCancelled()){
+                DamageUtil.calculateDamageMultipliers(event,this);
+            }
     }
 
     public void onHurtByEntity(EntityDamageByEntityEvent event) {
+           DamageUtil.applyEnchantmentImmunities(event, this);
     }
 
     public void onAttackEntity(EntityDamageByEntityEvent event) {
@@ -238,18 +323,6 @@ public abstract class Origin {
     }
 
     public void onResurrectEvent(EntityResurrectEvent event) {
-    }
-
-    public static TextColor errorColor() {
-        return TextColor.color(0xFF0029);
-    }
-
-    public static TextColor textColor() {
-        return TextColor.color(0xFFD700);
-    }
-
-    public static TextColor enableColor() {
-        return TextColor.color(0x18FF00);
     }
 
     public void primaryAbilityTimerCooldownMsg() {
@@ -269,7 +342,6 @@ public abstract class Origin {
     }
 
 
-
     public void enableSecondaryAbilityMsg() {
         getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
                 .append(Component.text(secondaryAbilityName()).color(enableColor()))
@@ -281,30 +353,35 @@ public abstract class Origin {
                 .append(Component.text(secondaryAbilityName()).color(errorColor()))
                 .append(Component.text(" is now disabled ").color(textColor())));
     }
+
     /**
      * Returns whether your secondary is toggled enabled
+     *
      * @return
      */
     public boolean isSecondaryEnabled() {
         return secondaryEnabled;
     }
+
     /**
      * Changes the state of primary enabled to the opposite of its current state.
      */
-    public void secondaryToggle(){
+    public void secondaryToggle() {
         secondaryEnabled = !secondaryEnabled;
     }
 
     /**
      * Changes the state of primary enabled to the opposite of its current state based upon user input.
+     *
      * @param secondaryEnabled
      */
-    public void secondaryToggle(boolean secondaryEnabled){
+    public void secondaryToggle(boolean secondaryEnabled) {
         this.secondaryEnabled = secondaryEnabled;
     }
 
     /**
      * Returns whether your primary is toggled enabled
+     *
      * @return
      */
     public boolean isPrimaryEnabled() {
@@ -314,14 +391,16 @@ public abstract class Origin {
     /**
      * Changes the state of primary enabled to the opposite of its current state.
      */
-    public void primaryToggle(){
+    public void primaryToggle() {
         primaryEnabled = !primaryEnabled;
     }
+
     /**
      * Changes the state of primary enabled to the opposite of its current state based upon user input.
+     *
      * @param primaryEnabled
      */
-    public void primaryToggle(boolean primaryEnabled){
+    public void primaryToggle(boolean primaryEnabled) {
         this.primaryEnabled = primaryEnabled;
     }
 

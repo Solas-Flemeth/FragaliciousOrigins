@@ -1,7 +1,7 @@
 package org.originsreborn.fragaliciousorigins.jdbc;
 
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.configs.MainConfig;
+import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 

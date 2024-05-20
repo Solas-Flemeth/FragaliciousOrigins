@@ -48,7 +48,6 @@
       </resource>
     </resources>
   </build>
-
   <repositories>
       <repository>
           <id>papermc-repo</id>
@@ -67,11 +66,6 @@
           <scope>provided</scope>
       </dependency>
       <dependency>
-          <groupId>com.google.code.gson</groupId>
-          <artifactId>gson</artifactId>
-          <version>2.10.1</version>
-      </dependency>
-      <dependency>
           <groupId>com.zaxxer</groupId>
           <artifactId>HikariCP</artifactId>
           <version>5.1.0</version>
@@ -79,11 +73,6 @@
       <dependency>
           <groupId>org.spongepowered</groupId>
           <artifactId>configurate-yaml</artifactId>
-          <version>4.0.0</version>
-      </dependency>
-      <dependency>
-          <groupId>org.spongepowered</groupId>
-          <artifactId>configurate-gson</artifactId>
           <version>4.0.0</version>
       </dependency>
   </dependencies>

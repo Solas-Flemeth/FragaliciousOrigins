@@ -1,9 +1,9 @@
 package org.originsreborn.fragaliciousorigins.origins.enums;
 
-import org.originsreborn.fragaliciousorigins.origins.Human;
-import org.originsreborn.fragaliciousorigins.origins.Inchling;
-import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.*;
+import org.originsreborn.fragaliciousorigins.origins.complete.Human;
+import org.originsreborn.fragaliciousorigins.origins.complete.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.wip.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public enum OriginType {
     ENDERIAN("Enderian"),
     ELYTRIAN("Elytrian"),
     FELINE("Feline"),
-    GIANT("Giant"),
+    GIANT("Cyclops"),
     INCHLING("Inchling"),
     HUNTSMAN("Huntsman"),
     MERLING("Merling"),
@@ -54,10 +54,40 @@ public enum OriginType {
 
     public Origin generateOrigin(UUID uuid, OriginState originState, String customDataString){
         switch (this){
-            case SHULK:
-                return new Shulk(uuid,originState,customDataString);
+            case ALCHEMIST:
+                return new Alchemist(uuid,originState,customDataString);
+            case ARACHNID:
+                return new Arachnid(uuid,originState,customDataString);
+            case BEE:
+                return new Bee(uuid,originState,customDataString);
+            case BLAZEBORN:
+                return new Blazeborn(uuid,originState,customDataString);
+            case ENDERIAN:
+                return new Enderian(uuid,originState,customDataString);
+            case ELYTRIAN:
+                return new Elytrian(uuid,originState,customDataString);
+            case FELINE:
+                return new Feline(uuid,originState,customDataString);
+            case GIANT:
+                return new Giant(uuid,originState,customDataString);
             case INCHLING:
-                return new Inchling(uuid,originState);
+                return new Inchling(uuid,originState, customDataString);
+            case HUNTSMAN:
+                return new Huntsman(uuid,originState,customDataString);
+            case MERLING:
+                return new Merling(uuid,originState, customDataString);
+            case PHANTOM:
+                return new Phantom(uuid,originState, customDataString);
+            case PHYTOKIN:
+                return new Phytokin(uuid,originState, customDataString);
+            case SHULK:
+                return new Shulk(uuid,originState, customDataString);
+            case STONEBORN:
+                return new Stoneborn(uuid,originState, customDataString);
+            case SHAPESHIFTER:
+                return new ShapeShifter(uuid,originState,customDataString);
+            case VAMPIRE:
+                return new Vampire(uuid,originState, customDataString);
             case HUMAN:
             default:
                 return new Human(uuid);

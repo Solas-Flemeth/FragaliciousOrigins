@@ -69,6 +69,12 @@ public class AbilityListener implements Listener {
     }
 
     @EventHandler
+    public void playerBurn(EntityCombustEvent event){
+        if(event.getEntity() instanceof Player && !event.isCancelled()){
+            getOrigin((Player) event.getEntity()).onIgnite(event);
+        }
+    }
+    @EventHandler
     public void changeGamemode(PlayerGameModeChangeEvent event) {
         getOrigin(event).changeGamemode(event);
     }
@@ -123,6 +129,7 @@ public class AbilityListener implements Listener {
         getOrigin(event).pickupArrow(event);
     }
 
+    @EventHandler
     public void onDeath(PlayerDeathEvent event){
         getOrigin(event.getPlayer()).onDeath(event);
     }
@@ -145,6 +152,7 @@ public class AbilityListener implements Listener {
 
     @EventHandler
     public void onSwapHands(PlayerSwapHandItemsEvent event) {
+        event.setCancelled(true);
         Origin origin = getOrigin(event);
         if (event.getPlayer().isSneaking()) {
             origin.secondaryAbility();
@@ -180,60 +188,61 @@ public class AbilityListener implements Listener {
 
     @EventHandler
     public void onPotionEffect(EntityPotionEffectEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onPotionEffect(event);
         }
     }
 
     @EventHandler
     public void onShootProjectileHit(ProjectileHitEvent event) {
-        if (event.getEntity().getShooter() instanceof Player) {
+        if (event.getEntity().getShooter() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity().getShooter()).onShootProjectileHit(event);
         }
     }
 
     @EventHandler
     public void onPickupItem(EntityPickupItemEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onPickupItem(event);
         }
     }
 
     @EventHandler
     public void onDamage(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player && !event.isCancelled()){
+            //check that it is not an entity attacking them, and then calculate damage
             getOrigin((Player) event.getEntity()).onDamage(event);
         }
     }
 
     @EventHandler
     public void onEntityDamageEntity(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player) {
-            getOrigin((Player) event.getEntity()).onHurtByEntity(event);
-        }
-        if (event.getDamager() instanceof Player) {
+        if (event.getDamager() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getDamager()).onAttackEntity(event);
+        }
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
+            getOrigin((Player) event.getEntity()).onHurtByEntity(event);
         }
     }
 
 
     @EventHandler
     public void onToggleSwim(EntityToggleSwimEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onToggleSwim(event);
         }
     }
 
     @EventHandler
     public void onToggleGlide(EntityToggleGlideEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onToggleGlide(event);
         }
     }
 
     @EventHandler
     public void onResurrectEvent(EntityResurrectEvent event) {
-        if (event.getEntity() instanceof Player) {
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onResurrectEvent(event);
         }
     }

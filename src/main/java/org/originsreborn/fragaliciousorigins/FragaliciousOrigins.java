@@ -5,11 +5,10 @@ import org.originsreborn.fragaliciousorigins.abilities.AbilityListener;
 import org.originsreborn.fragaliciousorigins.commands.OriginReloadCommand;
 import org.originsreborn.fragaliciousorigins.commands.OriginSetCommand;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
-import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
-import org.originsreborn.fragaliciousorigins.origins.Shulk;
-import org.originsreborn.fragaliciousorigins.origins.configs.MainConfig;
-import org.originsreborn.fragaliciousorigins.origins.Inchling;
+import org.originsreborn.fragaliciousorigins.origins.complete.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.wip.*;
+import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 
 public final class FragaliciousOrigins extends JavaPlugin {
     public static FragaliciousOrigins INSTANCE;
@@ -35,10 +34,23 @@ public final class FragaliciousOrigins extends JavaPlugin {
 
     public void reload() {
         CONFIG.loadConfig();
-        Human.onReload();
-        Shulk.onReload();
+        Alchemist.onReload();
+        Arachnid.onReload();
+        Bee.onReload();
+        Blazeborn.onReload();
+        Elytrian.onReload();
+        Enderian.onReload();
+        Feline.onReload();
+        Giant.onReload();
+        Huntsman.onReload();
         Inchling.onReload();
-
+        Merling.onReload();
+        Phantom.onReload();
+        Phytokin.onReload();
+        ShapeShifter.onReload();
+        Shulk.onReload();
+        Stoneborn.onReload();
+        Vampire.onReload();
         //DO LAST - this reloads all origin stats and applies to current playerbase
         ORIGINS.reloadOrigins();
     }

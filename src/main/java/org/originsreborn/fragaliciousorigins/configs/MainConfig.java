@@ -1,7 +1,8 @@
-package org.originsreborn.fragaliciousorigins.origins.configs;
+package org.originsreborn.fragaliciousorigins.configs;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
+
 
 public class MainConfig {
     private final FileConfiguration mainConfig;

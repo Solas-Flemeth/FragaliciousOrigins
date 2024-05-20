@@ -2,7 +2,7 @@ package org.originsreborn.fragaliciousorigins.jdbc;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.originsreborn.fragaliciousorigins.origins.configs.MainConfig;
+import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 
 import javax.sql.DataSource;
 
