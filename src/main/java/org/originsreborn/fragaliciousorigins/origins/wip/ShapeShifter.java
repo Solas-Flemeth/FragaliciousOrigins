@@ -23,12 +23,12 @@ public class ShapeShifter extends Origin {
     }
 
     @Override
-    public void originTick(long tickNum) {
+    public void originTick(int tickNum) {
 
     }
 
     @Override
-    public void originParticle(long tickNum) {
+    public void originParticle(int tickNum) {
 
     }
 
@@ -39,6 +39,16 @@ public class ShapeShifter extends Origin {
 
     @Override
     public void deserializeCustomData(String customData) {
+
+    }
+
+    @Override
+    public void primaryAbilityLogic() {
+
+    }
+
+    @Override
+    public void secondaryAbilityLogic() {
 
     }
 

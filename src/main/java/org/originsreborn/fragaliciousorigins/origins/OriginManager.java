@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.UUID;
 
 public class OriginManager {
-    private static final long MAX_TICK = 864000; //1 day of ticks if alternating ticks
+    private static final int MAX_TICK = 864000; //1 day of ticks if alternating ticks
     private final HashMap<UUID, Origin> originsMap;
-    private long tick = 0;
+    private int tick = 0;
 
     public OriginManager() {
         originsMap = new HashMap<UUID, Origin>();
@@ -101,7 +101,7 @@ public class OriginManager {
      * Tick Origin Logic
      * @param tick
      */
-    public void tickOrigins(long tick) {
+    public void tickOrigins(int tick) {
         if(originsMap.isEmpty()){
             return;
         }

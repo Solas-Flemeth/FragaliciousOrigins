@@ -6,7 +6,8 @@ import org.originsreborn.fragaliciousorigins.commands.OriginReloadCommand;
 import org.originsreborn.fragaliciousorigins.commands.OriginSetCommand;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
-import org.originsreborn.fragaliciousorigins.origins.complete.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
+import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 

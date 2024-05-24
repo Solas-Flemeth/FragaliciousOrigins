@@ -1,21 +1,16 @@
 package org.originsreborn.fragaliciousorigins.configs;
 
-import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.io.File;
-import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 public class MainOriginConfig extends OriginConfig {
 
     public MainOriginConfig(OriginType type) {
-        super(
-                Paths.get(FragaliciousOrigins.INSTANCE.getDataFolder().getPath() + File.separator + type.name().toLowerCase())
-                , Paths.get(FragaliciousOrigins.INSTANCE.getDataFolder().getPath() + File.separator + type.name().toLowerCase() + File.separator + "general.yml")
-        );
+        super(type, "general");
     }
 
 
@@ -45,7 +40,7 @@ public class MainOriginConfig extends OriginConfig {
             attributesNode.node("safeFallDistance").set(3); //NUMERIC
             attributesNode.node("fallDamageMultiplier").set(1.0); //multiplier
             attributesNode.node("saturationCap").set(20); //NUMERIC
-
+            attributesNode.node("skulkDetectable").set(true); //boolean
             CommentedConfigurationNode damageModifiersNode = getConfigNode().node("damageModifiers");
             damageModifiersNode.node("explosionDamageMultiplier").set(1.0);
             damageModifiersNode.node("meleeDamageMultiplier").set(1.0);
@@ -60,7 +55,7 @@ public class MainOriginConfig extends OriginConfig {
             damageModifiersNode.node("baneOfArthropodsImmune").set(true);
 
             CommentedConfigurationNode permissions = getConfigNode().node("permissions");
-            permissions.appendListNode().node("Permission").set("");
+            permissions.set(Collections.singletonList(""));
 
             CommentedConfigurationNode placeholdersNode = getConfigNode().node("placeholders");
             CommentedConfigurationNode placeholdersNodeTitle = placeholdersNode.node("title");
@@ -190,6 +185,9 @@ public class MainOriginConfig extends OriginConfig {
     public double getSaturationCap() {
         return getConfigNode().node("attributes").node("saturationCap").getDouble();
     }
+    public boolean getSkulkDetectable() {
+        return getConfigNode().node("attributes").node("skulkDetectable").getBoolean();
+    }
 
     public double getExplosionDamageMultiplier() {
         return getConfigNode().node("damageModifiers").node("explosionDamageMultiplier").getDouble();
@@ -236,7 +234,7 @@ public class MainOriginConfig extends OriginConfig {
             return getConfigNode().node("permissions").getList(String.class);
         } catch (SerializationException e) {
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
 
     }

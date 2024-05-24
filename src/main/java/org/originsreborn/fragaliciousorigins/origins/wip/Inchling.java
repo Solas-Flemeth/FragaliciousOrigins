@@ -16,6 +16,7 @@ import java.util.UUID;
  * - 20% base chance to dodge
  * - 0.7x attack range
  * - 0.7x build range
+ * - Better Food Managment
  */
 public class Inchling extends Origin {
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG =  new MainOriginConfig(OriginType.INCHLING);
@@ -29,12 +30,12 @@ public class Inchling extends Origin {
     }
 
     @Override
-    public void originTick(long tickNum) {
+    public void originTick(int tickNum) {
 
     }
 
     @Override
-    public void originParticle(long tickNum) {
+    public void originParticle(int tickNum) {
 
     }
 
@@ -45,6 +46,16 @@ public class Inchling extends Origin {
 
     @Override
     public void deserializeCustomData(String customData) {
+
+    }
+
+    @Override
+    public void primaryAbilityLogic() {
+
+    }
+
+    @Override
+    public void secondaryAbilityLogic() {
 
     }
 

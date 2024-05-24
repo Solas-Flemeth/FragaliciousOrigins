@@ -1,5 +1,6 @@
-package org.originsreborn.fragaliciousorigins.origins.complete;
+package org.originsreborn.fragaliciousorigins.origins.shulk;
 
+import org.bukkit.GameMode;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.entity.Enemy;
@@ -11,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
-import org.originsreborn.fragaliciousorigins.configs.ShulkConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
@@ -53,18 +53,19 @@ public class Shulk extends Origin {
     }
 
     @Override
-    public void originTick(long tickNum) {
+    public void originTick(int tickNum) {
 
     }
 
     @Override
-    public void originParticle(long tickNum) {
-        int tick = (int) tickNum;
-        if(tick%3 == 0){
-            int remainder = (int) (tickNum % 2L)+1;
+    public void originParticle(int tickNum) {
+        if(!getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
+            return;
+        }
+        if(tickNum%3 == 0){
+            int remainder = tickNum % 2 + 1;
             ParticleUtil.generateParticleAtLocation(Particle.DRIPPING_OBSIDIAN_TEAR, getPlayer().getLocation(), remainder);
         }
-
     }
 
     @Override
@@ -95,39 +96,30 @@ public class Shulk extends Origin {
         return OriginDifficulty.EASY;
     }
 
+
     @Override
-    public void primaryAbility() {
-        if (getPrimaryCooldown() > 0) {
-            primaryAbilityTimerCooldownMsg();
-        } else {
-            getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 1, 0.8f);
-            getPlayer().openInventory(getPlayer().getEnderChest());
-            setPrimaryCooldown(getPrimaryMaxCooldown());
-        }
+    public void primaryAbilityLogic() {
+        getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 1, 0.8f);
+        getPlayer().openInventory(getPlayer().getEnderChest());
     }
 
     @Override
-    public void secondaryAbility() {
-        if (getSecondaryCooldown() > 0) {
-            secondaryAbilityTimerCooldownMsg();
-        } else {
-            Player player = getPlayer();
-            int radius = SHULK_CONFIG.getSecondaryRadius();
-            ParticleUtil.generateSphereParticle(Particle.END_ROD, player.getLocation(), 500, radius);
-            ParticleUtil.generateSphereParticle(Particle.SCRAPE, player.getLocation(), 500, radius);
-            List<Entity> nearbyEntities = player.getNearbyEntities(radius, radius, radius);
-            for (Entity entity : nearbyEntities) {
-                if (entity instanceof Player) {
-                    secondaryAbilityOnPlayer((Player) entity);
-                } else if (entity instanceof Enemy) {
-                    secondaryAbilityOnEnemy((Enemy) entity);
-                    entity.setVelocity(new Vector(0, 2, 0));
-                }
+    public void secondaryAbilityLogic() {
+        Player player = getPlayer();
+        int radius = SHULK_CONFIG.getSecondaryRadius();
+        ParticleUtil.generateSphereParticle(Particle.END_ROD, player.getLocation(), 400, radius);
+        ParticleUtil.generateSphereParticle(Particle.SCRAPE, player.getLocation(), 400, radius);
+        List<Entity> nearbyEntities = player.getNearbyEntities(radius, radius, radius);
+        for (Entity entity : nearbyEntities) {
+            if (entity instanceof Player) {
+                secondaryAbilityOnPlayer((Player) entity);
+            } else if (entity instanceof Enemy) {
+                secondaryAbilityOnEnemy((Enemy) entity);
+                entity.setVelocity(new Vector(0, 2, 0));
             }
-            secondaryAbilityOnPlayer(getPlayer());
-            setSecondaryCooldown(getSecondaryMaxCooldown());
-            player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1, 1.5f);
         }
+        secondaryAbilityOnPlayer(getPlayer());
+        player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1, 1.5f);
     }
 
     @Override

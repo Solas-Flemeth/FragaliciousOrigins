@@ -1,5 +1,7 @@
 package org.originsreborn.fragaliciousorigins.abilities;
 
+import org.bukkit.GameEvent;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,6 +11,8 @@ import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
+import org.originsreborn.fragaliciousorigins.origins.OriginManager;
+import org.originsreborn.fragaliciousorigins.util.DamageUtil;
 
 import java.util.UUID;
 
@@ -199,6 +203,31 @@ public class AbilityListener implements Listener {
             getOrigin((Player) event.getEntity().getShooter()).onShootProjectileHit(event);
         }
     }
+    @EventHandler
+    public void onBowShoot(EntityShootBowEvent event){
+        if(!event.isCancelled() && event.getEntity() instanceof  Player player){
+            getOrigin(player).onBowShoot(event);
+        }
+    }
+    @EventHandler
+    public void onShootProjectile(ProjectileLaunchEvent event){
+        // Check if the shooter is a player
+        if (event.getEntity().getShooter() instanceof Player shooter && !event.isCancelled()) {
+            // Get the player who shot the projectile
+            switch (event.getEntity().getType()){
+                case ARROW:
+                    FragaliciousOrigins.ORIGINS.getOrigin(shooter.getUniqueId()).onArrowLaunch(event);
+                case TRIDENT:
+                    FragaliciousOrigins.ORIGINS.getOrigin(shooter.getUniqueId()).onTridentLaunch(event);
+                case SNOWBALL:
+                    FragaliciousOrigins.ORIGINS.getOrigin(shooter.getUniqueId()).onSnowballLaunch(event);
+                case FIREWORK_ROCKET:
+                    FragaliciousOrigins.ORIGINS.getOrigin(shooter.getUniqueId()).onRocketLaunch(event);
+                case POTION:
+                    FragaliciousOrigins.ORIGINS.getOrigin(shooter.getUniqueId()).onPotionLaunch(event);
+            }
+        }
+    }
 
     @EventHandler
     public void onPickupItem(EntityPickupItemEvent event) {
@@ -217,6 +246,7 @@ public class AbilityListener implements Listener {
 
     @EventHandler
     public void onEntityDamageEntity(EntityDamageByEntityEvent event) {
+        DamageUtil.onSpecialDamageEvents(event);
         if (event.getDamager() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getDamager()).onAttackEntity(event);
         }

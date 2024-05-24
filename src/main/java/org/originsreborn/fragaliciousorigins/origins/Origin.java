@@ -80,14 +80,14 @@ public abstract class Origin {
      *
      * @param tickNum
      */
-    public abstract void originTick(long tickNum);
+    public abstract void originTick(int tickNum);
 
     /**
      * Generates the Origin particle of the said origin
      *
      * @param tickNum
      */
-    public abstract void originParticle(long tickNum);
+    public abstract void originParticle(int tickNum);
 
     /**
      * Sets the players default stats as suggested in the config
@@ -148,19 +148,33 @@ public abstract class Origin {
         return getConfig().getPlaceholdersSecondaryAbilityName();
     }
 
-    /**
-     * Please override this if you have a primary ability
-     */
     public void primaryAbility() {
-        getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
+        if (getConfig().getPlaceholdersPrimaryAbilityName().equals("primaryAbility")) {
+            getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
+        }
+        if (getPrimaryCooldown() > 0) {
+            primaryAbilityTimerCooldownMsg();
+        } else {
+            primaryAbilityLogic();
+            setPrimaryCooldown(getPrimaryMaxCooldown());
+        }
     }
 
-    /**
-     * Please override this if you have a secondary ability
-     */
+    public abstract void primaryAbilityLogic();
+
     public void secondaryAbility() {
-        getPlayer().sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
+        if (getConfig().getPlaceholdersSecondaryAbilityName().equals("secondaryAbility")) {
+            getPlayer().sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
+        }
+        if (getSecondaryCooldown() > 0) {
+            secondaryAbilityTimerCooldownMsg();
+        } else {
+            secondaryAbilityLogic();
+            setSecondaryCooldown(getSecondaryMaxCooldown());
+        }
     }
+
+    public abstract void secondaryAbilityLogic();
 
 
     public int getPrimaryCooldown() {
@@ -238,7 +252,7 @@ public abstract class Origin {
     }
 
     public void onIgnite(EntityCombustEvent event) {
-        event.setDuration((int)(((double)event.getDuration()) * getConfig().getBurnDurationMultiplier()));
+        event.setDuration((int) (((double) event.getDuration()) * getConfig().getBurnDurationMultiplier()));
     }
 
     public void interactStaticEntity(PlayerInteractAtEntityEvent event) {
@@ -303,14 +317,18 @@ public abstract class Origin {
     }
 
     public void onDamage(EntityDamageEvent event) {
-            event.setCancelled(Math.random() < getConfig().getDodgeChance());
-            if(!event.isCancelled()){
-                DamageUtil.calculateDamageMultipliers(event,this);
-            }
+        event.setCancelled(Math.random() < getConfig().getDodgeChance());
+        if (!event.isCancelled()) {
+            DamageUtil.calculateDamageMultipliers(event, this);
+        }
+    }
+
+    public void onBowShoot(EntityShootBowEvent event) {
+
     }
 
     public void onHurtByEntity(EntityDamageByEntityEvent event) {
-           DamageUtil.applyEnchantmentImmunities(event, this);
+        DamageUtil.applyEnchantmentImmunities(event, this);
     }
 
     public void onAttackEntity(EntityDamageByEntityEvent event) {
@@ -325,8 +343,23 @@ public abstract class Origin {
     public void onResurrectEvent(EntityResurrectEvent event) {
     }
 
+    public void onRocketLaunch(ProjectileLaunchEvent event) {
+    }
+
+    public void onArrowLaunch(ProjectileLaunchEvent event) {
+    }
+
+    public void onSnowballLaunch(ProjectileLaunchEvent event) {
+    }
+
+    public void onTridentLaunch(ProjectileLaunchEvent event) {
+    }
+
+    public void onPotionLaunch(ProjectileLaunchEvent event) {
+    }
+
     public void primaryAbilityTimerCooldownMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+        getPlayer().sendMessage(Component.text("Your ability ").color(textColor())
                 .append(Component.text(primaryAbilityName()).color(errorColor()))
                 .append(Component.text(" will be ready in ").color(textColor()))
                 .append(Component.text(primaryCooldown).color(errorColor()))
@@ -334,7 +367,7 @@ public abstract class Origin {
     }
 
     public void secondaryAbilityTimerCooldownMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+        getPlayer().sendMessage(Component.text("Your ability ").color(textColor())
                 .append(Component.text(secondaryAbilityName()).color(errorColor()))
                 .append(Component.text(" will be ready in ").color(textColor()))
                 .append(Component.text(secondaryCooldown).color(errorColor()))

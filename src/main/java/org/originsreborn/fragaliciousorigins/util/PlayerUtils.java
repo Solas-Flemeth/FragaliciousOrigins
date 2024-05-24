@@ -2,6 +2,7 @@ package org.originsreborn.fragaliciousorigins.util;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
 public class PlayerUtils {
@@ -70,6 +71,14 @@ public class PlayerUtils {
         resetAttribute(player, attribute);
         if (updateInventory) {
             player.updateInventory();
+        }
+    }
+    public static double getAttribute(LivingEntity entity, Attribute attribute){
+        try {
+            AttributeInstance attributeInstance = entity.getAttribute(attribute);
+            return attributeInstance.getValue();
+        } catch(NullPointerException e){
+            return 0.0;
         }
     }
 

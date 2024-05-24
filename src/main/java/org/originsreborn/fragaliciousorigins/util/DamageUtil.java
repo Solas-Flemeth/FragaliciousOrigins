@@ -1,13 +1,20 @@
 package org.originsreborn.fragaliciousorigins.util;
 
+import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.metadata.MetadataValue;
+import org.bukkit.potion.PotionEffectType;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
+import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
+
+import java.util.List;
 
 public class DamageUtil {
     /**
@@ -33,13 +40,21 @@ public class DamageUtil {
             }
             if (item.containsEnchantment(Enchantment.SMITE) && !smiteImmune) {
                 int level = item.getItemMeta().getEnchantLevel(Enchantment.SMITE);
-                double damageModifier = 0.5 * (1.0 *  level);
+                double damageModifier = 0.5 * (1.0 * level);
                 event.setDamage(damage + damageModifier);
             }
             if (item.containsEnchantment(Enchantment.BANE_OF_ARTHROPODS) && !baneOfArthapodsImmune) {
                 int level = item.getItemMeta().getEnchantLevel(Enchantment.BANE_OF_ARTHROPODS);
-                double damageModifier = 0.5 * (1.0 *  level);
+                double damageModifier = 0.5 * (1.0 * level);
                 event.setDamage(damage + damageModifier);
+            }
+        }
+    }
+
+    public static void onSpecialDamageEvents(EntityDamageByEntityEvent event) {
+        if (event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && event.getEntity() instanceof LivingEntity livingEntity) {
+            if (event.getDamager() instanceof Projectile arrow) {
+                onArrowEvent(event, livingEntity, arrow);
             }
         }
     }
@@ -87,4 +102,41 @@ public class DamageUtil {
         }
     }
 
+    private static void onArrowEvent(EntityDamageByEntityEvent event, LivingEntity livingEntity, Projectile arrow) {
+        double initialDamage = event.getDamage();
+        double finalDamage = event.getFinalDamage();
+        double crossbowToughnessMultiplier = 1.0;
+        double damageMultiplier = 1.0;
+        double airMultiplier = 1.0;
+        Location location = livingEntity.getLocation();
+        location.setY(location.y() - 1.0);
+        List<MetadataValue> list = arrow.getMetadata("huntsman_damage_multiplier");
+        if (!list.isEmpty()) {
+            if (livingEntity.isGliding()) {
+                airMultiplier = Huntsman.HUNTSMAN_CONFIG.getAerialEnemyGlideMultiplier();
+            }
+            String mode = list.get(0).asString();
+            damageMultiplier = Huntsman.getDamageMultiplier(mode);
+            if(mode.equals("Tracing")){
+                PotionsUtil.addEffect(livingEntity, PotionEffectType.GLOWING, 0, Huntsman.HUNTSMAN_CONFIG.getTrackingArrowDuration());
+            }else if(mode.equals("Stun")){
+                if(Huntsman.HUNTSMAN_CONFIG.getStunArrowMiningFatigueEnabled()) {
+                    PotionsUtil.addEffect(livingEntity, PotionEffectType.MINING_FATIGUE, Huntsman.HUNTSMAN_CONFIG.getStunArrowMiningFatigueAmplifier() , Huntsman.HUNTSMAN_CONFIG.getStunArrowMiningFatigueDuration());
+                }
+                if(Huntsman.HUNTSMAN_CONFIG.getStunArrowDarknessEnabled()){
+                    PotionsUtil.addEffect(livingEntity, PotionEffectType.DARKNESS, Huntsman.HUNTSMAN_CONFIG.getStunArrowDarknessAmplifier() , Huntsman.HUNTSMAN_CONFIG.getStunArrowDarknessDuration());
+                }
+                if(Huntsman.HUNTSMAN_CONFIG.getStunArrowSlownessEnabled()){
+                    PotionsUtil.addEffect(livingEntity, PotionEffectType.SLOWNESS, Huntsman.HUNTSMAN_CONFIG.getStunArrowSlownessAmplifier() , Huntsman.HUNTSMAN_CONFIG.getStunArrowSlownessDuration());
+                }
+            }
+        }
+        list = arrow.getMetadata("huntsman_toughness_multiplier");
+        if (!list.isEmpty()) {
+            crossbowToughnessMultiplier = 1.0 + (Huntsman.HUNTSMAN_CONFIG.getCrossbowDamageMultiplierPerToughness() * PlayerUtils.getAttribute(livingEntity, Attribute.GENERIC_ARMOR_TOUGHNESS));
+        }
+        double newDamage = event.getDamage() * damageMultiplier * airMultiplier * crossbowToughnessMultiplier;
+        event.setDamage(newDamage);
+        System.out.println("Old Damage = " +  initialDamage + " / " + finalDamage + "    New Damage = " + event.getDamage() + " / " + event.getFinalDamage());
+    }
 }

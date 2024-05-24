@@ -1,18 +1,31 @@
 package org.originsreborn.fragaliciousorigins.configs;
 
+import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
+import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public abstract class OriginConfig {
     private final Path configPath;
     private final Path directoryPath;
     private final ConfigurationLoader<CommentedConfigurationNode> loader;
     private CommentedConfigurationNode configNode;
+
+    public OriginConfig(OriginType type, String yamlName) {
+        this.directoryPath = Paths.get(FragaliciousOrigins.INSTANCE.getDataFolder().getPath() + File.separator + type.name().toLowerCase());
+        this.configPath = Paths.get(FragaliciousOrigins.INSTANCE.getDataFolder().getPath() + File.separator + type.name().toLowerCase() + File.separator + yamlName + ".yml");
+        this.loader = YamlConfigurationLoader.builder()
+                .path(configPath).nodeStyle(NodeStyle.BLOCK)
+                .build();
+        loadConfig();
+    }
 
     public OriginConfig(Path directoryPath, Path configPath) {
         this.directoryPath = directoryPath;

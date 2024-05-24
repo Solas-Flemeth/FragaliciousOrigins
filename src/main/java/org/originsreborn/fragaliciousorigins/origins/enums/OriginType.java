@@ -2,7 +2,8 @@ package org.originsreborn.fragaliciousorigins.origins.enums;
 
 import org.originsreborn.fragaliciousorigins.origins.*;
 import org.originsreborn.fragaliciousorigins.origins.complete.Human;
-import org.originsreborn.fragaliciousorigins.origins.complete.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
+import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
 
 import java.util.ArrayList;

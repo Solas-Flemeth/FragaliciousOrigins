@@ -1,19 +1,15 @@
-package org.originsreborn.fragaliciousorigins.configs;
+package org.originsreborn.fragaliciousorigins.origins.shulk;
 
-import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
+import org.originsreborn.fragaliciousorigins.configs.OriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
-import java.io.File;
-import java.nio.file.Paths;
 
 public class ShulkConfig extends OriginConfig {
 
     public ShulkConfig() {
-        super(Paths.get(FragaliciousOrigins.INSTANCE.getDataFolder().getPath() + File.separator + OriginType.SHULK.name().toLowerCase()),
-                Paths.get(FragaliciousOrigins.INSTANCE.getDataFolder().getPath() + File.separator + OriginType.SHULK.name().toLowerCase() + File.separator + "specific.yml")
-        );
+        super(OriginType.SHULK, "unique");
     }
 
     public void populateDefaultConfig() {
