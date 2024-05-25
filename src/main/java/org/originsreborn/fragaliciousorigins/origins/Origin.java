@@ -1,7 +1,9 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.*;
@@ -26,6 +28,7 @@ public abstract class Origin {
     private int secondaryCooldown = 0;
     private boolean primaryEnabled = false;
     private boolean secondaryEnabled = false;
+    private int tempTimeRemaining = 0;
 
     //Initial creation
     public Origin(UUID uuid, OriginType type, OriginState state) {
@@ -62,7 +65,6 @@ public abstract class Origin {
     }
 
     public void updateStats() {
-
     }
 
     public UUID getUuid() {
@@ -121,7 +123,7 @@ public abstract class Origin {
     }
 
     public void onDeath(PlayerDeathEvent event) {
-        setDefaultStats();
+
     }
 
     public abstract String serializeCustomData();
@@ -150,6 +152,8 @@ public abstract class Origin {
 
     public void primaryAbility() {
         if (getConfig().getPlaceholdersPrimaryAbilityName().equals("primaryAbility")) {
+            Player player = getPlayer();
+            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
             getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
         }
         if (getPrimaryCooldown() > 0) {
@@ -164,7 +168,9 @@ public abstract class Origin {
 
     public void secondaryAbility() {
         if (getConfig().getPlaceholdersSecondaryAbilityName().equals("secondaryAbility")) {
-            getPlayer().sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
+            Player player = getPlayer();
+            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            player.sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
         }
         if (getSecondaryCooldown() > 0) {
             secondaryAbilityTimerCooldownMsg();
@@ -283,6 +289,7 @@ public abstract class Origin {
     }
 
     public void onRespawn(PlayerRespawnEvent event) {
+        setDefaultStats();
     }
 
     public void onRiptide(PlayerRiptideEvent event) {
@@ -317,7 +324,7 @@ public abstract class Origin {
     }
 
     public void onDamage(EntityDamageEvent event) {
-        event.setCancelled(Math.random() < getConfig().getDodgeChance());
+        event.setCancelled(Math.random() < getDodgeChance());
         if (!event.isCancelled()) {
             DamageUtil.calculateDamageMultipliers(event, this);
         }
@@ -356,6 +363,9 @@ public abstract class Origin {
     }
 
     public void onPotionLaunch(ProjectileLaunchEvent event) {
+    }
+    public void onUpdateArmor(PlayerArmorChangeEvent event){
+
     }
 
     public void primaryAbilityTimerCooldownMsg() {
@@ -437,4 +447,22 @@ public abstract class Origin {
         this.primaryEnabled = primaryEnabled;
     }
 
+    public int getTempTimeRemaining() {
+        return tempTimeRemaining;
+    }
+
+    public void setTempTimeRemaining(int tempTimeRemaining) {
+        if (tempTimeRemaining < 0) {
+            tempTimeRemaining = 0;
+        }
+        this.tempTimeRemaining = tempTimeRemaining;
+    }
+
+    /**
+     * Gets the players dodge chance
+     * @return
+     */
+    public double getDodgeChance() {
+        return getConfig().getDodgeChance();
+    }
 }

@@ -5,6 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
+import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,24 +100,43 @@ public class OriginManager {
 
     /**
      * Tick Origin Logic
+     *
      * @param tick
      */
     public void tickOrigins(int tick) {
-        if(originsMap.isEmpty()){
+        if (originsMap.isEmpty()) {
             return;
         }
         boolean isCoolDownTick = tick % 10 == 0;
+        List<Origin> outdatedTempOrigins = new ArrayList<Origin>();
         for (Origin origin : originsMap.values()) {
-            if(origin.getPlayer() != null) {
+            if (origin.getPlayer() != null) {
                 if (isCoolDownTick) {
                     origin.cooldownTick();
+                    if (origin.getState().equals(OriginState.TEMPORARY)) {
+                        int timeRemaining = origin.getTempTimeRemaining();
+                        if (timeRemaining == 0) {
+                            outdatedTempOrigins.add(origin);
+                        } else {
+                            origin.setTempTimeRemaining(timeRemaining - 1);
+                        }
+                    }
                 }
                 origin.originTick(tick);
                 origin.originParticle(tick);
-            }else{
+            } else {
                 //if the play is no longer on, remove them
                 removeOrigin(origin.getUUID());
             }
+        }
+        if (!outdatedTempOrigins.isEmpty()) {
+            FragaliciousOrigins.INSTANCE.getServer().getScheduler().runTaskLaterAsynchronously(FragaliciousOrigins.INSTANCE, () -> {
+                for (Origin origin : outdatedTempOrigins) {
+                    OriginsDAO.deleteOrigin(new SerializedOrigin(origin));
+                    Origin updatedOrigin = OriginsDAO.getOrigin(origin.getUUID());
+                    updateOrigin(updatedOrigin);
+                }
+            }, 0);
         }
     }
 }

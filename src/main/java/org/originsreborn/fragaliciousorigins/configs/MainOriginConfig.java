@@ -23,7 +23,7 @@ public class MainOriginConfig extends OriginConfig {
             CommentedConfigurationNode attributesNode = getConfigNode().node("attributes");
             attributesNode.node("armor").set(0f); //ADDITIONAL
             attributesNode.node("armorToughness").set(0); //ADDITIONAL
-            attributesNode.node("attackDamage").set(1); //NUMERIC
+            attributesNode.node("attackDamage").set(1.0); //NUMERIC
             attributesNode.node("attackSpeed").set(1.0); //multiplier
             attributesNode.node("flyingSpeed").set(0.4); //numeric
             attributesNode.node("knockbackResistance").set(0); //ADDITIONAL

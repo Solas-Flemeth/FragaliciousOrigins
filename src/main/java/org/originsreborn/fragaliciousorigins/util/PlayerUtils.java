@@ -1,5 +1,7 @@
 package org.originsreborn.fragaliciousorigins.util;
 
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
@@ -35,6 +37,8 @@ public class PlayerUtils {
                 case PLAYER_BLOCK_BREAK_SPEED:
                 case GENERIC_GRAVITY:
                 case GENERIC_FALL_DAMAGE_MULTIPLIER:
+                case PLAYER_BLOCK_INTERACTION_RANGE:
+                case PLAYER_ENTITY_INTERACTION_RANGE:
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() * amount);
                     break;
                 case GENERIC_MOVEMENT_SPEED:
@@ -98,4 +102,24 @@ public class PlayerUtils {
         player.setFoodLevel(food);
     }
 
+    /**
+     * Checks if there is a solid block above the player up to the height of roofHeight.
+     * @param player
+     * @param roofHeight
+     * @return
+     */
+    public static boolean isUnderRoof(Player player, int roofHeight){
+        Location location = player.getLocation();
+        int xCord = location.getBlockX();
+        int zCord = location.getBlockZ();
+        int yCord = location.getBlockY();
+        World world = location.getWorld();
+        for (int i = 0; i > roofHeight; i++){
+            Location checkLocation = new Location( world, xCord, yCord + i, zCord);
+            if(checkLocation.getBlock().isSolid()){
+                return true;
+            }
+        }
+        return false;
+    }
 }

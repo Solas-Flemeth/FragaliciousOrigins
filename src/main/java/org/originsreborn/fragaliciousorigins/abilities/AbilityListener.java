@@ -1,5 +1,6 @@
 package org.originsreborn.fragaliciousorigins.abilities;
 
+import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import org.bukkit.GameEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -163,6 +164,11 @@ public class AbilityListener implements Listener {
         } else {
             origin.primaryAbility();
         }
+    }
+
+    @EventHandler
+    public void onUpdateArmor(PlayerArmorChangeEvent event){
+        getOrigin(event).onUpdateArmor(event);
     }
 
     @EventHandler

@@ -99,8 +99,10 @@ public class Shulk extends Origin {
 
     @Override
     public void primaryAbilityLogic() {
-        getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 1, 0.8f);
-        getPlayer().openInventory(getPlayer().getEnderChest());
+        Player player = getPlayer();
+
+        ParticleUtil.generateSphereParticle(Particle.PORTAL, player.getEyeLocation(), 5, 0.7);
+        player.openInventory(getPlayer().getEnderChest());
     }
 
     @Override

@@ -3,17 +3,21 @@ package org.originsreborn.fragaliciousorigins.origins.huntsman;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
+import org.originsreborn.fragaliciousorigins.origins.elytrian.ElytrianConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
@@ -110,7 +114,6 @@ public class Huntsman extends Origin {
         HashMap<String, Serializable> hashMap = new HashMap<>();
         hashMap.put("PrimaryCooldown", getPrimaryCooldown());
         hashMap.put("SecondaryCooldown", getSecondaryCooldown());
-        hashMap.put("InvisDuration", getInvisDuration());
         hashMap.put("Mode", mode.getMode());
         try {
             return SerializationUtils.serializeHashMapToString(hashMap);
@@ -125,7 +128,6 @@ public class Huntsman extends Origin {
             HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
             setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
             setSecondaryCooldown((Integer) hashMap.get("SecondaryCooldown"));
-            setInvisDuration((Integer) hashMap.get("InvisDuration"));
             setMode(HuntsmanMode.getMode((String) hashMap.get("Mode")));
         } catch (Exception ignored) {
             //will use default values
@@ -210,4 +212,5 @@ public class Huntsman extends Origin {
         getPlayer().getWorld().playSound(getPlayer().getLocation(),Sound.ENTITY_HORSE_BREATHE, 1, 0.5f);
         ParticleUtil.generateSphereParticle(Particle.CAMPFIRE_COSY_SMOKE, getPlayer().getEyeLocation(),60,1.5);
     }
+
 }
