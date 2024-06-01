@@ -11,6 +11,7 @@ import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OriginSetCommand implements TabExecutor {
@@ -43,9 +44,16 @@ public class OriginSetCommand implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         switch (strings.length){
-            case 3:
+            case 1:
+                List<Player> players = List.copyOf(FragaliciousOrigins.INSTANCE.getServer().getOnlinePlayers());
+                List<String> playerNames = new ArrayList<>(players.size());
+                for(Player player : players){
+                    playerNames.add(player.getName());
+                }
+                return playerNames;
+            case 2:
                 return OriginType.getTypesStrings();
-            case 4:
+            case 3:
                 return OriginState.getStatesStrings();
         }
         return List.of();

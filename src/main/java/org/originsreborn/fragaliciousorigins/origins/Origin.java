@@ -2,6 +2,7 @@ package org.originsreborn.fragaliciousorigins.origins;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
@@ -154,6 +155,7 @@ public abstract class Origin {
         if (getConfig().getPlaceholdersPrimaryAbilityName().equals("primaryAbility")) {
             Player player = getPlayer();
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            player.sendActionBar(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
             getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
         }
         if (getPrimaryCooldown() > 0) {
@@ -170,6 +172,7 @@ public abstract class Origin {
         if (getConfig().getPlaceholdersSecondaryAbilityName().equals("secondaryAbility")) {
             Player player = getPlayer();
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            player.sendActionBar(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
             player.sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
         }
         if (getSecondaryCooldown() > 0) {
@@ -210,9 +213,15 @@ public abstract class Origin {
     public void cooldownTick() {
         if (getPrimaryCooldown() > 0) {
             setPrimaryCooldown(getPrimaryCooldown() - 1);
+            if(primaryCooldown == 0){
+                getPlayer().sendActionBar(Component.text("Your ability ").color(textColor()).append(Component.text(primaryAbilityName()).color(enableColor())).append(Component.text(" is ready").color(textColor())));
+            }
         }
         if (getSecondaryCooldown() > 0) {
             setSecondaryCooldown(getSecondaryCooldown() - 1);
+            if(primaryCooldown == 0){
+                getPlayer().sendActionBar(Component.text("Your ability ").color(textColor()).append(Component.text(secondaryAbilityName()).color(enableColor())).append(Component.text(" is ready").color(textColor())));
+            }
         }
     }
 
@@ -324,8 +333,11 @@ public abstract class Origin {
     }
 
     public void onDamage(EntityDamageEvent event) {
-        event.setCancelled(Math.random() < getDodgeChance());
         if (!event.isCancelled()) {
+            event.setCancelled(Math.random() < getDodgeChance());
+            if(event.isCancelled()){
+                getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_WITHER_SHOOT, 1, 2.0f);
+            }
             DamageUtil.calculateDamageMultipliers(event, this);
         }
     }
@@ -384,6 +396,17 @@ public abstract class Origin {
                 .append(Component.text(" seconds.").color(textColor())).asComponent());
     }
 
+    public void enablePrimaryAbilityMsg() {
+        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+                .append(Component.text(secondaryAbilityName()).color(enableColor()))
+                .append(Component.text(" is now enabled ").color(textColor())));
+    }
+
+    public void disablePrimaryAbilityMsg() {
+        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+                .append(Component.text(primaryAbilityName()).color(errorColor()))
+                .append(Component.text(" is now disabled ").color(textColor())));
+    }
 
     public void enableSecondaryAbilityMsg() {
         getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
@@ -411,6 +434,11 @@ public abstract class Origin {
      */
     public void secondaryToggle() {
         secondaryEnabled = !secondaryEnabled;
+        if(this.secondaryEnabled){
+            enableSecondaryAbilityMsg();
+        }else{
+            disableSecondaryAbilityMsg();
+        }
     }
 
     /**
@@ -436,6 +464,11 @@ public abstract class Origin {
      */
     public void primaryToggle() {
         primaryEnabled = !primaryEnabled;
+        if(primaryEnabled){
+            enablePrimaryAbilityMsg();
+        }else{
+            disablePrimaryAbilityMsg();
+        }
     }
 
     /**

@@ -1,20 +1,18 @@
-package org.originsreborn.fragaliciousorigins.origins.wip;
+package org.originsreborn.fragaliciousorigins.origins;
 
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
-import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
 import java.util.UUID;
 
-/**
- * Shapeshifter is just a normal human. Its primary ability will shift it into a random origin if it has the permission for it.
- */
-public class ShapeShifter extends Origin {
-    public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.SHAPESHIFTER);
-    public ShapeShifter(UUID uuid, OriginState state, String customDataString) {
-        super(uuid, OriginType.SHAPESHIFTER, state, customDataString);
+public class Human extends Origin {
+    public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.HUMAN);
+
+
+    public Human(UUID uuid) {
+        super(uuid, OriginType.HUMAN, OriginState.NORMAL);
     }
 
     @Override
@@ -30,6 +28,10 @@ public class ShapeShifter extends Origin {
     @Override
     public void originParticle(int tickNum) {
 
+    }
+
+    public static void onReload() {
+        MAIN_ORIGIN_CONFIG.loadConfig();
     }
 
     @Override
@@ -54,9 +56,6 @@ public class ShapeShifter extends Origin {
 
     @Override
     public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.MEDIUM;
-    }
-    public static void onReload() {
-        MAIN_ORIGIN_CONFIG.loadConfig();
+        return OriginDifficulty.EASY;
     }
 }

@@ -114,12 +114,13 @@ public class PlayerUtils {
         int zCord = location.getBlockZ();
         int yCord = location.getBlockY();
         World world = location.getWorld();
-        for (int i = 0; i > roofHeight; i++){
-            Location checkLocation = new Location( world, xCord, yCord + i, zCord);
+        for (int i = 0; i < roofHeight; i++){
+            Location checkLocation = new Location(world, xCord, yCord + i, zCord);
             if(checkLocation.getBlock().isSolid()){
                 return true;
             }
         }
         return false;
     }
+
 }

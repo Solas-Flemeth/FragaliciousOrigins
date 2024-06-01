@@ -33,14 +33,13 @@ public class MainOriginConfig extends OriginConfig {
             attributesNode.node("scale").set(1.0); //multiplier
             attributesNode.node("stepHeight").set(1.0); //multiplier
             attributesNode.node("jumpStrength").set(1.0); //multiplier
-            attributesNode.node("blockInteractRange").set(4.5); //NUMERIC
-            attributesNode.node("entityInteractRange").set(3); //NUMERIC
+            attributesNode.node("blockInteractRange").set(1.0); //NUMERIC
+            attributesNode.node("entityInteractRange").set(1.0); //NUMERIC
             attributesNode.node("blockBreakSpeed").set(1); //multiplier
             attributesNode.node("gravity").set(1.0); //multiplier
             attributesNode.node("safeFallDistance").set(3); //NUMERIC
             attributesNode.node("fallDamageMultiplier").set(1.0); //multiplier
             attributesNode.node("saturationCap").set(20); //NUMERIC
-            attributesNode.node("skulkDetectable").set(true); //boolean
             CommentedConfigurationNode damageModifiersNode = getConfigNode().node("damageModifiers");
             damageModifiersNode.node("explosionDamageMultiplier").set(1.0);
             damageModifiersNode.node("meleeDamageMultiplier").set(1.0);
@@ -184,9 +183,6 @@ public class MainOriginConfig extends OriginConfig {
 
     public double getSaturationCap() {
         return getConfigNode().node("attributes").node("saturationCap").getDouble();
-    }
-    public boolean getSkulkDetectable() {
-        return getConfigNode().node("attributes").node("skulkDetectable").getBoolean();
     }
 
     public double getExplosionDamageMultiplier() {

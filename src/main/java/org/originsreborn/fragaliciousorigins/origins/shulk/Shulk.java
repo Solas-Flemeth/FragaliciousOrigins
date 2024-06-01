@@ -100,7 +100,7 @@ public class Shulk extends Origin {
     @Override
     public void primaryAbilityLogic() {
         Player player = getPlayer();
-
+        getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_ENDER_CHEST_OPEN, 1, 0.8f);
         ParticleUtil.generateSphereParticle(Particle.PORTAL, player.getEyeLocation(), 5, 0.7);
         player.openInventory(getPlayer().getEnderChest());
     }
@@ -121,6 +121,7 @@ public class Shulk extends Origin {
             }
         }
         secondaryAbilityOnPlayer(getPlayer());
+        PotionsUtil.addEffect(player, PotionEffectType.RESISTANCE, SHULK_CONFIG.getResistanceAmplifier(), SHULK_CONFIG.getResistanceDuration());
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1, 1.5f);
     }
 

@@ -27,6 +27,7 @@ import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 //todo: Make checstpalte disappear on removal
 /**
@@ -62,13 +63,13 @@ public class Elytrian extends Origin {
     public void originTick(int tickNum) {
         Player player = getPlayer();
         if (PlayerUtils.isUnderRoof(player, ELYTRIAN_CONFIG.getCeilingPenaltyHeight())) {
-            PotionsUtil.addEffect(player, PotionEffectType.SLOWNESS, ELYTRIAN_CONFIG.getCeilingPenaltySlownessAmplifier(), 4);
+            PotionsUtil.addEffect(player, PotionEffectType.SLOWNESS, ELYTRIAN_CONFIG.getCeilingPenaltySlownessAmplifier(), 10);
         }
     }
 
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateParticleAtLocation(Particle.WHITE_ASH, getPlayer().getLocation(), 2);
+        ParticleUtil.generateParticleAtLocation(Particle.SMOKE, getPlayer().getLocation(), (tickNum%2)+1);
     }
 
     @Override
@@ -103,7 +104,7 @@ public class Elytrian extends Origin {
 
     @Override
     public void onToggleGlide(EntityToggleGlideEvent event) {
-        updateGlideAttributes(!event.isGliding());
+        updateGlideAttributes();
     }
 
     @Override
@@ -164,9 +165,9 @@ public class Elytrian extends Origin {
         }
     }
 
-    private void updateGlideAttributes(boolean gliding) {
+    private void updateGlideAttributes() {
         Player player = getPlayer();
-        if (gliding) {
+        if (player.isGliding()) {
             PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, ELYTRIAN_CONFIG.getGlidingBlockBreakSpeed());
             PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingEntityInteractRange());
             PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingBlockInteractRange());

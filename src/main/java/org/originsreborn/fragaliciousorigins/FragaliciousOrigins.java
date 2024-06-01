@@ -6,11 +6,18 @@ import org.originsreborn.fragaliciousorigins.commands.OriginReloadCommand;
 import org.originsreborn.fragaliciousorigins.commands.OriginSetCommand;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
+import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
+import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
+import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.configs.MainConfig;
+import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.ShapeShifter;
+import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Stoneborn;
+import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
 
 public final class FragaliciousOrigins extends JavaPlugin {
     public static FragaliciousOrigins INSTANCE;
@@ -38,7 +45,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
         CONFIG.loadConfig();
         Alchemist.onReload();
         Arachnid.onReload();
-        Bee.onReload();
+        Blazeborn.Bee.onReload();
         Blazeborn.onReload();
         Elytrian.onReload();
         Enderian.onReload();
@@ -53,7 +60,9 @@ public final class FragaliciousOrigins extends JavaPlugin {
         Shulk.onReload();
         Stoneborn.onReload();
         Vampire.onReload();
-        //DO LAST - this reloads all origin stats and applies to current playerbase
+        Bee.onReload();
+        //DO LAST - this reloads
+        //all origin stats and applies to current playerbase
         ORIGINS.reloadOrigins();
     }
     private void registerCommands() {

@@ -1,11 +1,18 @@
 package org.originsreborn.fragaliciousorigins.origins.enums;
 
 import org.originsreborn.fragaliciousorigins.origins.*;
-import org.originsreborn.fragaliciousorigins.origins.complete.Human;
+import org.originsreborn.fragaliciousorigins.origins.Human;
+import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
+import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
+import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
+import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.ShapeShifter;
+import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Stoneborn;
+import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +27,7 @@ public enum OriginType {
     ENDERIAN("Enderian"),
     ELYTRIAN("Elytrian"),
     FELINE("Feline"),
-    GIANT("Cyclops"),
+    GIANT("Giant"),
     INCHLING("Inchling"),
     HUNTSMAN("Huntsman"),
     MERLING("Merling"),
