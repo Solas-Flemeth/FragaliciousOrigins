@@ -69,29 +69,6 @@ public class Shulk extends Origin {
     }
 
     @Override
-    public String serializeCustomData() {
-        HashMap<String, Serializable> hashMap = new HashMap<>();
-        hashMap.put("PrimaryCooldown", getPrimaryCooldown());
-        hashMap.put("SecondaryCooldown", getSecondaryCooldown());
-        try {
-            return SerializationUtils.serializeHashMapToString(hashMap);
-        } catch (IOException ignored) {
-            return "";
-        }
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
-        try {
-            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
-            setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
-            setSecondaryCooldown((Integer) hashMap.get("SecondaryCooldown"));
-        } catch (Exception ignored) {
-            //will use default values
-        }
-    }
-
-    @Override
     public OriginDifficulty getDifficulty() {
         return OriginDifficulty.EASY;
     }

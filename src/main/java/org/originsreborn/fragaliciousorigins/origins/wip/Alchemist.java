@@ -47,16 +47,6 @@ public class Alchemist extends Origin {
     }
 
     @Override
-    public String serializeCustomData() {
-        return "";
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
-
-    }
-
-    @Override
     public void primaryAbilityLogic() {
 
     }

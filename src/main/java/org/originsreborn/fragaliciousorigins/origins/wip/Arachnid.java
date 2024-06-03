@@ -1,11 +1,14 @@
 package org.originsreborn.fragaliciousorigins.origins.wip;
 
+import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -46,13 +49,21 @@ public class Arachnid extends Origin {
 
     }
 
+    /**
+     * @param map
+     * @return
+     */
     @Override
-    public String serializeCustomData() {
-        return "";
+    public @NotNull HashMap<String, Serializable> additionalSerializationOfCustomData(HashMap<String, Serializable> map) {
+        return map;
     }
 
+    /**
+     * @param map
+     * @throws Exception
+     */
     @Override
-    public void deserializeCustomData(String customData) {
+    public void additionalDeserialization(HashMap<String, Serializable> map) throws Exception {
 
     }
 

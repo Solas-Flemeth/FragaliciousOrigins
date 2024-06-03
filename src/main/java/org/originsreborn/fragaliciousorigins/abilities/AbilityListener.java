@@ -8,11 +8,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.GenericGameEvent;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.OriginManager;
 import org.originsreborn.fragaliciousorigins.util.DamageUtil;
 
 import java.util.UUID;
@@ -126,7 +126,10 @@ public class AbilityListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        getOrigin(event).onMove(event);
+        if(!event.isCancelled()){
+            getOrigin(event).onMove(event);
+        }
+
     }
 
     @EventHandler
@@ -280,6 +283,21 @@ public class AbilityListener implements Listener {
     public void onResurrectEvent(EntityResurrectEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onResurrectEvent(event);
+        }
+    }
+
+    @EventHandler
+    public void onHungerChangeEvent(FoodLevelChangeEvent event){
+        if(event.getEntity() instanceof Player player && !event.isCancelled()){
+            getOrigin(player).onHungerChange(event);
+        }
+    }
+    @EventHandler
+    public void genericEvents(GenericGameEvent event){
+        if(!event.isCancelled() && event.getEntity() instanceof Player player){
+            if(event.getEvent().equals(GameEvent.STEP)){
+                getOrigin(player).onStep(event);
+            }
         }
     }
 

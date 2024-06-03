@@ -15,10 +15,13 @@ public class InchlingConfig extends OriginConfig {
         try {
             //Primary Ability
             CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryability");
-            primaryAbilityNode.node("SpeedModifer").set(1.5);
-            primaryAbilityNode.node("JumpheightModifier").set(1.5);
-            primaryAbilityNode.node("SizeModifer").set(0.2);
-            primaryAbilityNode.node("dodgeChance").set(0.5);
+                primaryAbilityNode.node("SpeedModifer").set(1.5);
+                primaryAbilityNode.node("JumpheightModifier").set(1.5);
+                primaryAbilityNode.node("SizeModifer").set(0.2);
+                primaryAbilityNode.node("dodgeChance").set(0.5);
+            CommentedConfigurationNode foodNode = getConfigNode().node("food");
+                foodNode.node("hungerLossCancelChance").set(0.25);
+                foodNode.node("SaturationGainChance").set(0.05);
         } catch (SerializationException Exception) {
 
         }
@@ -43,5 +46,16 @@ public class InchlingConfig extends OriginConfig {
     public double getDodgeChance() {
         return getConfigNode().node("primaryability").node("dodgeChance").getDouble();
     }
+
+    // Food - Hunger Loss Cancel Chance
+    public double getHungerLossCancelChance() {
+        return getConfigNode().node("food").node("hungerLossCancelChance").getDouble();
+    }
+
+    // Food - Saturation Gain Chance
+    public double getSaturationGainChance() {
+        return getConfigNode().node("food").node("SaturationGainChance").getDouble();
+    }
+
 
 }

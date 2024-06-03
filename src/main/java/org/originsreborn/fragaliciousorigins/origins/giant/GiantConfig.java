@@ -29,6 +29,8 @@ public class GiantConfig extends OriginConfig {
                 CommentedConfigurationNode hasteNode = primaryAbilityNode.node("haste");
                     hasteNode.node("duration").set(400);
                     hasteNode.node("amplifier").set(1);
+        CommentedConfigurationNode foodNode = getConfigNode().node("food");
+            foodNode.node("hungerLossChance").set(0.03);
         } catch (SerializationException Exception) {
 
         }
@@ -67,6 +69,11 @@ public class GiantConfig extends OriginConfig {
 
     public int getPrimaryAbilityHasteAmplifier() {
         return getConfigNode().node("primaryability").node("haste").node("amplifier").getInt();
+    }
+
+    // Food - Hunger Loss Cancel Chance
+    public double getHungerLossChance() {
+        return getConfigNode().node("food").node("hungerLossChance").getDouble();
     }
 
 }

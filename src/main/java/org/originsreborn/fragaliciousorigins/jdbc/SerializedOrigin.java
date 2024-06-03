@@ -5,10 +5,10 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
 
 public class SerializedOrigin {
-    private String uuid; //PK
-    private String originType;
-    private String originState; //PK
-    private String originData;
+    private final String uuid; //PK
+    private final String originType;
+    private final String originState; //PK
+    private final String originData;
 
     public SerializedOrigin(String uuid, String originType, String originState, String originData) {
         this.uuid = uuid;
@@ -26,7 +26,6 @@ public class SerializedOrigin {
 
     public Origin deserializeOrigin(){
         OriginType type = OriginType.getByDisplayName(originType);
-        System.out.println(this.toString());
         return type.generateOrigin(uuid, originState, originData);
     }
 

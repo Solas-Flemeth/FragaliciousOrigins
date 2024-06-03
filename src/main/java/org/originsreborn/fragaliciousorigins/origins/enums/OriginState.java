@@ -1,7 +1,6 @@
 package org.originsreborn.fragaliciousorigins.origins.enums;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public enum OriginState {

@@ -2,6 +2,7 @@ package org.originsreborn.fragaliciousorigins;
 
 import org.bukkit.plugin.java.JavaPlugin;
 import org.originsreborn.fragaliciousorigins.abilities.AbilityListener;
+import org.originsreborn.fragaliciousorigins.bossbars.BossBarManager;
 import org.originsreborn.fragaliciousorigins.commands.OriginReloadCommand;
 import org.originsreborn.fragaliciousorigins.commands.OriginSetCommand;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
@@ -22,12 +23,14 @@ import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
 public final class FragaliciousOrigins extends JavaPlugin {
     public static FragaliciousOrigins INSTANCE;
     public static OriginManager ORIGINS;
+    public static BossBarManager BOSS_BARS;
     public static MainConfig CONFIG;
     public static DataSourceManager DATASOURCE;
     @Override
     public void onEnable() {
         INSTANCE = this;
-        CONFIG = new MainConfig(); //Register as a valid config file
+        CONFIG = new MainConfig();//Register as a valid config file
+        BOSS_BARS = new BossBarManager();
         ORIGINS = new OriginManager();
         DATASOURCE = new DataSourceManager();
         this.getServer().getPluginManager().registerEvents(new AbilityListener(), this);

@@ -39,7 +39,7 @@ public class MainOriginConfig extends OriginConfig {
             attributesNode.node("gravity").set(1.0); //multiplier
             attributesNode.node("safeFallDistance").set(3); //NUMERIC
             attributesNode.node("fallDamageMultiplier").set(1.0); //multiplier
-            attributesNode.node("saturationCap").set(20); //NUMERIC
+            attributesNode.node("stepSound").set(true);
             CommentedConfigurationNode damageModifiersNode = getConfigNode().node("damageModifiers");
             damageModifiersNode.node("explosionDamageMultiplier").set(1.0);
             damageModifiersNode.node("meleeDamageMultiplier").set(1.0);
@@ -181,8 +181,8 @@ public class MainOriginConfig extends OriginConfig {
         return getConfigNode().node("attributes").node("fallDamageMultiplier").getDouble();
     }
 
-    public double getSaturationCap() {
-        return getConfigNode().node("attributes").node("saturationCap").getDouble();
+    public boolean hasStepSounds() {
+        return getConfigNode().node("attributes").node("stepSound").getBoolean();
     }
 
     public double getExplosionDamageMultiplier() {

@@ -1,11 +1,15 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
+import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,6 +61,9 @@ public class OriginManager {
      * @param origin
      */
     public void updateOrigin(Origin origin) {
+        if(containsUUID(origin.getUUID())){
+            getOrigin(origin.getUUID()).onRemoveOrigin();
+        }
         originsMap.put(origin.getUUID(), origin);
         origin.updateStats();
         FragaliciousOrigins.INSTANCE.getLogger().fine("SETTING PLAYER TO " + origin.getPlayer().getName() + " TO ORIGIN TYPE OF " + origin.getType().getDisplay());
@@ -73,6 +80,7 @@ public class OriginManager {
     @Nullable
     public Origin removeOrigin(UUID uuid) {
         if (containsUUID(uuid)) {
+            getOrigin(uuid).onRemoveOrigin();
             return originsMap.remove(uuid);
         }
         return null;

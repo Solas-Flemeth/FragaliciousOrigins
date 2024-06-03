@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
+import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
@@ -25,8 +26,16 @@ public class OriginSetCommand implements TabExecutor {
         String name = strings[0];
         String type = strings[1];
         String state = "NORMAL";
+        int duration = 0;
         if(strings.length >= 3){
             state = strings[2];
+        }
+        if(strings.length >= 4){
+            try{
+                duration = Math.abs(Integer.valueOf(strings[3]));
+            }catch (NumberFormatException ignored){
+
+            }
         }
         //build values
         Player player = Bukkit.getPlayer(name);
@@ -36,8 +45,14 @@ public class OriginSetCommand implements TabExecutor {
         }
         OriginType originType = OriginType.getByDisplayName(type);
         OriginState originState = OriginState.getState(state);
-        commandSender.sendMessage("Creating an Origin for player " + player.getName() + " as a " + originType.getDisplay() + " with the state of " + originState.name() );
-        FragaliciousOrigins.ORIGINS.updateOrigin(originType.generateOrigin(player.getUniqueId(), originState, ""));
+        Origin origin = originType.generateOrigin(player.getUniqueId(), originState, "");
+        if(duration > 0){
+            origin.setTempTimeRemaining(duration);
+            commandSender.sendMessage("Creating an Origin for player " + player.getName() + " as a " + originType.getDisplay() + " with the state of " + originState.name() + "and a duration of " + duration +" seconds");
+        }else{
+            commandSender.sendMessage("Creating an Origin for player " + player.getName() + " as a " + originType.getDisplay() + " with the state of " + originState.name());
+        }
+        FragaliciousOrigins.ORIGINS.updateOrigin(origin);
         return true;
     }
 

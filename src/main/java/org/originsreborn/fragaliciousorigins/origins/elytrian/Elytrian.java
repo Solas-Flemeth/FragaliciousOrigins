@@ -22,14 +22,7 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Random;
 import java.util.UUID;
-//todo: Make checstpalte disappear on removal
 /**
  * Primary Ability - Boost - flies off the ground or boost natural speed
  * Secondary Ability - Toggle Wings - turns wings on and off (Will delete current chestplate)
@@ -69,31 +62,9 @@ public class Elytrian extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateParticleAtLocation(Particle.SMOKE, getPlayer().getLocation(), (tickNum%2)+1);
+        ParticleUtil.generateSphereParticle(Particle.CLOUD, getPlayer().getLocation(), 2, MAIN_ORIGIN_CONFIG.getScale());
     }
 
-    @Override
-    public String serializeCustomData() {
-        HashMap<String, Serializable> hashMap = new HashMap<>();
-        hashMap.put("PrimaryCooldown", getPrimaryCooldown());
-        hashMap.put("SecondaryCooldown", getSecondaryCooldown());
-        try {
-            return SerializationUtils.serializeHashMapToString(hashMap);
-        } catch (IOException ignored) {
-            return "";
-        }
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
-        try {
-            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
-            setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
-            setSecondaryCooldown((Integer) hashMap.get("SecondaryCooldown"));
-        } catch (Exception ignored) {
-            //will use default values
-        }
-    }
 
     @Override
     public void setDefaultStats() {
@@ -197,13 +168,28 @@ public class Elytrian extends Origin {
         ItemStack elytra = new ItemStack(Material.ELYTRA);
         ItemMeta elytraMeta = elytra.getItemMeta();
         elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier("elytra_armor", ELYTRIAN_CONFIG.getElytraArmor(), AttributeModifier.Operation.ADD_NUMBER));
-        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier("elytra_toughness", ELYTRIAN_CONFIG.getElytraToughness(), AttributeModifier.Operation.ADD_NUMBER));
+        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier("elytra_toughness", ELYTRIAN_CONFIG.getElytraToughness(), AttributeModifier.Operation.ADD_NUMBER));
         elytraMeta.setHideTooltip(true);
         elytraMeta.setUnbreakable(true);
-        elytraMeta.addEnchant(Enchantment.VANISHING_CURSE, 1, false);
-        elytraMeta.addEnchant(Enchantment.BINDING_CURSE, 1, false);
+        elytraMeta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
+        elytraMeta.addEnchant(Enchantment.BINDING_CURSE, 1, true);
         elytraMeta.setCustomModelData(ELYTRIAN_CONFIG.getElytraModelData());
         elytra.setItemMeta(elytraMeta);
         return elytra;
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void onRemoveOrigin() {
+        Player player = getPlayer();
+        if(player == null){
+            return;
+        }
+        ItemStack chestplate = player.getEquipment().getChestplate();
+        if(chestplate != null && chestplate.getType().equals(Material.ELYTRA) && chestplate.getItemMeta().isUnbreakable()){
+            player.getEquipment().setChestplate(ItemStack.empty());
+        };
     }
 }

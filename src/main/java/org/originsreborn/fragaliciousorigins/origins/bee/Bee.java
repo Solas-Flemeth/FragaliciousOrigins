@@ -19,11 +19,7 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.origins.wip.Phytokin;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class Bee extends Origin {
@@ -54,12 +50,12 @@ public class Bee extends Origin {
     @Override
     public void originTick(int tickNum) {
         Player player = getPlayer();
-        if (player.isSneaking()) {
+        if (player.isSneaking() && (!player.isInWaterOrRain() || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER))) {
             PotionsUtil.addEffect(player, PotionEffectType.LEVITATION, 2, 4);
         }
         int radius = BEE_CONFIG.getHiveMindRadius();
         for (Entity entity : player.getNearbyEntities(radius * 2, radius * 2, radius * 2)) {
-            if (entity instanceof Player nearbyPlayer) {
+            if (entity instanceof Player) {
                 Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(entity.getUniqueId());
                 switch (origin.getType()) {
                     case BEE:
@@ -78,32 +74,8 @@ public class Bee extends Origin {
      */
     @Override
     public void originParticle(int tickNum) {
-        if(tickNum%5 == 0){
+        if (tickNum % 5 == 0) {
             ParticleUtil.generateParticleAtLocation(Particle.LANDING_HONEY, getPlayer().getLocation(), 1);
-        }
-
-    }
-
-    @Override
-    public String serializeCustomData() {
-        HashMap<String, Serializable> hashMap = new HashMap<>();
-        hashMap.put("PrimaryCooldown", getPrimaryCooldown());
-        hashMap.put("SecondaryEnabled", isSecondaryEnabled());
-        try {
-            return SerializationUtils.serializeHashMapToString(hashMap);
-        } catch (IOException ignored) {
-            return "";
-        }
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
-        try {
-            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
-            setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
-            secondaryToggle((boolean) hashMap.get("SecondaryEnabled"));
-        } catch (Exception ignored) {
-            //will use default values
         }
     }
 
@@ -123,7 +95,8 @@ public class Bee extends Origin {
         int maxY = playerLocation.getBlockY() + radius;
         int maxZ = playerLocation.getBlockZ() + radius;
         World world = playerLocation.getWorld();
-        world.playSound(getPlayer().getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 1, 2.5f);
+        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 2, 0.9f);
+        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 1, 1.5f);
         // Iterate through nearby blocks within the bounding box
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
@@ -157,8 +130,8 @@ public class Bee extends Origin {
         for (Entity entity : player.getNearbyEntities(radius * 2, radius * 2, radius * 2)) {
             if (entity instanceof Player nearbyPlayer) {
                 Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(entity.getUniqueId());
-                if(origin.getType().equals(OriginType.PHYTOKIN)){
-                    PotionsUtil.addEffect(nearbyPlayer, PotionEffectType.HEALTH_BOOST, BEE_CONFIG.getPrimaryAbilityPhytokinHealthBoostAmplifier(), BEE_CONFIG.getPrimaryAbilityPhytokinHealthBoostDuration()*20);
+                if (origin.getType().equals(OriginType.PHYTOKIN)) {
+                    PotionsUtil.addEffect(nearbyPlayer, PotionEffectType.HEALTH_BOOST, BEE_CONFIG.getPrimaryAbilityPhytokinHealthBoostAmplifier(), BEE_CONFIG.getPrimaryAbilityPhytokinHealthBoostDuration() * 20);
                     ParticleUtil.generateParticleLine(Particle.HEART, getPlayer().getLocation(), nearbyPlayer.getLocation(), 40);
                     ParticleUtil.generateCircleParticle(Particle.HEART, nearbyPlayer.getLocation(), 20, 1.6);
                 }
@@ -183,16 +156,16 @@ public class Bee extends Origin {
         return OriginDifficulty.HARD;
     }
 
-/**
-*
-*/
+    /**
+     *
+     */
     @Override
     public void consume(PlayerItemConsumeEvent event) {
-        if(!event.isCancelled()){
+        if (!event.isCancelled()) {
             Material material = event.getItem().getType();
-            if(material.equals(Material.HONEY_BOTTLE) || material.equals(Material.POTION)){
+            if (material.equals(Material.HONEY_BOTTLE) || material.equals(Material.POTION)) {
                 super.consume(event);
-            }else{
+            } else {
                 event.setCancelled(true);
                 event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat honey.").color(errorColor()));
             }
@@ -207,8 +180,12 @@ public class Bee extends Origin {
     @Override
     public void onAttackEntity(EntityDamageByEntityEvent event) {
         if (!event.isCancelled() && Math.random() < BEE_CONFIG.getSecondaryAbilityFinalStingChance() && event.getCause().equals(EntityDamageEvent.DamageCause.ENTITY_ATTACK) && isSecondaryEnabled()) {
+            Player player = getPlayer();
             event.setDamage(event.getDamage() * BEE_CONFIG.getSecondaryAbilityFinalStingMultiplier());
-            getPlayer().setHealth(1.0);
+            player.setHealth(1.0);
+            player.setSaturation(0);
+            player.setFoodLevel(6);
+            player.getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 1, 0.9f);
         }
         super.onAttackEntity(event);
 
@@ -250,6 +227,8 @@ public class Bee extends Origin {
             case RED_MUSHROOM:
             case CRIMSON_FUNGUS:
             case WARPED_FUNGUS:
+            case ROSE_BUSH:
+            case LILAC:
                 return true;
             default:
                 return false;
@@ -258,15 +237,15 @@ public class Bee extends Origin {
 
     private void phytokinHiveMind(Phytokin phytokin) {
         if (Math.random() < BEE_CONFIG.getHiveMindPhytokinSaturationChance()) {
-            PotionsUtil.addEffect(phytokin.getPlayer(), PotionEffectType.SATURATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration()*20);
-            PotionsUtil.addEffect(getPlayer(), PotionEffectType.SATURATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration()*20);
+            PotionsUtil.addEffect(phytokin.getPlayer(), PotionEffectType.SATURATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration() * 20);
+            PotionsUtil.addEffect(getPlayer(), PotionEffectType.SATURATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration() * 20);
         }
     }
 
     private void beeHiveMind(Bee bee) {
         if (Math.random() < BEE_CONFIG.getHiveMindBeeRegenChance()) {
-            PotionsUtil.addEffect(bee.getPlayer(), PotionEffectType.REGENERATION, BEE_CONFIG.getHiveMindBeeRegenAmplifier(), BEE_CONFIG.getHiveMindBeeRegenDuration()*20);
-            PotionsUtil.addEffect(getPlayer(), PotionEffectType.REGENERATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration()*20);
+            PotionsUtil.addEffect(bee.getPlayer(), PotionEffectType.REGENERATION, BEE_CONFIG.getHiveMindBeeRegenAmplifier(), BEE_CONFIG.getHiveMindBeeRegenDuration() * 20);
+            PotionsUtil.addEffect(getPlayer(), PotionEffectType.REGENERATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration() * 20);
         }
     }
 }

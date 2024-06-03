@@ -1,11 +1,14 @@
 package org.originsreborn.fragaliciousorigins.origins.wip.postrelease;
 
+import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -45,16 +48,6 @@ public class Soulbonder extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-
-    }
-
-    @Override
-    public String serializeCustomData() {
-        return "";
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
 
     }
 

@@ -2,20 +2,12 @@ package org.originsreborn.fragaliciousorigins.origins.inchling;
 
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.entity.*;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
-
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.UUID;
 
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
@@ -45,46 +37,18 @@ public class Inchling extends Origin {
 
     @Override
     public void originTick(int tickNum) {
-
+        if(tickNum%60 ==0){
+            Player player = getPlayer();
+            if(Math.random() < INCHLING_CONFIG.getSaturationGainChance()){
+                float saturation = player.getSaturation();
+                player.setSaturation(saturation + 1f);
+            }
+        }
     }
 
     @Override
     public void originParticle(int tickNum) {
 
-    }
-
-    /**
-     *
-     */
-    @Override
-    public void updateStats() {
-        super.updateStats();
-        if(isPrimaryEnabled()){
-            enableFlee();
-        }
-    }
-
-    @Override
-    public String serializeCustomData() {
-        HashMap<String, Serializable> hashMap = new HashMap<>();
-        hashMap.put("PrimaryCooldown", getPrimaryCooldown());
-        hashMap.put("PrimaryEnabled", isPrimaryEnabled());
-        try {
-            return SerializationUtils.serializeHashMapToString(hashMap);
-        } catch (IOException ignored) {
-            return "";
-        }
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
-        try {
-            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
-            setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
-            primaryToggle((Boolean) hashMap.get("PrimaryEnabled"));
-        } catch (Exception ignored) {
-            //will use default values
-        }
     }
 
     @Override
@@ -189,6 +153,19 @@ public class Inchling extends Origin {
         }else{
             return super.getDodgeChance();
         }
+    }
+
+    /**
+     * @param event
+     */
+    @Override
+    public void onHungerChange(FoodLevelChangeEvent event) {
+        if(event.getFoodLevel() < getPlayer().getFoodLevel() && Math.random() < INCHLING_CONFIG.getHungerLossCancelChance()){
+            event.setCancelled(true);
+        }else{
+            super.onHungerChange(event);
+        }
+
     }
 
     /**

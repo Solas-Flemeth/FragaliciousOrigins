@@ -1,32 +1,28 @@
 package org.originsreborn.fragaliciousorigins.origins.huntsman;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.elytrian.ElytrianConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 import org.originsreborn.fragaliciousorigins.util.enums.Food;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.UUID;
@@ -51,10 +47,13 @@ public class Huntsman extends Origin {
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.HUNTSMAN);
     public static final HuntsmanConfig HUNTSMAN_CONFIG = new HuntsmanConfig();
     private int invisDuration = 0;
-    private HuntsmanMode mode = HuntsmanMode.STANDARD;
+    private HuntsmanMode mode;
 
     public Huntsman(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.HUNTSMAN, state, customDataString);
+        if(mode == null){
+            mode = HuntsmanMode.STANDARD;
+        }
     }
 
     public static void onReload() {
@@ -105,39 +104,33 @@ public class Huntsman extends Origin {
     @Override
     public void secondaryAbilityLogic() {
         toggleMode();
-        getPlayer().sendMessage("Arrow Type:" + mode.getMode());
+        getPlayer().sendActionBar(Component.text("You are using arrow type of ").color(textColor()).append(Component.text(mode.getMode()).color(enableColor())));
     }
 
-
+    /**
+     * @param map
+     * @return
+     */
     @Override
-    public String serializeCustomData() {
-        HashMap<String, Serializable> hashMap = new HashMap<>();
-        hashMap.put("PrimaryCooldown", getPrimaryCooldown());
-        hashMap.put("SecondaryCooldown", getSecondaryCooldown());
-        hashMap.put("Mode", mode.getMode());
-        try {
-            return SerializationUtils.serializeHashMapToString(hashMap);
-        } catch (IOException ignored) {
-            return "";
-        }
+    public @NotNull HashMap<String, Serializable> additionalSerializationOfCustomData(HashMap<String, Serializable> map) {
+        map.put("mode", mode.getMode());
+        return map;
     }
 
+    /**
+     * @param map
+     * @throws Exception
+     */
     @Override
-    public void deserializeCustomData(String customData) {
-        try {
-            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
-            setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
-            setSecondaryCooldown((Integer) hashMap.get("SecondaryCooldown"));
-            setMode(HuntsmanMode.getMode((String) hashMap.get("Mode")));
-        } catch (Exception ignored) {
-            //will use default values
-        }
+    public void additionalDeserialization(HashMap<String, Serializable> map) throws Exception {
+        setMode(HuntsmanMode.getMode((String) map.get("mode")));
     }
+
 
     @Override
     public void onBowShoot(EntityShootBowEvent event) {
         if (event.getProjectile().getType().equals(EntityType.FIREWORK_ROCKET)) {
-            event.getEntity().sendMessage("You cannot shoot rockets as " + OriginType.HUNTSMAN.name());
+            event.getEntity().sendActionBar(Component.text("You cannot shoot rockets as " + OriginType.HUNTSMAN.name()).color(errorColor()));
             event.setCancelled(true);
             return;
         }
@@ -173,7 +166,7 @@ public class Huntsman extends Origin {
     public void consume(PlayerItemConsumeEvent event){
         Food food = Food.getFood(event.getItem().getType());
         if(food != null && !food.isMeat()){
-            event.getPlayer().sendMessage("You can only eat meat based foods.");
+            event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
             event.setCancelled(true);
         }
     }

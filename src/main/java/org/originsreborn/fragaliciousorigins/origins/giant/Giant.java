@@ -7,7 +7,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
@@ -15,11 +14,7 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,40 +49,24 @@ public class Giant extends Origin {
 
     @Override
     public void originTick(int tickNum) {
-
+        if(tickNum%60 ==0){
+            Player player = getPlayer();
+            int foodlevel = player.getFoodLevel();
+            if(Math.random() < GIANT_CONFIG.getHungerLossChance() && foodlevel > 10){
+                player.setFoodLevel(foodlevel-1);
+            }
+        }
     }
 
     @Override
     public void originParticle(int tickNum) {
 
     }
-
-    @Override
-    public String serializeCustomData() {
-        HashMap<String, Serializable> hashMap = new HashMap<>();
-        hashMap.put("PrimaryCooldown", getPrimaryCooldown());
-        try {
-            return SerializationUtils.serializeHashMapToString(hashMap);
-        } catch (IOException ignored) {
-            return "";
-        }
-    }
-
-    @Override
-    public void deserializeCustomData(String customData) {
-        try {
-            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
-            setPrimaryCooldown((Integer) hashMap.get("PrimaryCooldown"));
-        } catch (Exception ignored) {
-            //will use default values
-        }
-    }
-
     @Override
     public void primaryAbilityLogic() {
         Player player = getPlayer();
         int radius = GIANT_CONFIG.getPrimaryAbilityRadius();
-        ParticleUtil.generateSphereParticle(Particle.SMOKE, player.getLocation(), 400, radius);
+        ParticleUtil.generateSphereParticle(Particle.LARGE_SMOKE, player.getLocation(), 500, radius);
         List<Entity> nearbyEntities = player.getNearbyEntities(radius, radius, radius);
         for (Entity entity : nearbyEntities) {
             if (entity instanceof Player) {
@@ -97,7 +76,7 @@ public class Giant extends Origin {
             }
         }
         primaryAbilityOnPlayer(getPlayer());
-        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_GHAST_SCREAM, 2, 0.05f);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_IMITATE_ENDER_DRAGON, 1, 1.7f);
     }
 
     @Override

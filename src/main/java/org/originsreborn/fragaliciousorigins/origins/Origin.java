@@ -2,13 +2,14 @@ package org.originsreborn.fragaliciousorigins.origins;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.*;
+import org.bukkit.event.world.GenericGameEvent;
+import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
@@ -16,7 +17,11 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.DamageUtil;
 import org.originsreborn.fragaliciousorigins.util.PermissionsUtil;
+import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.UUID;
 
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
@@ -30,6 +35,7 @@ public abstract class Origin {
     private boolean primaryEnabled = false;
     private boolean secondaryEnabled = false;
     private int tempTimeRemaining = 0;
+    private UUID bondedUUID = null;
 
     //Initial creation
     public Origin(UUID uuid, OriginType type, OriginState state) {
@@ -63,6 +69,11 @@ public abstract class Origin {
 
     public static TextColor enableColor() {
         return TextColor.color(0x18FF00);
+    }
+
+    public static String formatFloatPercentage(float percentage) {
+        int formatPercentage = (int) (percentage * 100);
+        return formatPercentage + "%";
     }
 
     public void updateStats() {
@@ -103,6 +114,7 @@ public abstract class Origin {
         if (getConfig().getPermissions() != null && !config.getPermissions().isEmpty()) {
             PermissionsUtil.registerPermission(player, config.getPermissions());
         }
+        player.setGravity(true);
         //config
         setAttribute(player, Attribute.GENERIC_ARMOR, config.getArmor());
         setAttribute(player, Attribute.GENERIC_ARMOR_TOUGHNESS, config.getArmorToughness());
@@ -121,15 +133,81 @@ public abstract class Origin {
         setAttribute(player, Attribute.GENERIC_GRAVITY, config.getGravity());
         setAttribute(player, Attribute.GENERIC_SAFE_FALL_DISTANCE, config.getSafeFallDistance());
         setAttribute(player, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, config.getFallDamageMultiplier());
+
     }
 
     public void onDeath(PlayerDeathEvent event) {
 
     }
 
-    public abstract String serializeCustomData();
+    @NotNull
+    public HashMap<String, Serializable> additionalSerializationOfCustomData(HashMap<String, Serializable> map) {
+        return map;
+    }
 
-    public abstract void deserializeCustomData(String customData);
+    public void additionalDeserialization(HashMap<String, Serializable> map) throws Exception {
+    }
+
+    /**
+     * Serializes the data from hashmap generateSerializedHashmap().
+     * Do NOT override this method. Please add to the additionalSerializationOfCustomData()
+     *
+     * @return
+     */
+    public String serializeCustomData() {
+        HashMap<String, Serializable> hashMap = new HashMap<String, Serializable>();
+        hashMap.put("primaryCooldown", getPrimaryCooldown());
+        hashMap.put("secondaryCooldown", getSecondaryCooldown());
+        hashMap.put("primaryEnabled", isPrimaryEnabled());
+        hashMap.put("secondaryEnabled", isSecondaryEnabled());
+        hashMap.put("timeRemaining", getTempTimeRemaining());
+        hashMap.put("bondedUUID", getBondedUUID());
+        try {
+            hashMap = additionalSerializationOfCustomData(hashMap);
+        } catch (Exception e) {
+            FragaliciousOrigins.INSTANCE.getLogger().severe("Error Serializing Custom Data for Origin " + getType().name());
+            FragaliciousOrigins.INSTANCE.getLogger().severe("Error:" + e.getMessage());
+        }
+        try {
+            return SerializationUtils.serializeHashMapToString(hashMap);
+        } catch (IOException e) {
+            FragaliciousOrigins.INSTANCE.getLogger().severe("Error Serializing Default Data for Origin type of " + getType().name());
+            FragaliciousOrigins.INSTANCE.getLogger().severe("Error:" + e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * Deserializes data from a custom string.
+     * Do NOT overide this method. Please add to the additionalDeserialization
+     *
+     * @param customData
+     */
+    public void deserializeCustomData(String customData) {
+        System.out.println("ATTEMPTING DESERIALIZATION");
+        try {
+            HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
+            setPrimaryCooldown((Integer) hashMap.get("primaryCooldown"));
+            setSecondaryCooldown((Integer) hashMap.get("secondaryCooldown"));
+            primaryToggle((boolean) hashMap.get("primaryEnabled"));
+            secondaryToggle((boolean) hashMap.get("secondaryEnabled"));
+            setTempTimeRemaining((int) (hashMap.get("timeRemaining")));
+            setBondedUUID((UUID) hashMap.get("bondedUUID"));
+            try {
+                additionalDeserialization(hashMap);
+            } catch (Exception e) {
+                FragaliciousOrigins.INSTANCE.getLogger().severe("Error Deserializing Custom Data for Origin " + getType().name());
+                FragaliciousOrigins.INSTANCE.getLogger().severe("Error:" + e.getMessage());
+            }
+        } catch (Exception e) {
+            FragaliciousOrigins.INSTANCE.getLogger().severe("Error Deserializing Default Data for Origin type of " + getType().name());
+            FragaliciousOrigins.INSTANCE.getLogger().severe("Error:" + e.getMessage());
+        }
+    }
+
+    public void onRemoveOrigin() {
+
+    }
 
     public OriginType getType() {
         return type;
@@ -152,14 +230,14 @@ public abstract class Origin {
     }
 
     public void primaryAbility() {
+        Player player = getPlayer();
         if (getConfig().getPlaceholdersPrimaryAbilityName().equals("primaryAbility")) {
-            Player player = getPlayer();
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
             player.sendActionBar(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
-            getPlayer().sendMessage(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
         }
         if (getPrimaryCooldown() > 0) {
-            primaryAbilityTimerCooldownMsg();
+            player.sendActionBar(primaryAbilityTimerCooldownMsg());
+            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
         } else {
             primaryAbilityLogic();
             setPrimaryCooldown(getPrimaryMaxCooldown());
@@ -169,14 +247,14 @@ public abstract class Origin {
     public abstract void primaryAbilityLogic();
 
     public void secondaryAbility() {
+        Player player = getPlayer();
         if (getConfig().getPlaceholdersSecondaryAbilityName().equals("secondaryAbility")) {
-            Player player = getPlayer();
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
             player.sendActionBar(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
-            player.sendMessage(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
         }
         if (getSecondaryCooldown() > 0) {
-            secondaryAbilityTimerCooldownMsg();
+            player.sendActionBar(secondaryAbilityTimerCooldownMsg());
+            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
         } else {
             secondaryAbilityLogic();
             setSecondaryCooldown(getSecondaryMaxCooldown());
@@ -184,7 +262,6 @@ public abstract class Origin {
     }
 
     public abstract void secondaryAbilityLogic();
-
 
     public int getPrimaryCooldown() {
         return primaryCooldown;
@@ -213,13 +290,15 @@ public abstract class Origin {
     public void cooldownTick() {
         if (getPrimaryCooldown() > 0) {
             setPrimaryCooldown(getPrimaryCooldown() - 1);
-            if(primaryCooldown == 0){
+            if (primaryCooldown == 0) {
+                getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 0.3f);
                 getPlayer().sendActionBar(Component.text("Your ability ").color(textColor()).append(Component.text(primaryAbilityName()).color(enableColor())).append(Component.text(" is ready").color(textColor())));
             }
         }
         if (getSecondaryCooldown() > 0) {
             setSecondaryCooldown(getSecondaryCooldown() - 1);
-            if(primaryCooldown == 0){
+            if (secondaryCooldown == 0) {
+                getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 0.3f);
                 getPlayer().sendActionBar(Component.text("Your ability ").color(textColor()).append(Component.text(secondaryAbilityName()).color(enableColor())).append(Component.text(" is ready").color(textColor())));
             }
         }
@@ -332,10 +411,14 @@ public abstract class Origin {
     public void onPickupItem(EntityPickupItemEvent event) {
     }
 
+    public void onHungerChange(FoodLevelChangeEvent event) {
+
+    }
+
     public void onDamage(EntityDamageEvent event) {
         if (!event.isCancelled()) {
             event.setCancelled(Math.random() < getDodgeChance());
-            if(event.isCancelled()){
+            if (event.isCancelled()) {
                 getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_WITHER_SHOOT, 1, 2.0f);
             }
             DamageUtil.calculateDamageMultipliers(event, this);
@@ -347,7 +430,7 @@ public abstract class Origin {
     }
 
     public void onHurtByEntity(EntityDamageByEntityEvent event) {
-        DamageUtil.applyEnchantmentImmunities(event, this);
+        DamageUtil.applySpecialWeaponDamage(event, this);
     }
 
     public void onAttackEntity(EntityDamageByEntityEvent event) {
@@ -376,48 +459,55 @@ public abstract class Origin {
 
     public void onPotionLaunch(ProjectileLaunchEvent event) {
     }
-    public void onUpdateArmor(PlayerArmorChangeEvent event){
+
+    public void onUpdateArmor(PlayerArmorChangeEvent event) {
 
     }
 
-    public void primaryAbilityTimerCooldownMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(textColor())
+    public void onStep(GenericGameEvent event) {
+        if (!getConfig().hasStepSounds()) {
+            event.setCancelled(true);
+        }
+    }
+
+    public Component primaryAbilityTimerCooldownMsg() {
+        return Component.text("Your ability ").color(textColor())
                 .append(Component.text(primaryAbilityName()).color(errorColor()))
                 .append(Component.text(" will be ready in ").color(textColor()))
                 .append(Component.text(primaryCooldown).color(errorColor()))
-                .append(Component.text(" seconds.").color(textColor())).asComponent());
+                .append(Component.text(" seconds.").color(textColor()));
     }
 
-    public void secondaryAbilityTimerCooldownMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(textColor())
+    public Component secondaryAbilityTimerCooldownMsg() {
+        return Component.text("Your ability ").color(textColor())
                 .append(Component.text(secondaryAbilityName()).color(errorColor()))
                 .append(Component.text(" will be ready in ").color(textColor()))
                 .append(Component.text(secondaryCooldown).color(errorColor()))
-                .append(Component.text(" seconds.").color(textColor())).asComponent());
+                .append(Component.text(" seconds.").color(textColor()));
     }
 
-    public void enablePrimaryAbilityMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
-                .append(Component.text(secondaryAbilityName()).color(enableColor()))
-                .append(Component.text(" is now enabled ").color(textColor())));
+    public Component enablePrimaryAbilityMsg() {
+        return Component.text("Your ability ").color(textColor())
+                .append(Component.text(primaryAbilityName()).color(enableColor()))
+                .append(Component.text(" is now enabled ").color(textColor()));
     }
 
-    public void disablePrimaryAbilityMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+    public Component disablePrimaryAbilityMsg() {
+        return Component.text("Your ability ").color(textColor())
                 .append(Component.text(primaryAbilityName()).color(errorColor()))
-                .append(Component.text(" is now disabled ").color(textColor())));
+                .append(Component.text(" is now disabled ").color(textColor()));
     }
 
-    public void enableSecondaryAbilityMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+    public Component enableSecondaryAbilityMsg() {
+        return Component.text("Your ability ").color(textColor())
                 .append(Component.text(secondaryAbilityName()).color(enableColor()))
-                .append(Component.text(" is now enabled ").color(textColor())));
+                .append(Component.text(" is now enabled ").color(textColor()));
     }
 
-    public void disableSecondaryAbilityMsg() {
-        getPlayer().sendMessage(Component.text("Your ability ").color(errorColor())
+    public Component disableSecondaryAbilityMsg() {
+        return Component.text("Your ability ").color(textColor())
                 .append(Component.text(secondaryAbilityName()).color(errorColor()))
-                .append(Component.text(" is now disabled ").color(textColor())));
+                .append(Component.text(" is now disabled ").color(textColor()));
     }
 
     /**
@@ -434,10 +524,10 @@ public abstract class Origin {
      */
     public void secondaryToggle() {
         secondaryEnabled = !secondaryEnabled;
-        if(this.secondaryEnabled){
-            enableSecondaryAbilityMsg();
-        }else{
-            disableSecondaryAbilityMsg();
+        if (this.secondaryEnabled) {
+            getPlayer().sendActionBar(enableSecondaryAbilityMsg());
+        } else {
+            getPlayer().sendActionBar(disableSecondaryAbilityMsg());
         }
     }
 
@@ -464,10 +554,10 @@ public abstract class Origin {
      */
     public void primaryToggle() {
         primaryEnabled = !primaryEnabled;
-        if(primaryEnabled){
-            enablePrimaryAbilityMsg();
-        }else{
-            disablePrimaryAbilityMsg();
+        if (primaryEnabled) {
+            getPlayer().sendActionBar(enablePrimaryAbilityMsg());
+        } else {
+            getPlayer().sendActionBar(disablePrimaryAbilityMsg());
         }
     }
 
@@ -493,9 +583,18 @@ public abstract class Origin {
 
     /**
      * Gets the players dodge chance
+     *
      * @return
      */
     public double getDodgeChance() {
         return getConfig().getDodgeChance();
+    }
+
+    public UUID getBondedUUID() {
+        return bondedUUID;
+    }
+
+    public void setBondedUUID(UUID bonded) {
+        this.bondedUUID = bonded;
     }
 }

@@ -1,10 +1,13 @@
 package org.originsreborn.fragaliciousorigins.util;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Trident;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -22,13 +25,10 @@ public class DamageUtil {
      *
      * @param event
      */
-    public static void applyEnchantmentImmunities(EntityDamageByEntityEvent event, Origin origin) {
+    public static void applySpecialWeaponDamage(EntityDamageByEntityEvent event, Origin origin) {
         boolean sharpnessImmune = origin.getConfig().getSharpnessImmune();
         boolean smiteImmune = origin.getConfig().getSmiteImmune();
         boolean baneOfArthapodsImmune = origin.getConfig().getBaneOfArthopodsImmune();
-        if (!sharpnessImmune && smiteImmune && baneOfArthapodsImmune) { //does not need modified
-            return;
-        }
         double damage = event.getDamage();
         if (event.getDamager() instanceof LivingEntity && ((LivingEntity) event.getDamager()).getEquipment() != null) {
             EntityEquipment equipment = ((LivingEntity) event.getDamager()).getEquipment();
@@ -48,6 +48,12 @@ public class DamageUtil {
                 double damageModifier = 0.5 * (1.0 * level);
                 event.setDamage(damage + damageModifier);
             }
+            if(item.getType().equals(Material.TRIDENT)){
+                event.setDamage(damage * origin.getConfig().getWaterDamageMultiplier());
+            }
+        }
+        if(event.getDamager().getType().equals(EntityType.TRIDENT)){
+            event.setDamage(damage * origin.getConfig().getWaterDamageMultiplier());
         }
     }
 

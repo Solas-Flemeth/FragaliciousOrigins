@@ -16,11 +16,11 @@ public class ShulkConfig extends OriginConfig {
         try {
             CommentedConfigurationNode secondaryAbilityNode = getConfigNode().node("secondaryAbility");
                 secondaryAbilityNode.node("radius").set(10);
-                secondaryAbilityNode.node("playerDuration").set(60);
-                secondaryAbilityNode.node("enemyDuration").set(200);
-                CommentedConfigurationNode resistanceNode = secondaryAbilityNode.node("haste");
-                    resistanceNode.set("duration").set(200);
-                    resistanceNode.set("amplifier").set(1);
+                secondaryAbilityNode.node("playerDuration").set(200);
+                secondaryAbilityNode.node("enemyDuration").set(60);
+            CommentedConfigurationNode resistanceNode = getConfigNode().node("resistance");
+                resistanceNode.node("duration").set(200);
+                resistanceNode.node("amplifier").set(0);
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
@@ -39,10 +39,10 @@ public class ShulkConfig extends OriginConfig {
     }
 
     public int getResistanceDuration() {
-        return getConfigNode().node("secondaryAbility").node("resistance").node("duration").getInt();
+        return getConfigNode().node("resistance").node("duration").getInt();
     }
 
     public int getResistanceAmplifier() {
-        return getConfigNode().node("secondaryAbility").node("resistance").node("amplifier").getInt();
+        return getConfigNode().node("resistance").node("amplifier").getInt();
     }
 }
