@@ -51,19 +51,21 @@ public class Bee extends Origin {
     public void originTick(int tickNum) {
         Player player = getPlayer();
         if (player.isSneaking() && (!player.isInWaterOrRain() || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER))) {
-            PotionsUtil.addEffect(player, PotionEffectType.LEVITATION, 2, 4);
+            PotionsUtil.addEffect(player, PotionEffectType.LEVITATION, 2, 6);
         }
         int radius = BEE_CONFIG.getHiveMindRadius();
-        for (Entity entity : player.getNearbyEntities(radius * 2, radius * 2, radius * 2)) {
-            if (entity instanceof Player) {
-                Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(entity.getUniqueId());
-                switch (origin.getType()) {
-                    case BEE:
-                        beeHiveMind((Bee) origin);
-                        break;
-                    case PHYTOKIN:
-                        phytokinHiveMind((Phytokin) origin);
-                        break;
+        if(tickNum%20 == 0){
+            for (Entity entity : player.getNearbyEntities(radius * 2, radius * 2, radius * 2)) {
+                if (entity instanceof Player) {
+                    Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(entity.getUniqueId());
+                    switch (origin.getType()) {
+                        case BEE:
+                            beeHiveMind((Bee) origin);
+                            break;
+                        case PHYTOKIN:
+                            phytokinHiveMind((Phytokin) origin);
+                            break;
+                    }
                 }
             }
         }
@@ -103,14 +105,15 @@ public class Bee extends Origin {
                 for (int z = minZ; z <= maxZ; z++) {
                     Location blockLocation = new Location(world, x, y, z);
                     Material material = blockLocation.getBlock().getType();
-                    if (isPlant(material)) {
-                        if (Math.random() < BEE_CONFIG.getPrimaryAbilityFlowerChance()) {
+                    boolean isFlower = isFlower(material);
+                    boolean isCrop = isCrop(material);
+                    if (isCrop || isFlower) {
+                        if (Math.random() < BEE_CONFIG.getPrimaryAbilityFlowerChance() && isFlower) {
                             world.dropItem(blockLocation, new ItemStack(material));
                             ParticleUtil.generateParticleAtLocation(Particle.CLOUD, blockLocation, 3);
                         }
-                        if (Math.random() < BEE_CONFIG.getPrimaryAbilityBonemealChance()) {
+                        if (Math.random() < BEE_CONFIG.getPrimaryAbilityBonemealChance() && isCrop) {
                             blockLocation.getBlock().applyBoneMeal(BlockFace.UP);
-
                         }
                         if (Math.random() < BEE_CONFIG.getPrimaryAbilityHoneyCombChance()) {
                             world.dropItem(blockLocation, new ItemStack(Material.HONEYCOMB));
@@ -197,7 +200,7 @@ public class Bee extends Origin {
      * @param material
      * @return
      */
-    public boolean isPlant(Material material) {
+    public boolean isFlower(Material material) {
         switch (material) {
             case DANDELION:
             case POPPY:
@@ -229,11 +232,49 @@ public class Bee extends Origin {
             case WARPED_FUNGUS:
             case ROSE_BUSH:
             case LILAC:
+            case PEONY:
+            case SUNFLOWER:
+            case WITHER_ROSE:
+            case CACTUS:
+            case SUGAR_CANE:
                 return true;
             default:
                 return false;
         }
     }
+    public boolean isCrop(Material material){
+        switch (material) {
+            case WHEAT:
+            case CARROTS:
+            case POTATOES:
+            case BEETROOTS:
+            case NETHER_WART:
+            case MELON_STEM:
+            case PUMPKIN_STEM:
+            case PITCHER_CROP:
+            case TORCHFLOWER_CROP:
+            case BAMBOO:
+            case SWEET_BERRY_BUSH:
+            case COCOA:
+            case KELP:
+            case OAK_SAPLING:
+            case BIRCH_SAPLING:
+            case SPRUCE_SAPLING:
+            case JUNGLE_SAPLING:
+            case ACACIA_SAPLING:
+            case DARK_OAK_SAPLING:
+            case RED_MUSHROOM:
+            case BROWN_MUSHROOM:
+            case SEA_PICKLE:
+            case POINTED_DRIPSTONE:
+            case TWISTING_VINES:
+            case WEEPING_VINES:
+                return true;
+            default:
+                return false;
+        }
+    }
+
 
     private void phytokinHiveMind(Phytokin phytokin) {
         if (Math.random() < BEE_CONFIG.getHiveMindPhytokinSaturationChance()) {

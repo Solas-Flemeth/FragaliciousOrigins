@@ -30,6 +30,17 @@ public class Human extends Origin {
 
     }
 
+    /**
+     *
+     */
+    @Override
+    public void primaryAbility() {
+        if(getType().equals(OriginType.HUMAN) && getState().equals(OriginState.NORMAL)){
+            getPlayer().performCommand("cp origin_main");
+            return;
+        };
+    }
+
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
     }

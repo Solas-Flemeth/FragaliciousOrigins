@@ -1,4 +1,4 @@
-package org.originsreborn.fragaliciousorigins.origins.wip;
+package org.originsreborn.fragaliciousorigins.origins.enderian;
 
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;

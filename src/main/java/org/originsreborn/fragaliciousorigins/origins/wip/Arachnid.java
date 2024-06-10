@@ -28,7 +28,7 @@ import java.util.UUID;
  * - Immune to sharpness - bonus damage from bane of arthapods
  */
 
-public class Arachnid extends Origin {
+public class  Arachnid extends Origin {
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.ARACHNID);
     public Arachnid(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.ARACHNID, state, customDataString);

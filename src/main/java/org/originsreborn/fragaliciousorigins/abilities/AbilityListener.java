@@ -2,7 +2,6 @@ package org.originsreborn.fragaliciousorigins.abilities;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import org.bukkit.GameEvent;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,9 +25,7 @@ public class AbilityListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         UUID uuid = event.getPlayer().getUniqueId();
-        System.out.println("event UUID = " + uuid);
         Origin origin = OriginsDAO.getOrigin(uuid);
-        System.out.println(origin.toString());
         FragaliciousOrigins.ORIGINS.updateOrigin(origin);
     }
 
@@ -129,7 +126,6 @@ public class AbilityListener implements Listener {
         if(!event.isCancelled()){
             getOrigin(event).onMove(event);
         }
-
     }
 
     @EventHandler

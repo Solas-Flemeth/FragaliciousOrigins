@@ -7,7 +7,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 
 public class ShulkConfig extends OriginConfig {
-
+    private int radius, playerDuration, enemyDuration, resistanceDuration,resistanceAmp;
     public ShulkConfig() {
         super(OriginType.SHULK, "unique");
     }
@@ -26,23 +26,36 @@ public class ShulkConfig extends OriginConfig {
         }
     }
 
+    /**
+     *
+     */
+
+    @Override
+    public void defineVariables() {
+        radius = getConfigNode().node("secondaryAbility").node("radius").getInt();
+        playerDuration = getConfigNode().node("secondaryAbility").node("playerDuration").getInt();
+        enemyDuration = getConfigNode().node("secondaryAbility").node("enemyDuration").getInt();
+        resistanceAmp = getConfigNode().node("resistance").node("amplifier").getInt();
+        resistanceDuration =getConfigNode().node("resistance").node("duration").getInt();
+    }
+
     public int getSecondaryRadius() {
-        return getConfigNode().node("secondaryAbility").node("radius").getInt();
+        return radius;
     }
 
     public int getSecondaryPlayerDuration() {
-        return getConfigNode().node("secondaryAbility").node("playerDuration").getInt();
+        return playerDuration;
     }
 
     public int getSecondaryEnemyDuration() {
-        return getConfigNode().node("secondaryAbility").node("enemyDuration").getInt();
+        return enemyDuration;
     }
 
     public int getResistanceDuration() {
-        return getConfigNode().node("resistance").node("duration").getInt();
+        return resistanceDuration;
     }
 
     public int getResistanceAmplifier() {
-        return getConfigNode().node("resistance").node("amplifier").getInt();
+        return resistanceAmp;
     }
 }

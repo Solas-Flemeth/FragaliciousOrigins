@@ -1,6 +1,7 @@
 package org.originsreborn.fragaliciousorigins.origins.elytrian;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -10,6 +11,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
@@ -45,6 +47,7 @@ public class Elytrian extends Origin {
 
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
+        ELYTRIAN_CONFIG.loadConfig();
     }
 
     @Override
@@ -69,13 +72,25 @@ public class Elytrian extends Origin {
     @Override
     public void setDefaultStats() {
         super.setDefaultStats();
-        getPlayer().getInventory().setChestplate(getElytra());
-        updateArmor();
+        toggleChestplate();
     }
 
     @Override
     public void onToggleGlide(EntityToggleGlideEvent event) {
-        updateGlideAttributes();
+        Player player = getPlayer();
+        if (event.isGliding()) {
+            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, ELYTRIAN_CONFIG.getGlidingBlockBreakSpeed());
+            PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingEntityInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingBlockInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_SPEED, ELYTRIAN_CONFIG.getGlidingAttackSpeed());
+            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, ELYTRIAN_CONFIG.getGlidingAttackDamage());
+        }else{
+            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, MAIN_ORIGIN_CONFIG.getBlockBreakSpeed());
+            PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_SPEED, MAIN_ORIGIN_CONFIG.getAttackSpeed());
+            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, MAIN_ORIGIN_CONFIG.getAttackDamage());
+        }
     }
 
     @Override
@@ -119,7 +134,8 @@ public class Elytrian extends Origin {
 
     @Override
     public void secondaryAbilityLogic() {
-
+        secondaryToggle();
+        toggleChestplate();
     }
 
     @Override
@@ -136,27 +152,12 @@ public class Elytrian extends Origin {
         }
     }
 
-    private void updateGlideAttributes() {
-        Player player = getPlayer();
-        if (player.isGliding()) {
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, ELYTRIAN_CONFIG.getGlidingBlockBreakSpeed());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingEntityInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingBlockInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_SPEED, ELYTRIAN_CONFIG.getGlidingAttackSpeed());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, ELYTRIAN_CONFIG.getGlidingAttackDamage());
-        } else {
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, MAIN_ORIGIN_CONFIG.getBlockBreakSpeed());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_SPEED, MAIN_ORIGIN_CONFIG.getAttackSpeed());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, MAIN_ORIGIN_CONFIG.getAttackDamage());
-        }
-    }
-
     private void updateArmor() {
         Player player = getPlayer();
         double armor = PlayerUtils.getAttribute(player, Attribute.GENERIC_ARMOR);
-        armor -= ELYTRIAN_CONFIG.getArmorPenaltyMinArmorToApply();
+        if(!isSecondaryEnabled()){ //wings not spread
+            armor -= ELYTRIAN_CONFIG.getArmorPenaltyMinArmorToApply();
+        }
         if (armor > 0.0) {
             PlayerUtils.setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, 1.0 - (armor * ELYTRIAN_CONFIG.getArmorPenaltySlownessPerArmor()));
         } else {
@@ -191,5 +192,20 @@ public class Elytrian extends Origin {
         if(chestplate != null && chestplate.getType().equals(Material.ELYTRA) && chestplate.getItemMeta().isUnbreakable()){
             player.getEquipment().setChestplate(ItemStack.empty());
         };
+    }
+    private void toggleChestplate(){
+        Player player = getPlayer();
+        if(isSecondaryEnabled() == false){
+            ItemStack chestplate = player.getEquipment().getChestplate();
+            if(chestplate != null && !chestplate.getType().equals(Material.ELYTRA)){
+                player.getWorld().dropItem(player.getLocation(), chestplate);
+                player.sendActionBar(Component.text("Your chestplate falls on the ground as you spread your wings").color(errorColor()));
+            }
+            player.getInventory().setChestplate(getElytra());
+        }else if(isSecondaryEnabled()){  //unequip
+            player.getEquipment().setChestplate(ItemStack.empty());
+
+        }
+        updateArmor();
     }
 }

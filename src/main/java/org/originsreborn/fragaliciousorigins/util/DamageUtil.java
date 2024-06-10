@@ -7,7 +7,6 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.Trident;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.EntityEquipment;
@@ -109,8 +108,6 @@ public class DamageUtil {
     }
 
     private static void onArrowEvent(EntityDamageByEntityEvent event, LivingEntity livingEntity, Projectile arrow) {
-        double initialDamage = event.getDamage();
-        double finalDamage = event.getFinalDamage();
         double crossbowToughnessMultiplier = 1.0;
         double damageMultiplier = 1.0;
         double airMultiplier = 1.0;
@@ -143,6 +140,5 @@ public class DamageUtil {
         }
         double newDamage = event.getDamage() * damageMultiplier * airMultiplier * crossbowToughnessMultiplier;
         event.setDamage(newDamage);
-        System.out.println("Old Damage = " +  initialDamage + " / " + finalDamage + "    New Damage = " + event.getDamage() + " / " + event.getFinalDamage());
     }
 }

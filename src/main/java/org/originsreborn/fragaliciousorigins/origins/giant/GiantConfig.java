@@ -6,74 +6,85 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class GiantConfig extends OriginConfig {
+    private int radius, weaknessDuration, weaknessAmplifier, slownessDuration, slownessAmplifier, strengthDuration, strengthAmplifier, hasteDuration, hasteAmplifier;
+    private double hungerLossChance;
+
     public GiantConfig() {
         super(OriginType.GIANT, "unique");
     }
 
     @Override
     public void populateDefaultConfig() {
-        //Primary Ability - Roars - All nearby hostile mobs get weakness and slowness. Nearby players get Strength and haste
         try {
-            //Primary Ability
-            CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryability");
-                primaryAbilityNode.node("radius").set(15);
-                CommentedConfigurationNode weaknessNode = primaryAbilityNode.node("weakness");
-                    weaknessNode.node("duration").set(400);
-                    weaknessNode.node("amplifier").set(1);
-                CommentedConfigurationNode slownessNode = primaryAbilityNode.node("slowness");
-                    slownessNode.node("duration").set(400);
-                    slownessNode.node("amplifier").set(1);
-                CommentedConfigurationNode strengthNode = primaryAbilityNode.node("strength");
-                    strengthNode.node("duration").set(400);
-                    strengthNode.node("amplifier").set(1);
-                CommentedConfigurationNode hasteNode = primaryAbilityNode.node("haste");
-                    hasteNode.node("duration").set(400);
-                    hasteNode.node("amplifier").set(1);
-        CommentedConfigurationNode foodNode = getConfigNode().node("food");
-            foodNode.node("hungerLossChance").set(0.03);
-        } catch (SerializationException Exception) {
+            CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryAbility");
+            primaryAbilityNode.node("radius").set(15);
+            primaryAbilityNode.node("weakness").node("duration").set(400);
+            primaryAbilityNode.node("weakness").node("amplifier").set(1);
+            primaryAbilityNode.node("slowness").node("duration").set(400);
+            primaryAbilityNode.node("slowness").node("amplifier").set(1);
+            primaryAbilityNode.node("strength").node("duration").set(400);
+            primaryAbilityNode.node("strength").node("amplifier").set(1);
+            primaryAbilityNode.node("haste").node("duration").set(400);
+            primaryAbilityNode.node("haste").node("amplifier").set(1);
 
+            CommentedConfigurationNode foodNode = getConfigNode().node("food");
+            foodNode.node("hungerLossChance").set(0.03);
+        } catch (SerializationException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void defineVariables() {
+        radius = getConfigNode().node("primaryAbility").node("radius").getInt();
+        weaknessDuration = getConfigNode().node("primaryAbility").node("weakness").node("duration").getInt();
+        weaknessAmplifier = getConfigNode().node("primaryAbility").node("weakness").node("amplifier").getInt();
+        slownessDuration = getConfigNode().node("primaryAbility").node("slowness").node("duration").getInt();
+        slownessAmplifier = getConfigNode().node("primaryAbility").node("slowness").node("amplifier").getInt();
+        strengthDuration = getConfigNode().node("primaryAbility").node("strength").node("duration").getInt();
+        strengthAmplifier = getConfigNode().node("primaryAbility").node("strength").node("amplifier").getInt();
+        hasteDuration = getConfigNode().node("primaryAbility").node("haste").node("duration").getInt();
+        hasteAmplifier = getConfigNode().node("primaryAbility").node("haste").node("amplifier").getInt();
+        hungerLossChance = getConfigNode().node("food").node("hungerLossChance").getDouble();
+    }
+
     public int getPrimaryAbilityRadius() {
-        return getConfigNode().node("primaryability").node("radius").getInt();
+        return radius;
     }
 
     public int getPrimaryAbilityWeaknessDuration() {
-        return getConfigNode().node("primaryability").node("weakness").node("duration").getInt();
+        return weaknessDuration;
     }
 
     public int getPrimaryAbilityWeaknessAmplifier() {
-        return getConfigNode().node("primaryability").node("weakness").node("amplifier").getInt();
+        return weaknessAmplifier;
     }
 
     public int getPrimaryAbilitySlownessDuration() {
-        return getConfigNode().node("primaryability").node("slowness").node("duration").getInt();
+        return slownessDuration;
     }
 
     public int getPrimaryAbilitySlownessAmplifier() {
-        return getConfigNode().node("primaryability").node("slowness").node("amplifier").getInt();
+        return slownessAmplifier;
     }
 
     public int getPrimaryAbilityStrengthDuration() {
-        return getConfigNode().node("primaryability").node("strength").node("duration").getInt();
+        return strengthDuration;
     }
 
     public int getPrimaryAbilityStrengthAmplifier() {
-        return getConfigNode().node("primaryability").node("strength").node("amplifier").getInt();
+        return strengthAmplifier;
     }
 
     public int getPrimaryAbilityHasteDuration() {
-        return getConfigNode().node("primaryability").node("haste").node("duration").getInt();
+        return hasteDuration;
     }
 
     public int getPrimaryAbilityHasteAmplifier() {
-        return getConfigNode().node("primaryability").node("haste").node("amplifier").getInt();
+        return hasteAmplifier;
     }
 
-    // Food - Hunger Loss Cancel Chance
     public double getHungerLossChance() {
-        return getConfigNode().node("food").node("hungerLossChance").getDouble();
+        return hungerLossChance;
     }
-
 }

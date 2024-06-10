@@ -3,7 +3,9 @@ package org.originsreborn.fragaliciousorigins.configs;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.ScopedConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.yaml.NodeStyle;
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
@@ -11,6 +13,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 
 public abstract class OriginConfig {
     private final Path configPath;
@@ -47,13 +51,14 @@ public abstract class OriginConfig {
             } else {
                 configNode = loader.load();
             }
+            defineVariables();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public abstract void populateDefaultConfig();
-
+    public abstract void defineVariables();
     public void saveConfig() {
         try {
             loader.save(configNode);
@@ -76,5 +81,18 @@ public abstract class OriginConfig {
 
     public CommentedConfigurationNode getConfigNode() {
         return configNode;
+    }
+
+    /**
+     * Gives a list of strings from a valid node
+     * @param node
+     * @return
+     */
+    public static List<String> getStringsFromNode(ScopedConfigurationNode node){
+        try {
+            return node.getList(String.class);
+        } catch (SerializationException e) {
+            return Collections.emptyList();
+        }
     }
 }

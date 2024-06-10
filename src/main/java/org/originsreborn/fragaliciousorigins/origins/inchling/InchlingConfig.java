@@ -6,6 +6,8 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class InchlingConfig extends OriginConfig {
+    private double speedModifier, jumpHeightModifier, sizeModifier, dodgeChance, hungerLossCancelChance, saturationGainChance;
+
     public InchlingConfig() {
         super(OriginType.INCHLING, "unique");
     }
@@ -13,49 +15,51 @@ public class InchlingConfig extends OriginConfig {
     @Override
     public void populateDefaultConfig() {
         try {
-            //Primary Ability
-            CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryability");
-                primaryAbilityNode.node("SpeedModifer").set(1.5);
-                primaryAbilityNode.node("JumpheightModifier").set(1.5);
-                primaryAbilityNode.node("SizeModifer").set(0.2);
-                primaryAbilityNode.node("dodgeChance").set(0.5);
-            CommentedConfigurationNode foodNode = getConfigNode().node("food");
-                foodNode.node("hungerLossCancelChance").set(0.25);
-                foodNode.node("SaturationGainChance").set(0.05);
-        } catch (SerializationException Exception) {
+            CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryAbility");
+            primaryAbilityNode.node("speedModifier").set(1.5);
+            primaryAbilityNode.node("jumpHeightModifier").set(1.5);
+            primaryAbilityNode.node("sizeModifier").set(0.2);
+            primaryAbilityNode.node("dodgeChance").set(0.5);
 
+            CommentedConfigurationNode foodNode = getConfigNode().node("food");
+            foodNode.node("hungerLossCancelChance").set(0.25);
+            foodNode.node("saturationGainChance").set(0.05);
+        } catch (SerializationException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    // Primary Ability - Speed Modifier
+    @Override
+    public void defineVariables() {
+        speedModifier = getConfigNode().node("primaryAbility").node("speedModifier").getDouble();
+        jumpHeightModifier = getConfigNode().node("primaryAbility").node("jumpHeightModifier").getDouble();
+        sizeModifier = getConfigNode().node("primaryAbility").node("sizeModifier").getDouble();
+        dodgeChance = getConfigNode().node("primaryAbility").node("dodgeChance").getDouble();
+        hungerLossCancelChance = getConfigNode().node("food").node("hungerLossCancelChance").getDouble();
+        saturationGainChance = getConfigNode().node("food").node("saturationGainChance").getDouble();
+    }
+
     public double getSpeedModifier() {
-        return getConfigNode().node("primaryability").node("SpeedModifer").getDouble();
+        return speedModifier;
     }
 
-    // Primary Ability - Jump Height Modifier
     public double getJumpHeightModifier() {
-        return getConfigNode().node("primaryability").node("JumpheightModifier").getDouble();
+        return jumpHeightModifier;
     }
 
-    // Primary Ability - Size Modifier
     public double getSizeModifier() {
-        return getConfigNode().node("primaryability").node("SizeModifer").getDouble();
+        return sizeModifier;
     }
 
-    // Primary Ability - Dodge Chance
     public double getDodgeChance() {
-        return getConfigNode().node("primaryability").node("dodgeChance").getDouble();
+        return dodgeChance;
     }
 
-    // Food - Hunger Loss Cancel Chance
     public double getHungerLossCancelChance() {
-        return getConfigNode().node("food").node("hungerLossCancelChance").getDouble();
+        return hungerLossCancelChance;
     }
 
-    // Food - Saturation Gain Chance
     public double getSaturationGainChance() {
-        return getConfigNode().node("food").node("SaturationGainChance").getDouble();
+        return saturationGainChance;
     }
-
-
 }

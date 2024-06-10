@@ -4,10 +4,27 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class MainOriginConfig extends OriginConfig {
+    boolean sharpness, smite, arthapods;
+    //cooldowns
+    private int primaryCooldown, secondaryCooldown;
+    //attributes, ;
+    private double armor, attack, armorToughness, attackSpeed, flySpeed, luck, maxHealth,
+            movementSpeed, scale, stepHeight, jumpstrength,
+            blockInteractRange, entityInteractRange, blockBreakSpeed, gravity, fallDamageMultiplier, safeFallDistance;
+    private boolean stepSound;
+    //DamageModifiers
+    private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, burnDuration, dodgeChance;
+    //permissions & placeholders
+    private List<String> permissions, originDesc;
+    private Ability primary, secondary;
+    private List<Ability> abilities;
+    private String originName, icon;
+
 
     public MainOriginConfig(OriginType type) {
         super(type, "general");
@@ -19,7 +36,6 @@ public class MainOriginConfig extends OriginConfig {
             CommentedConfigurationNode cooldownNode = getConfigNode().node("cooldowns");
             cooldownNode.node("primaryMaxCooldown").set(0);
             cooldownNode.node("secondaryMaxCooldown").set(0);
-
             CommentedConfigurationNode attributesNode = getConfigNode().node("attributes");
             attributesNode.node("armor").set(0f); //ADDITIONAL
             attributesNode.node("armorToughness").set(0); //ADDITIONAL
@@ -59,272 +75,272 @@ public class MainOriginConfig extends OriginConfig {
             CommentedConfigurationNode placeholdersNode = getConfigNode().node("placeholders");
             CommentedConfigurationNode placeholdersNodeTitle = placeholdersNode.node("title");
             placeholdersNodeTitle.node("name").set("defaultName");
-            placeholdersNodeTitle.node("description").set("A basic human");
+            placeholdersNodeTitle.node("description").set(Collections.singletonList(""));
             placeholdersNodeTitle.node("icon").set("icon");
             CommentedConfigurationNode placeholdersPrimaryAbility = placeholdersNode.node("primaryAbility");
             placeholdersPrimaryAbility.node("name").set("primaryAbility");
-            placeholdersPrimaryAbility.node("description").set("an ability");
+            placeholdersPrimaryAbility.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholdersSecondaryAbility = placeholdersNode.node("secondaryAbility");
             placeholdersSecondaryAbility.node("name").set("secondaryAbility");
-            placeholdersSecondaryAbility.node("description").set("an ability");
+            placeholdersSecondaryAbility.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility1 = placeholdersNode.node("ability1");
             placeholderAbility1.node("name").set("abilityName");
-            placeholderAbility1.node("description").set("abilityDescription");
+            placeholderAbility1.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility2 = placeholdersNode.node("ability2");
             placeholderAbility2.node("name").set("abilityName");
-            placeholderAbility2.node("description").set("abilityDescription");
+            placeholderAbility2.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility3 = placeholdersNode.node("ability3");
             placeholderAbility3.node("name").set("abilityName");
-            placeholderAbility3.node("description").set("abilityDescription");
+            placeholderAbility3.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility4 = placeholdersNode.node("ability4");
             placeholderAbility4.node("name").set("abilityName");
-            placeholderAbility4.node("description").set("abilityDescription");
+            placeholderAbility4.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility5 = placeholdersNode.node("ability5");
             placeholderAbility5.node("name").set("abilityName");
-            placeholderAbility5.node("description").set("abilityDescription");
+            placeholderAbility5.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility6 = placeholdersNode.node("ability6");
             placeholderAbility6.node("name").set("abilityName");
-            placeholderAbility6.node("description").set("abilityDescription");
+            placeholderAbility6.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility7 = placeholdersNode.node("ability7");
             placeholderAbility7.node("name").set("abilityName");
-            placeholderAbility7.node("description").set("abilityDescription");
+            placeholderAbility7.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility8 = placeholdersNode.node("ability8");
             placeholderAbility8.node("name").set("abilityName");
-            placeholderAbility8.node("description").set("abilityDescription");
+            placeholderAbility8.node("description").set(Collections.singletonList(""));
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     *
+     */
+    @Override
+    public void defineVariables() {
+        primaryCooldown = getConfigNode().node("cooldowns").node("primaryMaxCooldown").getInt();
+        secondaryCooldown = getConfigNode().node("cooldowns").node("secondaryMaxCooldown").getInt();
+        armor = getConfigNode().node("attributes").node("armor").getDouble();
+        armorToughness = getConfigNode().node("attributes").node("armorToughness").getDouble();
+        attack = getConfigNode().node("attributes").node("attackDamage").getDouble();
+        attackSpeed = getConfigNode().node("attributes").node("attackSpeed").getDouble();
+        knockbackResistance = getConfigNode().node("attributes").node("knockbackResistance").getDouble();
+        flySpeed = getConfigNode().node("attributes").node("flyingSpeed").getDouble();
+        luck = getConfigNode().node("attributes").node("luck").getDouble();
+        maxHealth = getConfigNode().node("attributes").node("maxHealth").getDouble();
+        movementSpeed = getConfigNode().node("attributes").node("movementSpeed").getDouble();
+        scale = getConfigNode().node("attributes").node("scale").getDouble();
+        stepHeight = getConfigNode().node("attributes").node("stepHeight").getDouble();
+        jumpstrength = getConfigNode().node("attributes").node("jumpStrength").getDouble();
+        blockInteractRange = getConfigNode().node("attributes").node("blockInteractRange").getDouble();
+        entityInteractRange = getConfigNode().node("attributes").node("entityInteractRange").getDouble();
+        blockBreakSpeed = getConfigNode().node("attributes").node("blockBreakSpeed").getDouble();
+        gravity = getConfigNode().node("attributes").node("gravity").getDouble();
+        safeFallDistance = getConfigNode().node("attributes").node("safeFallDistance").getDouble();
+        fallDamageMultiplier = getConfigNode().node("attributes").node("fallDamageMultiplier").getDouble();
+        stepSound = getConfigNode().node("attributes").node("stepSound").getBoolean();
+        explosionsDamage = getConfigNode().node("damageModifiers").node("explosionDamageMultiplier").getDouble();
+        meleeDamage = getConfigNode().node("damageModifiers").node("meleeDamageMultiplier").getDouble();
+        projectileDamage = getConfigNode().node("damageModifiers").node("projectileDamageMultiplier").getDouble();
+        waterDamage = getConfigNode().node("damageModifiers").node("waterDamageMultiplier").getDouble();
+        magicDamage = getConfigNode().node("damageModifiers").node("magicDamageMultiplier").getDouble();
+        fireDamage = getConfigNode().node("damageModifiers").node("fireDamageMultiplier").getDouble();
+        burnDuration = getConfigNode().node("damageModifiers").node("burnDurationMultiplier").getDouble();
+        dodgeChance = getConfigNode().node("damageModifiers").node("dodgeChance").getDouble();
+        sharpness = getConfigNode().node("damageModifiers").node("sharpnessImmune").getBoolean();
+        smite = getConfigNode().node("damageModifiers").node("smiteImmune").getBoolean();
+        arthapods = getConfigNode().node("damageModifiers").node("baneOfArthropodsImmune").getBoolean();
+        permissions = getStringsFromNode(getConfigNode().node("permissions"));
+        originName = getConfigNode().node("placeholders").node("title").node("name").getString();
+        originDesc = getStringsFromNode(getConfigNode().node("placeholders").node("title").node("description"));
+        icon = getConfigNode().node("placeholders").node("title").node("icon").getString();
+        abilities = new ArrayList<Ability>(8);
+        primary = new Ability(getConfigNode().node("placeholders").node("primaryAbility").node("name").getString(),
+                getStringsFromNode(getConfigNode().node("placeholders").node("primaryAbility").node("description"))
+        );
+        secondary = new Ability(getConfigNode().node("placeholders").node("secondaryAbility").node("name").getString(),
+                getStringsFromNode(getConfigNode().node("placeholders").node("secondaryAbility").node("description"))
+        );
+        for (int ability = 1; ability < 9; ability++) {
+            abilities.add(new Ability(
+                    getConfigNode().node("placeholders").node("ability" + ability).node("name").getString(),
+                    getStringsFromNode(getConfigNode().node("placeholders").node("ability" + ability).node("description"))
+            ));
+        }
+    }
+
 
     public int getPrimaryMaxCooldown() {
-        return getConfigNode().node("cooldowns").node("primaryMaxCooldown").getInt();
+        return primaryCooldown;
     }
 
     public int getSecondaryMaxCooldown() {
-        return getConfigNode().node("cooldowns").node("secondaryMaxCooldown").getInt();
+        return secondaryCooldown;
     }
 
     public double getArmor() {
-        return getConfigNode().node("attributes").node("armor").getDouble();
+        return armor;
     }
 
     public double getArmorToughness() {
-        return getConfigNode().node("attributes").node("armorToughness").getDouble();
+        return armorToughness;
     }
 
     public double getAttackDamage() {
-        return getConfigNode().node("attributes").node("attackDamage").getDouble();
-    }
-
-    public double getAttackKnockback() {
-        return getConfigNode().node("attributes").node("attackKnockback").getDouble();
+        return attack;
     }
 
     public double getAttackSpeed() {
-        return getConfigNode().node("attributes").node("attackSpeed").getDouble();
+        return attackSpeed;
     }
 
     public double getFlyingSpeed() {
-        return getConfigNode().node("attributes").node("flyingSpeed").getDouble();
+        return flySpeed;
     }
 
     public double getKnockbackResistance() {
-        return getConfigNode().node("attributes").node("knockbackResistance").getDouble();
+        return knockbackResistance;
     }
 
     public double getLuck() {
-        return getConfigNode().node("attributes").node("luck").getDouble();
+        return luck;
     }
 
     public double getMaxHealth() {
-        return getConfigNode().node("attributes").node("maxHealth").getDouble();
+        return maxHealth;
     }
 
     public double getMovementSpeed() {
-        return getConfigNode().node("attributes").node("movementSpeed").getDouble();
+        return movementSpeed;
     }
 
     public double getScale() {
-        return getConfigNode().node("attributes").node("scale").getDouble();
+        return scale;
     }
 
     public double getStepHeight() {
-        return getConfigNode().node("attributes").node("stepHeight").getDouble();
+        return stepHeight;
     }
 
     public double getJumpStrength() {
-        return getConfigNode().node("attributes").node("jumpStrength").getDouble();
+        return jumpstrength;
     }
 
     public double getBlockInteractRange() {
-        return getConfigNode().node("attributes").node("blockInteractRange").getDouble();
+        return blockInteractRange;
     }
 
     public double getPlayerEntityInteractRange() {
-        return getConfigNode().node("attributes").node("entityInteractRange").getDouble();
+        return entityInteractRange;
     }
 
     public double getBlockBreakSpeed() {
-        return getConfigNode().node("attributes").node("blockBreakSpeed").getDouble();
+        return blockBreakSpeed;
     }
 
     public double getGravity() {
-        return getConfigNode().node("attributes").node("gravity").getDouble();
+        return gravity;
     }
 
     public double getSafeFallDistance() {
-        return getConfigNode().node("attributes").node("safeFallDistance").getDouble();
+        return safeFallDistance;
     }
 
     public double getFallDamageMultiplier() {
-        return getConfigNode().node("attributes").node("fallDamageMultiplier").getDouble();
+        return fallDamageMultiplier;
     }
 
     public boolean hasStepSounds() {
-        return getConfigNode().node("attributes").node("stepSound").getBoolean();
+        return stepSound;
     }
 
     public double getExplosionDamageMultiplier() {
-        return getConfigNode().node("damageModifiers").node("explosionDamageMultiplier").getDouble();
+        return explosionsDamage;
     }
 
     public double getMeleeDamageMultiplier() {
-        return getConfigNode().node("damageModifiers").node("meleeDamageMultiplier").getDouble();
+        return meleeDamage;
     }
 
     public double getProjectileDamageMultiplier() {
-        return getConfigNode().node("damageModifiers").node("projectileDamageMultiplier").getDouble();
+        return projectileDamage;
     }
 
     public double getMagicDamageMultiplier() {
-        return getConfigNode().node("damageModifiers").node("magicDamageMultiplier").getDouble();
+        return magicDamage;
     }
 
     public double getWaterDamageMultiplier() {
-        return getConfigNode().node("damageModifiers").node("waterDamageMultiplier").getDouble();
+        return waterDamage;
     }
+
     public double getFireDamageMultiplier() {
-        return getConfigNode().node("damageModifiers").node("fireDamageMultiplier").getDouble();
+        return fireDamage;
     }
 
     public double getBurnDurationMultiplier() {
-        return getConfigNode().node("damageModifiers").node("burnDurationMultiplier").getDouble();
+        return burnDuration;
     }
 
     public double getDodgeChance() {
-        return getConfigNode().node("damageModifiers").node("dodgeChance").getDouble();
+        return dodgeChance;
     }
+
     public boolean getSharpnessImmune() {
-        return getConfigNode().node("damageModifiers").node("sharpnessImmune").getBoolean();
+        return sharpness;
     }
+
     public boolean getSmiteImmune() {
-        return getConfigNode().node("damageModifiers").node("smiteImmune").getBoolean();
+        return smite;
     }
+
     public boolean getBaneOfArthopodsImmune() {
-        return getConfigNode().node("damageModifiers").node("baneOfArthropodsImmune").getBoolean();
+        return arthapods;
     }
 
     public List<String> getPermissions() {
-        try {
-            return getConfigNode().node("permissions").getList(String.class);
-        } catch (SerializationException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
-
+        return permissions;
     }
 
     public String getPlaceholdersNodeTitleName() {
-        return getConfigNode().node("placeholders").node("title").node("name").getString();
+        return originName;
     }
 
-    public String getPlaceholdersNodeTitleDescription() {
-        return getConfigNode().node("placeholders").node("title").node("description").getString();
+    public List<String> getPlaceholdersNodeTitleDescription() {
+        return originDesc;
     }
 
     public String getPlaceholdersNodeTitleIcon() {
-        return getConfigNode().node("placeholders").node("title").node("icon").getString();
+        return icon;
     }
 
     public String getPlaceholdersPrimaryAbilityName() {
-        return getConfigNode().node("placeholders").node("primaryAbility").node("name").getString();
+        return primary.getName();
     }
 
-    public String getPlaceholdersPrimaryAbilityDescription() {
-        return getConfigNode().node("placeholders").node("primaryAbility").node("description").getString();
+    public List<String> getPlaceholdersPrimaryAbilityDescription() {
+        return primary.getDescription();
     }
 
     public String getPlaceholdersSecondaryAbilityName() {
-        return getConfigNode().node("placeholders").node("secondaryAbility").node("name").getString();
+        return secondary.getName();
     }
 
-    public String getPlaceholdersSecondaryAbilityDescription() {
-        return getConfigNode().node("placeholders").node("secondaryAbility").node("description").getString();
+    public List<String> getPlaceholdersSecondaryAbilityDescription() {
+        return secondary.getDescription();
     }
 
-    public String getPlaceholderAbility1Name() {
-        return getConfigNode().node("placeholders").node("ability1").node("name").getString();
+    public String getPlaceholderAbilityName(int ability) {
+        if (ability > 9 || ability < 1) {
+            return "Invalid Ability";
+        }
+        return abilities.get(ability - 1).getName();
     }
 
-    public String getPlaceholderAbility1Description() {
-        return getConfigNode().node("placeholders").node("ability1").node("description").getString();
-    }
-
-    public String getPlaceholderAbility2Name() {
-        return getConfigNode().node("placeholders").node("ability2").node("name").getString();
-    }
-
-    public String getPlaceholderAbility2Description() {
-        return getConfigNode().node("placeholders").node("ability2").node("description").getString();
-    }
-
-    public String getPlaceholderAbility3Name() {
-        return getConfigNode().node("placeholders").node("ability3").node("name").getString();
-    }
-
-    public String getPlaceholderAbility3Description() {
-        return getConfigNode().node("placeholders").node("ability3").node("description").getString();
-    }
-
-    public String getPlaceholderAbility4Name() {
-        return getConfigNode().node("placeholders").node("ability4").node("name").getString();
-    }
-
-    public String getPlaceholderAbility4Description() {
-        return getConfigNode().node("placeholders").node("ability4").node("description").getString();
-    }
-
-    public String getPlaceholderAbility5Name() {
-        return getConfigNode().node("placeholders").node("ability5").node("name").getString();
-    }
-
-    public String getPlaceholderAbility5Description() {
-        return getConfigNode().node("placeholders").node("ability5").node("description").getString();
-    }
-
-    public String getPlaceholderAbility6Name() {
-        return getConfigNode().node("placeholders").node("ability6").node("name").getString();
-    }
-
-    public String getPlaceholderAbility6Description() {
-        return getConfigNode().node("placeholders").node("ability6").node("description").getString();
-    }
-
-    public String getPlaceholderAbility7Name() {
-        return getConfigNode().node("placeholders").node("ability7").node("name").getString();
-    }
-
-    public String getPlaceholderAbility7Description() {
-        return getConfigNode().node("placeholders").node("ability7").node("description").getString();
-    }
-
-    public String getPlaceholderAbility8Name() {
-        return getConfigNode().node("placeholders").node("ability8").node("name").getString();
-    }
-
-    public String getPlaceholderAbility8Description() {
-        return getConfigNode().node("placeholders").node("ability8").node("description").getString();
+    public List<String> getAbilityDescription(int ability) {
+        if (ability > 9 || ability < 1) {
+            return Collections.emptyList();
+        }
+        return abilities.get(ability - 1).getDescription();
     }
 
 }

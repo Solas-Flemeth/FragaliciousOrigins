@@ -109,9 +109,9 @@ public class Merling extends Origin {
         Player player = getPlayer();
         if (player.isInWater()) {
             if(isSecondaryEnabled()){
-                PotionsUtil.addEffect(player, PotionEffectType.DOLPHINS_GRACE, MERLING_CONFIG.getWaterAttributesDolphinsGraceAmplifier(), 5);
+                PotionsUtil.addEffect(player, PotionEffectType.DOLPHINS_GRACE, MERLING_CONFIG.getWaterAttributesDolphinsGraceAmplifier(), 19);
             }
-            PotionsUtil.addEffect(player, PotionEffectType.CONDUIT_POWER, 1, 5);
+            PotionsUtil.addEffect(player, PotionEffectType.CONDUIT_POWER, 2, 19);
             if (player.hasPotionEffect(PotionEffectType.MINING_FATIGUE)) {
                 player.removePotionEffect(PotionEffectType.MINING_FATIGUE);
             }

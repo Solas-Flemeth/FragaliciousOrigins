@@ -1,14 +1,16 @@
 package org.originsreborn.fragaliciousorigins;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.originsreborn.fragaliciousorigins.abilities.AbilityListener;
 import org.originsreborn.fragaliciousorigins.bossbars.BossBarManager;
-import org.originsreborn.fragaliciousorigins.commands.OriginReloadCommand;
-import org.originsreborn.fragaliciousorigins.commands.OriginSetCommand;
+import org.originsreborn.fragaliciousorigins.commands.*;
+import org.originsreborn.fragaliciousorigins.intergration.OriginPlaceholders;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
 import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
@@ -35,6 +37,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
         DATASOURCE = new DataSourceManager();
         this.getServer().getPluginManager().registerEvents(new AbilityListener(), this);
         registerCommands();
+        registerPlaceholderAPI();
         reload();
         // Plugin startup logic
     }
@@ -71,6 +74,16 @@ public final class FragaliciousOrigins extends JavaPlugin {
     private void registerCommands() {
         this.getCommand("originreload").setExecutor(new OriginReloadCommand());
         this.getCommand("originset").setExecutor(new OriginSetCommand());
+        this.getCommand("primaryability").setExecutor(new PrimaryAbilityCommand());
+        this.getCommand("secondaryability").setExecutor(new SecondaryAbilityCommand());
+        this.getCommand("human").setExecutor(new HumanCommand());
+        this.getCommand("originchoose").setExecutor(new OriginChooseCommand());
+        this.getCommand("origininfo").setExecutor(new OriginInfoCommand());
+    }
+    private void registerPlaceholderAPI(){
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new OriginPlaceholders().register();
+        }
     }
 
 }

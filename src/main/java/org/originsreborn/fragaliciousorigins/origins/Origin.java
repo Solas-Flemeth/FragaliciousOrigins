@@ -51,7 +51,9 @@ public abstract class Origin {
         this.type = type;
         this.state = state;
         setDefaultStats();
-        deserializeCustomData(customDataString);
+        if(customDataString != null && !customDataString.isEmpty()){
+            deserializeCustomData(customDataString);
+        }
         getPlayer().sendMessage("You are now a " + getType().getDisplay());
     }
 
@@ -184,7 +186,6 @@ public abstract class Origin {
      * @param customData
      */
     public void deserializeCustomData(String customData) {
-        System.out.println("ATTEMPTING DESERIALIZATION");
         try {
             HashMap<String, Serializable> hashMap = SerializationUtils.unserializeStringToHashMap(customData);
             setPrimaryCooldown((Integer) hashMap.get("primaryCooldown"));

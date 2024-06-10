@@ -2,10 +2,40 @@ name: FragaliciousOrigins
 version: '${project.version}'
 main: org.originsreborn.fragaliciousorigins.FragaliciousOrigins
 api-version: '1.20'
+softdepend: [PlaceholderAPI]
 commands:
   originreload:
     description: Reloads the Origins for a player
     usage: /originreload
+    permission: fragalicious.origins.reload
   originset:
-    description: Sets the players origin
-    usage: /originset <username> <origin> <state>
+    description: Sets the players origin. State and duration are optional
+    usage: /originset <username> <origin> [state] [duration]
+    permission: fragalicious.origins.set
+  primaryability:
+    description: Uses the players primaryability
+    usage: /primaryability
+    aliases:
+      - pa
+      - a1
+  secondaryability:
+    description: Uses the players secondaryability
+    usage: /secondaryability
+    aliases:
+      - sa
+      - a2
+  human:
+    description: Makes the player human
+    usage: /human
+  originchoose:
+    description: Sets the player to a new origin when they are human
+    usage: /originchoose <origin>
+    aliases:
+      - choose
+      - origin
+  origininfo:
+    description: Displays information about your origin
+    usage: /origininfo
+    aliases:
+      - oi
+      - info

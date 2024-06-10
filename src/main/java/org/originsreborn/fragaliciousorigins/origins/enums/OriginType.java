@@ -1,9 +1,12 @@
 package org.originsreborn.fragaliciousorigins.origins.enums;
 
+import org.originsreborn.fragaliciousorigins.configs.MainConfig;
+import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.*;
 import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
 import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
@@ -113,5 +116,46 @@ public enum OriginType {
             list.add(type.name());
         }
         return list;
+    }
+    public MainOriginConfig getConfig(){
+        switch (this){
+            case ALCHEMIST:
+                return Alchemist.MAIN_ORIGIN_CONFIG;
+            case ARACHNID:
+                return Arachnid.MAIN_ORIGIN_CONFIG;
+            case BEE:
+                return Bee.MAIN_ORIGIN_CONFIG;
+            case BLAZEBORN:
+                return Blazeborn.MAIN_ORIGIN_CONFIG;
+            case ENDERIAN:
+                return Enderian.MAIN_ORIGIN_CONFIG;
+            case ELYTRIAN:
+                return Elytrian.MAIN_ORIGIN_CONFIG;
+            case FELINE:
+                return Feline.MAIN_ORIGIN_CONFIG;
+            case GIANT:
+                return Giant.MAIN_ORIGIN_CONFIG;
+            case INCHLING:
+                return Inchling.MAIN_ORIGIN_CONFIG;
+            case HUNTSMAN:
+                return Huntsman.MAIN_ORIGIN_CONFIG;
+            case MERLING:
+                return Merling.MAIN_ORIGIN_CONFIG;
+            case PHANTOM:
+                return Phantom.MAIN_ORIGIN_CONFIG;
+            case PHYTOKIN:
+                return  Phytokin.MAIN_ORIGIN_CONFIG;
+            case SHULK:
+                return  Shulk.MAIN_ORIGIN_CONFIG;
+            case STONEBORN:
+                return  Stoneborn.MAIN_ORIGIN_CONFIG;
+            case SHAPESHIFTER:
+                return ShapeShifter.MAIN_ORIGIN_CONFIG;
+            case VAMPIRE:
+                return Vampire.MAIN_ORIGIN_CONFIG;
+            case HUMAN:
+            default:
+                return Human.MAIN_ORIGIN_CONFIG;
+        }
     }
 }

@@ -4,7 +4,14 @@ import org.originsreborn.fragaliciousorigins.configs.OriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 
+
 public class BeeConfig extends OriginConfig {
+    private int radius, phytoAmp, phytoduration;
+    private double bottleChance, combChance, flowerChance, bonemealChance;
+    //secondary
+    private double stingChance, stingMultiplier;
+    private int hiveradius, hiveBeeAmp, hivePhytoAmp, hivePhytoDuration, hiveBeeDuration;
+    private double hiveBeeChance, hivePhytoChance;
     public BeeConfig() {
         super(OriginType.BEE, "unique");
     }
@@ -15,7 +22,7 @@ public class BeeConfig extends OriginConfig {
     @Override
     public void populateDefaultConfig() {
         try{
-            CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryability");
+            CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryAbility");
                 primaryAbilityNode.node("radius").set(6);
                 primaryAbilityNode.node("honeyBottleChance").set(0.33);
                 primaryAbilityNode.node("honeyCombChance").set(0.25);
@@ -40,69 +47,93 @@ public class BeeConfig extends OriginConfig {
 
         }
     }
+
+    /**
+     *
+     */
+    @Override
+    public void defineVariables() {
+        radius = getConfigNode().node("primaryAbility").node("radius").getInt();
+        bottleChance = getConfigNode().node("primaryAbility").node("honeyBottleChance").getDouble();
+        combChance = getConfigNode().node("primaryAbility").node("honeyCombChance").getDouble();
+        flowerChance = getConfigNode().node("primaryAbility").node("flowerChance").getDouble();
+        bonemealChance = getConfigNode().node("primaryAbility").node("bonemealChance").getDouble();
+        phytoAmp = getConfigNode().node("primaryAbility").node("phytokinHealthBoostAmplifier").getInt();
+        phytoduration =getConfigNode().node("primaryAbility").node("phytokinHealthBoostDuration").getInt();
+        stingChance = getConfigNode().node("secondaryAbility").node("finalStingChance").getDouble();
+        stingMultiplier =getConfigNode().node("secondaryAbility").node("finalStingMultiplier").getDouble();
+        hiveradius = getConfigNode().node("hiveMind").node("radius").getInt();
+        hiveBeeChance = getConfigNode().node("hiveMind").node("beeRegen").node("chance").getDouble();
+        hiveBeeDuration = getConfigNode().node("hiveMind").node("beeRegen").node("duration").getInt();
+        hiveBeeAmp =getConfigNode().node("hiveMind").node("beeRegen").node("amplifier").getInt();
+        hivePhytoChance =getConfigNode().node("hiveMind").node("phytokinSaturation").node("chance").getDouble();
+        hivePhytoDuration=getConfigNode().node("hiveMind").node("phytokinSaturation").node("duration").getInt();
+        hivePhytoAmp=getConfigNode().node("hiveMind").node("phytokinSaturation").node("amplifier").getInt();
+    }
+
     public int getPrimaryAbilityRadius() {
-        return getConfigNode().node("primaryability").node("radius").getInt();
+        return radius;
     }
 
     public double getPrimaryAbilityHoneyBottleChance() {
-        return getConfigNode().node("primaryability").node("honeyBottleChance").getDouble();
+        return bottleChance;
     }
 
     public double getPrimaryAbilityHoneyCombChance() {
-        return getConfigNode().node("primaryability").node("honeyCombChance").getDouble();
+        return  combChance;
     }
 
     public double getPrimaryAbilityFlowerChance() {
-        return getConfigNode().node("primaryability").node("flowerChance").getDouble();
+        return flowerChance;
     }
 
     public double getPrimaryAbilityBonemealChance() {
-        return getConfigNode().node("primaryability").node("bonemealChance").getDouble();
+        return bonemealChance;
     }
 
     public int getPrimaryAbilityPhytokinHealthBoostAmplifier() {
-        return getConfigNode().node("primaryability").node("phytokinHealthBoostAmplifier").getInt();
+        return phytoAmp;
     }
 
     public int getPrimaryAbilityPhytokinHealthBoostDuration() {
-        return getConfigNode().node("primaryability").node("phytokinHealthBoostDuration").getInt();
+        return phytoduration;
     }
 
     public double getSecondaryAbilityFinalStingChance() {
-        return getConfigNode().node("secondaryAbility").node("finalStingChance").getDouble();
+        return stingChance;
     }
 
     public double getSecondaryAbilityFinalStingMultiplier() {
-        return getConfigNode().node("secondaryAbility").node("finalStingMultiplier").getDouble();
+        return stingMultiplier;
     }
 
     public int getHiveMindRadius() {
-        return getConfigNode().node("hiveMind").node("radius").getInt();
+        return hiveradius;
     }
 
 
     public double getHiveMindBeeRegenChance() {
-        return getConfigNode().node("hiveMind").node("beeRegen").node("chance").getDouble();
+        return hiveBeeChance;
     }
 
     public int getHiveMindBeeRegenDuration() {
-        return getConfigNode().node("hiveMind").node("beeRegen").node("duration").getInt();
+        return hiveBeeDuration;
     }
 
     public int getHiveMindBeeRegenAmplifier() {
-        return getConfigNode().node("hiveMind").node("beeRegen").node("amplifier").getInt();
+        return hiveBeeAmp;
     }
 
     public double getHiveMindPhytokinSaturationChance() {
-        return getConfigNode().node("hiveMind").node("phytokinSaturation").node("chance").getDouble();
+        return hivePhytoChance;
     }
 
     public int getHiveMindPhytokinSaturationDuration() {
-        return getConfigNode().node("hiveMind").node("phytokinSaturation").node("duration").getInt();
+        return hivePhytoDuration;
     }
 
     public int getHiveMindPhytokinSaturationAmplifier() {
-        return getConfigNode().node("hiveMind").node("phytokinSaturation").node("amplifier").getInt();
+        return hivePhytoAmp;
     }
 
 }

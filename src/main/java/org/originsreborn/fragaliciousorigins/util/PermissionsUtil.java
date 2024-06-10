@@ -13,8 +13,12 @@ public class PermissionsUtil {
      * @param permissions
      */
     public static void registerPermission(Player player, List<String> permissions){
-        for (String permission : permissions){
-            registerPermissions(player,permission);
+        try{
+            for (String permission : permissions){
+                registerPermissions(player,permission);
+            }
+        }catch (Exception ignored){
+
         }
     }
 
@@ -24,14 +28,16 @@ public class PermissionsUtil {
      * @param permission
      */
     public static void registerPermissions(Player player, String permission){
-        if (!player.hasPermission(permission)) {
-            // Get or create the player's PermissionAttachment
-            PermissionAttachment attachment = player.addAttachment(FragaliciousOrigins.INSTANCE);
-            // Grant the permission
-            attachment.setPermission(permission, true);
-            // Save the changes
-            player.recalculatePermissions();
-        }
+        try{
+            if (!player.hasPermission(permission)) {
+                // Get or create the player's PermissionAttachment
+                PermissionAttachment attachment = player.addAttachment(FragaliciousOrigins.INSTANCE);
+                // Grant the permission
+                attachment.setPermission(permission, true);
+                // Save the changes
+                player.recalculatePermissions();
+            }
+        }catch (Exception ignored){}
     }
 
     /**
@@ -39,8 +45,10 @@ public class PermissionsUtil {
      * @param player
      */
     public static void resetPermissions(Player player) {
+        try{
         player.removeAttachment(player.addAttachment(FragaliciousOrigins.INSTANCE));
         player.recalculatePermissions();
+        }catch (Exception ignored){}
     }
     //TODO: Register luckperms checks too
 }

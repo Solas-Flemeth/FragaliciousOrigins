@@ -11,10 +11,7 @@ import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class OriginManager {
     private static final int MAX_TICK = 864000; //1 day of ticks if alternating ticks
@@ -116,15 +113,19 @@ public class OriginManager {
             return;
         }
         boolean isCoolDownTick = tick % 10 == 0;
-        List<Origin> outdatedTempOrigins = new ArrayList<Origin>();
-        for (Origin origin : originsMap.values()) {
+        List<Origin> outdatedTempOrigins = new ArrayList<>();
+        Iterator<Origin> iterator = originsMap.values().iterator();
+        while (iterator.hasNext()) {
+            Origin origin = iterator.next();
             if (origin.getPlayer() != null) {
                 if (isCoolDownTick) {
                     origin.cooldownTick();
                     if (origin.getState().equals(OriginState.TEMPORARY)) {
                         int timeRemaining = origin.getTempTimeRemaining();
                         if (timeRemaining == 0) {
+                            iterator.remove();
                             outdatedTempOrigins.add(origin);
+                            continue;
                         } else {
                             origin.setTempTimeRemaining(timeRemaining - 1);
                         }
@@ -133,7 +134,8 @@ public class OriginManager {
                 origin.originTick(tick);
                 origin.originParticle(tick);
             } else {
-                //if the play is no longer on, remove them
+                //if the player is no longer on, remove them
+                iterator.remove();
                 removeOrigin(origin.getUUID());
             }
         }
