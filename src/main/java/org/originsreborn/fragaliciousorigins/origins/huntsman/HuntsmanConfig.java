@@ -6,11 +6,11 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class HuntsmanConfig extends OriginConfig {
-    private double primaryAbilityDamageMultiplier, broadArrowDamageMultiplier, trackingArrowDamageMultiplier,
+    private double primaryAbilityDamageMultiplier, broadArrowDamageMultiplier, healMultiplier,
             stunArrowDamageMultiplier, aerialEnemyGlideMultiplier, crossbowDamageMultiplierPerToughness,
             otherBowVelocityMultiplier;
-    private int primaryAbilityDuration, trackingArrowDuration, stunArrowSlownessDuration, stunArrowSlownessAmplifier,
-            stunArrowDarknessDuration, stunArrowDarknessAmplifier, stunArrowMiningFatigueDuration,
+    private int primaryAbilityDuration, strengthTicksPerDamage, stunArrowSlownessDuration, stunArrowSlownessAmplifier,
+            stunArrowDarknessDuration, stunArrowDarknessAmplifier, stunArrowMiningFatigueDuration, strengthAmplifier,
             stunArrowMiningFatigueAmplifier, crouchDuration, speedOnDamageDuration, speedOnDamageAmplifier;
     private boolean stunArrowSlownessEnabled, stunArrowDarknessEnabled, stunArrowMiningFatigueEnabled;
 
@@ -30,9 +30,10 @@ public class HuntsmanConfig extends OriginConfig {
             CommentedConfigurationNode broadArrowNode = secondaryAbilityNode.node("broadArrow");
             broadArrowNode.node("damageMultiplier").set(1.3);
 
-            CommentedConfigurationNode trackingArrowNode = secondaryAbilityNode.node("trackingArrow");
-            trackingArrowNode.node("damageMultiplier").set(1.1);
-            trackingArrowNode.node("duration").set(160);
+            CommentedConfigurationNode buffArrow = secondaryAbilityNode.node("buffArrow");
+            buffArrow.node("healMultiplier").set(0.3);
+            buffArrow.node("strengthAmp").set(2);
+            buffArrow.node("strengthTickPerDamage").set(2);
 
             CommentedConfigurationNode stunArrowNode = secondaryAbilityNode.node("stunArrow");
             stunArrowNode.node("damageMultiplier").set(0.6);
@@ -77,8 +78,9 @@ public class HuntsmanConfig extends OriginConfig {
 
         broadArrowDamageMultiplier = getConfigNode().node("secondaryAbility").node("broadArrow").node("damageMultiplier").getDouble();
 
-        trackingArrowDamageMultiplier = getConfigNode().node("secondaryAbility").node("trackingArrow").node("damageMultiplier").getDouble();
-        trackingArrowDuration = getConfigNode().node("secondaryAbility").node("trackingArrow").node("duration").getInt();
+        healMultiplier = getConfigNode().node("secondaryAbility").node("buffArrow").node("healMultiplier").getDouble();
+        strengthAmplifier = getConfigNode().node("secondaryAbility").node("buffArrow").node("strengthAmp").getInt();
+        strengthTicksPerDamage = getConfigNode().node("secondaryAbility").node("buffArrow").node("strengthTickPerDamage").getInt();
 
         stunArrowDamageMultiplier = getConfigNode().node("secondaryAbility").node("stunArrow").node("damageMultiplier").getDouble();
 
@@ -117,12 +119,15 @@ public class HuntsmanConfig extends OriginConfig {
         return broadArrowDamageMultiplier;
     }
 
-    public double getTrackingArrowDamageMultiplier() {
-        return trackingArrowDamageMultiplier;
+    public double getHealMultiplier() {
+        return healMultiplier;
     }
 
-    public int getTrackingArrowDuration() {
-        return trackingArrowDuration;
+    public int getStrengthAmplifier(){
+        return strengthAmplifier;
+    }
+    public int getStrengthTicksPerDamage() {
+        return strengthTicksPerDamage;
     }
 
     public double getStunArrowDamageMultiplier() {

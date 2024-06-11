@@ -18,7 +18,7 @@ public class MainOriginConfig extends OriginConfig {
             blockInteractRange, entityInteractRange, blockBreakSpeed, gravity, fallDamageMultiplier, safeFallDistance;
     private boolean stepSound;
     //DamageModifiers
-    private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, burnDuration, dodgeChance;
+    private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, burnDuration, dodgeChance, meleeAtackMultiplier;
     //permissions & placeholders
     private List<String> permissions, originDesc;
     private Ability primary, secondary;
@@ -64,6 +64,7 @@ public class MainOriginConfig extends OriginConfig {
             damageModifiersNode.node("fireDamageMultiplier").set(1.0);
             damageModifiersNode.node("waterDamageMultiplier").set(1.0);
             damageModifiersNode.node("burnDurationMultiplier").set(1.0);
+            damageModifiersNode.node("meleeAttackMultiplier").set(1.0);
             damageModifiersNode.node("dodgeChance").set(0.0);
             damageModifiersNode.node("sharpnessImmune").set(false);
             damageModifiersNode.node("smiteImmune").set(true);
@@ -146,6 +147,7 @@ public class MainOriginConfig extends OriginConfig {
         fireDamage = getConfigNode().node("damageModifiers").node("fireDamageMultiplier").getDouble();
         burnDuration = getConfigNode().node("damageModifiers").node("burnDurationMultiplier").getDouble();
         dodgeChance = getConfigNode().node("damageModifiers").node("dodgeChance").getDouble();
+        meleeAtackMultiplier = getConfigNode().node("damageModifiers").node("meleeAttackMultiplier").getDouble();
         sharpness = getConfigNode().node("damageModifiers").node("sharpnessImmune").getBoolean();
         smite = getConfigNode().node("damageModifiers").node("smiteImmune").getBoolean();
         arthapods = getConfigNode().node("damageModifiers").node("baneOfArthropodsImmune").getBoolean();
@@ -283,6 +285,9 @@ public class MainOriginConfig extends OriginConfig {
 
     public double getDodgeChance() {
         return dodgeChance;
+    }
+    public double getMeleeAttackMultiplier(){
+        return meleeAtackMultiplier;
     }
 
     public boolean getSharpnessImmune() {

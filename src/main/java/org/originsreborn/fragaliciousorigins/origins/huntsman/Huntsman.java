@@ -1,6 +1,7 @@
 package org.originsreborn.fragaliciousorigins.origins.huntsman;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -9,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -25,6 +27,7 @@ import org.originsreborn.fragaliciousorigins.util.enums.Food;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -48,11 +51,12 @@ public class Huntsman extends Origin {
     public static final HuntsmanConfig HUNTSMAN_CONFIG = new HuntsmanConfig();
     private int invisDuration = 0;
     private HuntsmanMode mode;
+    private static final Random random = new Random();
 
     public Huntsman(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.HUNTSMAN, state, customDataString);
         if(mode == null){
-            mode = HuntsmanMode.STANDARD;
+            mode = HuntsmanMode.BROADHEAD;
         }
     }
 
@@ -83,6 +87,10 @@ public class Huntsman extends Origin {
                 PotionsUtil.addEffect(player, PotionEffectType.INVISIBILITY, 0, 25);
             }
         }
+        if(tickNum % 300 == 0 && Math.random() > 0.2){
+            player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.ARROW).add(random.nextInt(3)+1));
+            player.sendActionBar(Component.text("You find some arrows on the ground").color(TextColor.color(Origin.textColor())));
+        }
     }
 
     @Override
@@ -99,12 +107,17 @@ public class Huntsman extends Origin {
     public void primaryAbilityLogic() {
         primaryAbilityAnimation();
         setInvisDuration(HUNTSMAN_CONFIG.getPrimaryAbilityDuration());
+        Player player = getPlayer();
+        if(player.getEquipment().getItemInMainHand().isEmpty()){
+            player.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
+        }
+        player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.ARROW).add(random.nextInt(16)+3));
     }
 
     @Override
     public void secondaryAbilityLogic() {
         toggleMode();
-        getPlayer().sendActionBar(Component.text("You are using arrow type of ").color(textColor()).append(Component.text(mode.getMode()).color(enableColor())));
+        getPlayer().sendActionBar(Component.text("You changed your arrow tips to ").color(textColor()).append(Component.text(mode.getMode()).color(mode.getColor())));
     }
 
     /**
@@ -188,14 +201,13 @@ public class Huntsman extends Origin {
 
     public void toggleMode() {
         switch (mode) {
-            case STUN -> setMode(HuntsmanMode.STANDARD);
-            case STANDARD -> setMode(HuntsmanMode.TRACING);
+            case STUN -> setMode(HuntsmanMode.BROADHEAD);
+            case BROADHEAD -> setMode(HuntsmanMode.CUPID);
             default -> setMode(HuntsmanMode.STUN);
         }
     }
     public static double getDamageMultiplier(String mode){
         return switch (mode) {
-            case "Tracking" -> HUNTSMAN_CONFIG.getTrackingArrowDuration();
             case "Stun" -> HUNTSMAN_CONFIG.getStunArrowDamageMultiplier();
             case "Ability" -> HUNTSMAN_CONFIG.getPrimaryAbilityDamageMultiplier();
             default -> HUNTSMAN_CONFIG.getBroadArrowDamageMultiplier();

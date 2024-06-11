@@ -435,6 +435,7 @@ public abstract class Origin {
     }
 
     public void onAttackEntity(EntityDamageByEntityEvent event) {
+        event.setDamage(event.getDamage() * getConfig().getMeleeAttackMultiplier());
     }
 
     public void onToggleSwim(EntityToggleSwimEvent event) {

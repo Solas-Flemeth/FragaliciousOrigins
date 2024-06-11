@@ -48,25 +48,29 @@ public final class FragaliciousOrigins extends JavaPlugin {
     }
 
     public void reload() {
-        CONFIG.loadConfig();
-        Alchemist.onReload();
-        Arachnid.onReload();
-        Blazeborn.Bee.onReload();
-        Blazeborn.onReload();
-        Elytrian.onReload();
-        Enderian.onReload();
-        Feline.onReload();
-        Giant.onReload();
-        Huntsman.onReload();
-        Inchling.onReload();
-        Merling.onReload();
-        Phantom.onReload();
-        Phytokin.onReload();
-        ShapeShifter.onReload();
-        Shulk.onReload();
-        Stoneborn.onReload();
-        Vampire.onReload();
-        Bee.onReload();
+        try {
+            CONFIG.loadConfig();
+            Alchemist.onReload();
+            Arachnid.onReload();
+            Blazeborn.Bee.onReload();
+            Blazeborn.onReload();
+            Elytrian.onReload();
+            Enderian.onReload();
+            Feline.onReload();
+            Giant.onReload();
+            Huntsman.onReload();
+            Inchling.onReload();
+            Merling.onReload();
+            Phantom.onReload();
+            Phytokin.onReload();
+            ShapeShifter.onReload();
+            Shulk.onReload();
+            Stoneborn.onReload();
+            Vampire.onReload();
+            Bee.onReload();
+        }catch (Exception e){
+
+        }
         //DO LAST - this reloads
         //all origin stats and applies to current playerbase
         ORIGINS.reloadOrigins();

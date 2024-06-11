@@ -2,6 +2,7 @@ package org.originsreborn.fragaliciousorigins.util;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -111,6 +112,7 @@ public class DamageUtil {
         double crossbowToughnessMultiplier = 1.0;
         double damageMultiplier = 1.0;
         double airMultiplier = 1.0;
+        boolean heal = false;
         Location location = livingEntity.getLocation();
         location.setY(location.y() - 1.0);
         List<MetadataValue> list = arrow.getMetadata("huntsman_damage_multiplier");
@@ -120,9 +122,9 @@ public class DamageUtil {
             }
             String mode = list.get(0).asString();
             damageMultiplier = Huntsman.getDamageMultiplier(mode);
-            if(mode.equals("Tracing")){
-                PotionsUtil.addEffect(livingEntity, PotionEffectType.GLOWING, 0, Huntsman.HUNTSMAN_CONFIG.getTrackingArrowDuration());
-            }else if(mode.equals("Stun")){
+            if(mode.equals("Cupid")) {
+                heal = true;
+            } else if(mode.equals("Stun")){
                 if(Huntsman.HUNTSMAN_CONFIG.getStunArrowMiningFatigueEnabled()) {
                     PotionsUtil.addEffect(livingEntity, PotionEffectType.MINING_FATIGUE, Huntsman.HUNTSMAN_CONFIG.getStunArrowMiningFatigueAmplifier() , Huntsman.HUNTSMAN_CONFIG.getStunArrowMiningFatigueDuration());
                 }
@@ -139,6 +141,17 @@ public class DamageUtil {
             crossbowToughnessMultiplier = 1.0 + (Huntsman.HUNTSMAN_CONFIG.getCrossbowDamageMultiplierPerToughness() * PlayerUtils.getAttribute(livingEntity, Attribute.GENERIC_ARMOR_TOUGHNESS));
         }
         double newDamage = event.getDamage() * damageMultiplier * airMultiplier * crossbowToughnessMultiplier;
-        event.setDamage(newDamage);
+        if(heal && event.getEntity() instanceof LivingEntity target){
+            double healthMultiplier = Huntsman.HUNTSMAN_CONFIG.getHealMultiplier();
+            double totalHeal = healthMultiplier * damageMultiplier;
+            target.heal(totalHeal);
+            int duration = 1 + ((int) newDamage * Huntsman.HUNTSMAN_CONFIG.getStrengthTicksPerDamage());
+            PotionsUtil.addEffect(target, PotionEffectType.STRENGTH,Huntsman.HUNTSMAN_CONFIG.getStrengthAmplifier(), duration);
+            ParticleUtil.generateParticleAtLocation(Particle.HEART, livingEntity.getLocation(), 6);
+            event.setDamage(0.01);
+        }else{
+            event.setDamage(newDamage);
+        }
+
     }
 }
