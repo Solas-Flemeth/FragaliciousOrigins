@@ -15,8 +15,9 @@ public class PermissionsUtil {
     public static void registerPermission(Player player, List<String> permissions){
         try{
             for (String permission : permissions){
-                registerPermissions(player,permission);
+                registerPermissionsWithoutUpdate(player,permission);
             }
+            player.recalculatePermissions();
         }catch (Exception ignored){
 
         }
@@ -40,13 +41,29 @@ public class PermissionsUtil {
         }catch (Exception ignored){}
     }
 
+    public static void registerPermissionsWithoutUpdate(Player player, String permission){
+        try{
+            if (!player.hasPermission(permission)) {
+                // Get or create the player's PermissionAttachment
+                PermissionAttachment attachment = player.addAttachment(FragaliciousOrigins.INSTANCE);
+                // Grant the permission
+                attachment.setPermission(permission, true);
+            }
+        }catch (Exception ignored){}
+    }
+
     /**
      * Removes all permissions from the plugin.
      * @param player
      */
     public static void resetPermissions(Player player) {
         try{
-        player.removeAttachment(player.addAttachment(FragaliciousOrigins.INSTANCE));
+            player.getEffectivePermissions().forEach(permissionAttachmentInfo -> {
+                if(permissionAttachmentInfo.getAttachment().getPlugin().equals(FragaliciousOrigins.INSTANCE)){
+                    player.removeAttachment(permissionAttachmentInfo.getAttachment());
+                }
+
+            });
         player.recalculatePermissions();
         }catch (Exception ignored){}
     }

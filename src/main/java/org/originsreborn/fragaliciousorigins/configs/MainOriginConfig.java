@@ -20,8 +20,9 @@ public class MainOriginConfig extends OriginConfig {
     //DamageModifiers
     private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, burnDuration, dodgeChance, meleeAtackMultiplier;
     //permissions & placeholders
+    private  int difficulty;
     private List<String> permissions, originDesc;
-    private Ability primary, secondary;
+    private Ability primary, secondary, crouch;
     private List<Ability> abilities;
     private String originName, icon;
 
@@ -78,12 +79,16 @@ public class MainOriginConfig extends OriginConfig {
             placeholdersNodeTitle.node("name").set("defaultName");
             placeholdersNodeTitle.node("description").set(Collections.singletonList(""));
             placeholdersNodeTitle.node("icon").set("icon");
+            placeholdersNodeTitle.node("difficulty").set(0);
             CommentedConfigurationNode placeholdersPrimaryAbility = placeholdersNode.node("primaryAbility");
             placeholdersPrimaryAbility.node("name").set("primaryAbility");
             placeholdersPrimaryAbility.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholdersSecondaryAbility = placeholdersNode.node("secondaryAbility");
             placeholdersSecondaryAbility.node("name").set("secondaryAbility");
             placeholdersSecondaryAbility.node("description").set(Collections.singletonList(""));
+            CommentedConfigurationNode placeholderCrouchAbility = placeholdersNode.node("crouchAbility");
+            placeholderCrouchAbility.node("name").set("abilityName");
+            placeholderCrouchAbility.node("description").set(Collections.singletonList(""));
             CommentedConfigurationNode placeholderAbility1 = placeholdersNode.node("ability1");
             placeholderAbility1.node("name").set("abilityName");
             placeholderAbility1.node("description").set(Collections.singletonList(""));
@@ -155,12 +160,16 @@ public class MainOriginConfig extends OriginConfig {
         originName = getConfigNode().node("placeholders").node("title").node("name").getString();
         originDesc = getStringsFromNode(getConfigNode().node("placeholders").node("title").node("description"));
         icon = getConfigNode().node("placeholders").node("title").node("icon").getString();
+        difficulty = getConfigNode().node("placeholders").node("difficulty").getInt();
         abilities = new ArrayList<Ability>(8);
         primary = new Ability(getConfigNode().node("placeholders").node("primaryAbility").node("name").getString(),
                 getStringsFromNode(getConfigNode().node("placeholders").node("primaryAbility").node("description"))
         );
         secondary = new Ability(getConfigNode().node("placeholders").node("secondaryAbility").node("name").getString(),
                 getStringsFromNode(getConfigNode().node("placeholders").node("secondaryAbility").node("description"))
+        );
+        crouch = new Ability(getConfigNode().node("placeholders").node("crouchAbility").node("name").getString(),
+                getStringsFromNode(getConfigNode().node("placeholders").node("crouchAbility").node("description"))
         );
         for (int ability = 1; ability < 9; ability++) {
             abilities.add(new Ability(
@@ -334,6 +343,14 @@ public class MainOriginConfig extends OriginConfig {
         return secondary.getDescription();
     }
 
+    public String getPlaceholdersCrouchAbilityName() {
+        return crouch.getName();
+    }
+
+    public List<String> getPlaceholdersCrouchAbilityDescription() {
+        return crouch.getDescription();
+    }
+
     public String getPlaceholderAbilityName(int ability) {
         if (ability > 9 || ability < 1) {
             return "Invalid Ability";
@@ -346,6 +363,9 @@ public class MainOriginConfig extends OriginConfig {
             return Collections.emptyList();
         }
         return abilities.get(ability - 1).getDescription();
+    }
+    public int getDifficulty(){
+        return difficulty;
     }
 
 }

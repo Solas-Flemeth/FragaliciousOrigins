@@ -76,7 +76,7 @@ public class Huntsman extends Origin {
         if (getPlayer().isSneaking()) {
             PotionsUtil.addEffect(player, PotionEffectType.INVISIBILITY, 0, HUNTSMAN_CONFIG.getCrouchDuration());
             PotionsUtil.addEffect(player, PotionEffectType.SLOW_FALLING, 0, HUNTSMAN_CONFIG.getCrouchDuration());
-            PotionsUtil.addEffect(player, PotionEffectType.SLOWNESS, 1, HUNTSMAN_CONFIG.getCrouchDuration());
+            PotionsUtil.addEffect(player, PotionEffectType.SLOWNESS, 0, HUNTSMAN_CONFIG.getCrouchDuration());
         }
         if (tickNum % 10 == 0) {
             if (invisDuration != 0) {
@@ -87,8 +87,8 @@ public class Huntsman extends Origin {
                 PotionsUtil.addEffect(player, PotionEffectType.INVISIBILITY, 0, 25);
             }
         }
-        if(tickNum % 300 == 0 && Math.random() > 0.2){
-            player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.ARROW).add(random.nextInt(3)+1));
+        if(tickNum % 600 == 0 && Math.random() > 0.2){
+            player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.ARROW).add(random.nextInt(2)));
             player.sendActionBar(Component.text("You find some arrows on the ground").color(TextColor.color(Origin.textColor())));
         }
     }
@@ -99,8 +99,8 @@ public class Huntsman extends Origin {
         if(!getPlayer().isSneaking()){
             ParticleUtil.generateParticleAtLocation(Particle.SPORE_BLOSSOM_AIR, getPlayer().getLocation(), 2);
         }
-
     }
+
 
 
     @Override
@@ -111,7 +111,7 @@ public class Huntsman extends Origin {
         if(player.getEquipment().getItemInMainHand().isEmpty()){
             player.getEquipment().setItemInMainHand(new ItemStack(Material.BOW));
         }
-        player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.ARROW).add(random.nextInt(16)+3));
+        player.getWorld().dropItem(player.getLocation(), new ItemStack(Material.ARROW).add(random.nextInt(20)+5));
     }
 
     @Override
@@ -178,7 +178,11 @@ public class Huntsman extends Origin {
     @Override
     public void consume(PlayerItemConsumeEvent event){
         Food food = Food.getFood(event.getItem().getType());
-        if(food != null && !food.isMeat()){
+        if(food != null && !food.isMeat()
+                && !food.getType().equals(Material.GLOW_BERRIES)
+                && !food.getType().equals(Material.SWEET_BERRIES)
+                && !food.getType().equals(Material.MUSHROOM_STEM)
+        ){
             event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
             event.setCancelled(true);
         }

@@ -51,7 +51,10 @@ public class Bee extends Origin {
     public void originTick(int tickNum) {
         Player player = getPlayer();
         if (player.isSneaking() && (!player.isInWaterOrRain() || player.hasPotionEffect(PotionEffectType.CONDUIT_POWER))) {
-            PotionsUtil.addEffect(player, PotionEffectType.LEVITATION, 2, 6);
+            PotionsUtil.addEffect(player, PotionEffectType.LEVITATION, 2, 4);
+        }
+        else if (player.getName().startsWith(".")) {
+            PotionsUtil.addEffect(player, PotionEffectType.SLOW_FALLING, 0, 5);
         }
         int radius = BEE_CONFIG.getHiveMindRadius();
         if(tickNum%20 == 0){
@@ -97,7 +100,7 @@ public class Bee extends Origin {
         int maxY = playerLocation.getBlockY() + radius;
         int maxZ = playerLocation.getBlockZ() + radius;
         World world = playerLocation.getWorld();
-        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 2, 0.9f);
+        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 2, 0.8f);
         world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 1, 1.5f);
         // Iterate through nearby blocks within the bounding box
         for (int x = minX; x <= maxX; x++) {
@@ -166,9 +169,17 @@ public class Bee extends Origin {
     public void consume(PlayerItemConsumeEvent event) {
         if (!event.isCancelled()) {
             Material material = event.getItem().getType();
-            if (material.equals(Material.HONEY_BOTTLE) || material.equals(Material.POTION)) {
+            if (material.equals(Material.HONEY_BOTTLE)) {
+                if(getPlayer().getFoodLevel() != 20){
+                    getPlayer().setFoodLevel(getPlayer().getFoodLevel() + 1);
+                }
+                if(getPlayer().getSaturation() != 20){
+                    getPlayer().setSaturation(getPlayer().getSaturation() + 2f);
+                }
                 super.consume(event);
-            } else {
+            } else if(material.equals(Material.POTION)) {
+                super.consume(event);
+            }else{
                 event.setCancelled(true);
                 event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat honey.").color(errorColor()));
             }
@@ -280,6 +291,15 @@ public class Bee extends Origin {
         if (Math.random() < BEE_CONFIG.getHiveMindPhytokinSaturationChance()) {
             PotionsUtil.addEffect(phytokin.getPlayer(), PotionEffectType.SATURATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration() * 20);
             PotionsUtil.addEffect(getPlayer(), PotionEffectType.SATURATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration() * 20);
+            if(getPrimaryCooldown() > 1){
+                setPrimaryCooldown(getPrimaryCooldown()-2);
+            }
+            if(phytokin.getPrimaryCooldown() > 1){
+                phytokin.setPrimaryCooldown(phytokin.getPrimaryCooldown()-2);
+            }
+            if(phytokin.getSecondaryCooldown() > 1){
+                phytokin.setSecondaryCooldown(phytokin.getSecondaryCooldown()-2);
+            }
         }
     }
 
@@ -287,6 +307,12 @@ public class Bee extends Origin {
         if (Math.random() < BEE_CONFIG.getHiveMindBeeRegenChance()) {
             PotionsUtil.addEffect(bee.getPlayer(), PotionEffectType.REGENERATION, BEE_CONFIG.getHiveMindBeeRegenAmplifier(), BEE_CONFIG.getHiveMindBeeRegenDuration() * 20);
             PotionsUtil.addEffect(getPlayer(), PotionEffectType.REGENERATION, BEE_CONFIG.getHiveMindPhytokinSaturationAmplifier(), BEE_CONFIG.getHiveMindPhytokinSaturationDuration() * 20);
+            if(getPrimaryCooldown() > 1){
+                setPrimaryCooldown(getPrimaryCooldown()-2);
+            }
+            if(bee.getPrimaryCooldown() > 1){
+                bee.setPrimaryCooldown(bee.getPrimaryCooldown()-2);
+            }
         }
     }
 }

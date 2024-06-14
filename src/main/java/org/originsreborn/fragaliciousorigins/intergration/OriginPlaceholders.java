@@ -60,11 +60,13 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                             return config.getPlaceholdersNodeTitleIcon();
                         case "description":
                             return config.getPlaceholdersNodeTitleDescription().get(Integer.parseInt(args[3]));
+                        case "difficulty":
+                            return String.valueOf(config.getDifficulty());
                         case "count":
                             return String.valueOf(type.getConfig().getPlaceholdersNodeTitleDescription().size());
                     }
                 case "primary":
-                    switch (args[2]){
+                    switch (args[2]) {
                         case "name":
                             return config.getPlaceholdersPrimaryAbilityName();
                         case "description":
@@ -85,9 +87,20 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                         case "enabled":
                             return String.valueOf(!config.getPlaceholdersPrimaryAbilityName().equals("secondaryAbility"));
                     }
+                case "crouch":
+                    switch (args[2]) {
+                        case "name":
+                            return config.getPlaceholdersCrouchAbilityName();
+                        case "description":
+                            return config.getPlaceholdersCrouchAbilityDescription().get(Integer.parseInt(args[3]));
+                        case "count":
+                            return String.valueOf(type.getConfig().getPlaceholdersCrouchAbilityDescription().size());
+                        case "enabled":
+                            return String.valueOf(!config.getPlaceholdersCrouchAbilityName().equals("secondaryAbility"));
+                    }
                 case "ability":
                     int abilityNum = Integer.parseInt(args[2]);
-                    switch (args[3]){
+                    switch (args[3]) {
                         case "name":
                             return config.getPlaceholderAbilityName(abilityNum);
                         case "description":

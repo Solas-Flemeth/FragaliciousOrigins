@@ -55,6 +55,9 @@ public class Giant extends Origin {
             if(Math.random() < GIANT_CONFIG.getHungerLossChance() && foodlevel > 10){
                 player.setFoodLevel(foodlevel-1);
             }
+            if (player.getName().startsWith(".")) {
+                PotionsUtil.addEffect(player, PotionEffectType.JUMP_BOOST, 1, 130);
+            }
         }
     }
 

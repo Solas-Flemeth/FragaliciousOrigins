@@ -296,6 +296,23 @@ public class AbilityListener implements Listener {
             }
         }
     }
+    /*
+    @EventHandler
+    public void onClick( PlayerInteractEvent event){
+        Player player = event.getPlayer();
+        String gamemode = player.getGameMode().name();
+        if(event.getAction().isRightClick()){
+            String code = "Player right  click in gamemode " + gamemode;
+            FragaliciousOrigins.INSTANCE.getLogger().fine(code);
+            player.sendMessage(code);
+        }
+        if(event.getAction().isLeftClick()){
+            String code = "Player left click in gamemode " + gamemode;
+            FragaliciousOrigins.INSTANCE.getLogger().fine(code);
+            player.sendMessage(code);
+        }
+    }
+     */
 
     private Origin getOrigin(PlayerEvent event) {
         return FragaliciousOrigins.ORIGINS.getOrigin(event.getPlayer().getUniqueId());

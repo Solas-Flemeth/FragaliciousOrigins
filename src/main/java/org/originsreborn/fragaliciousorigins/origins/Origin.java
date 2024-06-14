@@ -50,10 +50,11 @@ public abstract class Origin {
         this.uuid = uuid;
         this.type = type;
         this.state = state;
-        setDefaultStats();
         if(customDataString != null && !customDataString.isEmpty()){
             deserializeCustomData(customDataString);
         }
+        setDefaultStats();
+
         getPlayer().sendMessage("You are now a " + getType().getDisplay());
     }
 

@@ -6,8 +6,9 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class ElytrianConfig extends OriginConfig {
-    private double groundVelocityMultiplier, flyingMinVelocity, flyingVelocityMultiplier, slownessPerArmor, dodgeChance, attackDamage, attackSpeed, blockInteractRange, entityInteractRange, blockBreakSpeed;
-    private int armor, toughness, modelData, minArmorToApply, ceilingHeight, slownessAmplifier;
+    private double groundVelocityMultiplier, flyingMinVelocity, flyingVelocityMultiplier, slownessPerArmor, dodgeChance, attackDamage, attackSpeed, blockInteractRange, entityInteractRange,
+            multiplyPerCharge, blockBreakSpeed, knockbackRadius, knockbackVelocityPerDamage;
+    private int armor, toughness, modelData, minArmorToApply, ceilingHeight, slownessAmplifier, maxCharge;
 
     public ElytrianConfig() {
         super(OriginType.ELYTRIAN, "unique");
@@ -41,6 +42,10 @@ public class ElytrianConfig extends OriginConfig {
             glidingNode.node("blockInteractRange").set(2.5);
             glidingNode.node("entityInteractRange").set(2.5);
             glidingNode.node("blockBreakSpeed").set(5.0);
+            glidingNode.node("multiplyPerCharge").set(0.12);
+            glidingNode.node("maxCharge").set(30);
+            glidingNode.node("knockbackradiusPerDamage").set(0.1);
+            glidingNode.node("knockbackVelocityPerDamage").set(0.05);
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
@@ -68,26 +73,10 @@ public class ElytrianConfig extends OriginConfig {
         blockInteractRange = getConfigNode().node("gliding").node("blockInteractRange").getDouble();
         entityInteractRange = getConfigNode().node("gliding").node("entityInteractRange").getDouble();
         blockBreakSpeed = getConfigNode().node("gliding").node("blockBreakSpeed").getDouble();
-
-        // Debug output for all variables
-        System.out.println("ELYTRIAN CONFIG STARTS");
-        System.out.println("groundVelocityMultiplier: " + groundVelocityMultiplier);
-        System.out.println("flyingMinVelocity: " + flyingMinVelocity);
-        System.out.println("flyingVelocityMultiplier: " + flyingVelocityMultiplier);
-        System.out.println("armor: " + armor);
-        System.out.println("toughness: " + toughness);
-        System.out.println("modelData: " + modelData);
-        System.out.println("slownessPerArmor: " + slownessPerArmor);
-        System.out.println("minArmorToApply: " + minArmorToApply);
-        System.out.println("ceilingHeight: " + ceilingHeight);
-        System.out.println("slownessAmplifier: " + slownessAmplifier);
-        System.out.println("dodgeChance: " + dodgeChance);
-        System.out.println("attackDamage: " + attackDamage);
-        System.out.println("attackSpeed: " + attackSpeed);
-        System.out.println("blockInteractRange: " + blockInteractRange);
-        System.out.println("entityInteractRange: " + entityInteractRange);
-        System.out.println("blockBreakSpeed: " + blockBreakSpeed);
-        System.out.println("ELYTRIAN CONFIG ENDS");
+        multiplyPerCharge = getConfigNode().node("gliding").node("multiplyPerCharge").getDouble();
+        maxCharge = getConfigNode().node("gliding").node("maxCharge").getInt();
+        knockbackRadius = getConfigNode().node("gliding").node("knockbackradiusPerDamage").getDouble();
+        knockbackVelocityPerDamage = getConfigNode().node("gliding").node("knockbackVelocityPerDamage").getDouble();
     }
 
     public double getPrimaryAbilityGroundVelocityMultiplier() {
@@ -152,5 +141,20 @@ public class ElytrianConfig extends OriginConfig {
 
     public double getGlidingBlockBreakSpeed() {
         return blockBreakSpeed;
+    }
+
+    public double getKnockbackVelocityPerDamage() {
+        return knockbackVelocityPerDamage;
+    }
+
+    public double getKnockbackRadius() {
+        return knockbackRadius;
+    }
+
+    public double getMultiplyPerCharge() {
+        return multiplyPerCharge;
+    }
+    public int getMaxCharge(){
+        return maxCharge;
     }
 }

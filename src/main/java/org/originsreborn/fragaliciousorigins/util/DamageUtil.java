@@ -56,11 +56,15 @@ public class DamageUtil {
             event.setDamage(damage * origin.getConfig().getWaterDamageMultiplier());
         }
     }
+    public static void huntsmanWeapondamage(EntityDamageByEntityEvent event, Origin origin){
+
+    }
 
     public static void onSpecialDamageEvents(EntityDamageByEntityEvent event) {
         if (event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && event.getEntity() instanceof LivingEntity livingEntity) {
             if (event.getDamager() instanceof Projectile arrow) {
                 onArrowEvent(event, livingEntity, arrow);
+
             }
         }
     }

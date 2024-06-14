@@ -61,6 +61,7 @@ public class OriginManager {
         if(containsUUID(origin.getUUID())){
             getOrigin(origin.getUUID()).onRemoveOrigin();
         }
+        origin.setDefaultStats(); //force override to make sure stats reset
         originsMap.put(origin.getUUID(), origin);
         origin.updateStats();
         FragaliciousOrigins.INSTANCE.getLogger().fine("SETTING PLAYER TO " + origin.getPlayer().getName() + " TO ORIGIN TYPE OF " + origin.getType().getDisplay());

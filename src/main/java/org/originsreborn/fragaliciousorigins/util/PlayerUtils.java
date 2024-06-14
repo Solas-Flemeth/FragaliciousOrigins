@@ -4,10 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 
 public class PlayerUtils {
     /**
@@ -116,8 +114,8 @@ public class PlayerUtils {
         int zCord = location.getBlockZ();
         int yCord = location.getBlockY();
         World world = location.getWorld();
-        for (int i = 0; i < roofHeight; i++){
-            Location checkLocation = new Location(world, xCord, yCord + i, zCord);
+        for (int i = 1; i < roofHeight; i++){
+            Location checkLocation = new Location(world, xCord, yCord + 2 + i , zCord);
             if(checkLocation.getBlock().isSolid()){
                 return true;
             }
