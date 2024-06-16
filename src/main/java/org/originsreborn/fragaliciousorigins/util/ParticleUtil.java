@@ -2,7 +2,6 @@ package org.originsreborn.fragaliciousorigins.util;
 
 import org.bukkit.Location;
 import org.bukkit.Particle;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 

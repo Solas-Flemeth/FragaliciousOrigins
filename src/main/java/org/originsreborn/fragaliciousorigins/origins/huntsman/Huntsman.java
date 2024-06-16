@@ -117,7 +117,10 @@ public class Huntsman extends Origin {
     @Override
     public void secondaryAbilityLogic() {
         toggleMode();
-        getPlayer().sendActionBar(Component.text("You changed your arrow tips to ").color(textColor()).append(Component.text(mode.getMode()).color(mode.getColor())));
+        Player player = getPlayer();
+        ParticleUtil.generateSphereParticle(mode.getParticle(), player.getLocation(), 10, 1.5);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_GRINDSTONE_USE, 1.5f, 1);
+        player.sendActionBar(Component.text("You changed your arrow tips to ").color(textColor()).append(Component.text(mode.getMode()).color(mode.getColor())));
     }
 
     /**

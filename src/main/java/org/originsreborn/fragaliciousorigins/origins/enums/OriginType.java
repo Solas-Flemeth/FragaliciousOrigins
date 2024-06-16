@@ -1,9 +1,9 @@
 package org.originsreborn.fragaliciousorigins.origins.enums;
 
-import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.*;
 import org.originsreborn.fragaliciousorigins.origins.Human;
+import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;

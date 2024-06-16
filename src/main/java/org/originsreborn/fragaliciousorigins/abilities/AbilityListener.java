@@ -5,7 +5,10 @@ import org.bukkit.GameEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.GenericGameEvent;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
@@ -49,7 +52,13 @@ public class AbilityListener implements Listener {
     public void onPreCommandSend(PlayerCommandPreprocessEvent event) {
         getOrigin(event).onPreCommandSend(event);
     }
+    @EventHandler
+    public void openInventory(InventoryOpenEvent event){
+        if(event.getPlayer() instanceof Player player && !event.isCancelled()){
+            FragaliciousOrigins.ORIGINS.getOrigin(player.getUniqueId()).onOpenInventory(event);
+        }
 
+    }
     @EventHandler
     public void onDropitem(PlayerDropItemEvent event) {
         getOrigin(event).onDropitem(event);
@@ -269,6 +278,20 @@ public class AbilityListener implements Listener {
     }
 
     @EventHandler
+    public void onPotionLingering(LingeringPotionSplashEvent event){
+        if(!event.isCancelled() && event.getEntity().getShooter() instanceof Player player){
+            getOrigin(player).onPotionLingering(event);
+        }
+    }
+
+    @EventHandler
+    public void onPotionSplash(PotionSplashEvent event){
+        if(!event.isCancelled() && event.getEntity().getShooter() instanceof Player player){
+            getOrigin(player).onPotionSplash(event);
+        }
+    }
+
+    @EventHandler
     public void onToggleGlide(EntityToggleGlideEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onToggleGlide(event);
@@ -279,6 +302,28 @@ public class AbilityListener implements Listener {
     public void onResurrectEvent(EntityResurrectEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()) {
             getOrigin((Player) event.getEntity()).onResurrectEvent(event);
+        }
+    }
+    @EventHandler
+    public void onEnchant(EnchantItemEvent event){
+        if(!event.isCancelled()){
+            getOrigin(event.getEnchanter()).onEnchant(event);
+        }
+    }
+    @EventHandler
+    public void onInventoryClick(InventoryClickEvent event){
+        if(event.isCancelled()){
+            return;
+        }
+        if(event.getWhoClicked() instanceof Player player){
+            switch (event.getInventory().getType()){
+                case MERCHANT:
+                    getOrigin(player).onTradeClick(event);
+                break;
+                case ANVIL:
+                    getOrigin(player).onAnvilClick(event);
+                    break;
+            }
         }
     }
 

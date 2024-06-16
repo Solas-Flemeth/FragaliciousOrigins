@@ -8,6 +8,7 @@ import org.originsreborn.fragaliciousorigins.commands.*;
 import org.originsreborn.fragaliciousorigins.intergration.OriginPlaceholders;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
+import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;

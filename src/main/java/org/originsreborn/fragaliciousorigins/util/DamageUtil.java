@@ -4,17 +4,20 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Projectile;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FireworkExplodeEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.potion.PotionEffectType;
+import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
+import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 
 import java.util.List;
@@ -56,15 +59,17 @@ public class DamageUtil {
             event.setDamage(damage * origin.getConfig().getWaterDamageMultiplier());
         }
     }
-    public static void huntsmanWeapondamage(EntityDamageByEntityEvent event, Origin origin){
-
-    }
 
     public static void onSpecialDamageEvents(EntityDamageByEntityEvent event) {
         if (event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && event.getEntity() instanceof LivingEntity livingEntity) {
             if (event.getDamager() instanceof Projectile arrow) {
                 onArrowEvent(event, livingEntity, arrow);
-
+            }
+        }
+        if(event.getDamager() instanceof Firework firework && firework.getShooter() instanceof Player player){
+            Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(player.getUniqueId());
+            if(origin != null && origin instanceof Alchemist && firework.isGlowing()){
+                event.setDamage(event.getDamage() * Alchemist.ALCHEMIST_CONFIG.getExplosionDamageModifier());
             }
         }
     }

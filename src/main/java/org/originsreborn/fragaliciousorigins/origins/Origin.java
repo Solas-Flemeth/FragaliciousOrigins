@@ -6,7 +6,11 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.world.GenericGameEvent;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +26,7 @@ import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Random;
 import java.util.UUID;
 
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
@@ -36,6 +41,7 @@ public abstract class Origin {
     private boolean secondaryEnabled = false;
     private int tempTimeRemaining = 0;
     private UUID bondedUUID = null;
+    private static final Random RANDOM = new Random();
 
     //Initial creation
     public Origin(UUID uuid, OriginType type, OriginState state) {
@@ -375,6 +381,14 @@ public abstract class Origin {
     public void onMove(PlayerMoveEvent event) {
     }
 
+    public void onPotionLingering(LingeringPotionSplashEvent event){
+    }
+
+    public void onPotionSplash(PotionSplashEvent event){
+
+    }
+
+
     public void pickupArrow(PlayerPickupArrowEvent event) {
     }
 
@@ -599,5 +613,20 @@ public abstract class Origin {
 
     public void setBondedUUID(UUID bonded) {
         this.bondedUUID = bonded;
+    }
+
+    public void onEnchant(EnchantItemEvent event) {
+    }
+
+    public void onAnvilClick(InventoryClickEvent event) {
+    }
+    public static Random getRandom(){
+        return RANDOM;
+    }
+
+    public void onTradeClick(InventoryClickEvent event) {
+    }
+
+    public void onOpenInventory(InventoryOpenEvent event) {
     }
 }
