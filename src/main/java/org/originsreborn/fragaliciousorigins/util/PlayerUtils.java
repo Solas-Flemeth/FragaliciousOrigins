@@ -39,6 +39,7 @@ public class PlayerUtils {
                 case GENERIC_FALL_DAMAGE_MULTIPLIER:
                 case PLAYER_BLOCK_INTERACTION_RANGE:
                 case PLAYER_ENTITY_INTERACTION_RANGE:
+                case GENERIC_BURNING_TIME:
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() * amount);
                     break;
                 case GENERIC_MOVEMENT_SPEED:
@@ -121,6 +122,46 @@ public class PlayerUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns the total Experience of the player
+     * @param player
+     * @return
+     */
+    public static int getExperience(Player player){
+        return player.calculateTotalExperiencePoints();
+    }
+
+    /**
+     * Adds experience to the player
+     * @param player
+     * @param value
+     * @return
+     */
+    public static void addExperience(Player player, int value){
+        int total = getExperience(player);
+        System.out.println("Has a total expierence of " + total + " and adding " + value);
+        if(value >= 0){
+            player.setExperienceLevelAndProgress(total+value);
+        }
+    }
+
+    /**
+     * Subtracts experience from the player
+     * @param player
+     * @param value
+     * @return
+     */
+    public static void removeExperience(Player player, int value){
+        int total = getExperience(player);
+        System.out.println("Has a total expierence of " + total + " and removing " + value);
+        if(total > value){
+            player.setExperienceLevelAndProgress(total-value);
+        }else {
+            player.setExperienceLevelAndProgress(0);
+
+        }
     }
 
 }

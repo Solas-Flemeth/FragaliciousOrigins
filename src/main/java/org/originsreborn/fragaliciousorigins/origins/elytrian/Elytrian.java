@@ -24,7 +24,6 @@ import org.bukkit.util.Vector;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
@@ -100,8 +99,6 @@ public class Elytrian extends Origin {
     @Override
     public void setDefaultStats() {
         super.setDefaultStats();
-        ItemStack chestplate =  getPlayer().getEquipment().getChestplate();
-        //secondaryToggle(chestplate == null || chestplate.isEmpty() || getPlayer().getEquipment().getChestplate().getType().equals(Material.ELYTRA));
         toggleChestplate();
         updateArmor();
 
@@ -198,10 +195,6 @@ public class Elytrian extends Origin {
         toggleChestplate();
     }
 
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.MEDIUM;
-    }
 
     @Override
     public double getDodgeChance() {
@@ -270,7 +263,7 @@ public class Elytrian extends Origin {
         boolean isNull = chestplate == null;
         boolean isElytra = false;
         if(!isNull){
-            isElytra = chestplate.getType().equals(Material.ELYTRA);
+            isElytra = (chestplate.getType().equals(Material.ELYTRA) && chestplate.getItemMeta().isUnbreakable());
         }
         if (!isSecondaryEnabled()) {
             if (isNull == false && isElytra == false) {
@@ -289,7 +282,7 @@ public class Elytrian extends Origin {
         Player player = getPlayer();
         //when the charge is greater than 0, grab the minecraft player's speed and make them move the way their face is looking at the speed of speed * multiplier
         double percentage = Math.pow((charge / maxCharge), 2.0);
-        double multiplier = 1.0 + (percentage * ELYTRIAN_CONFIG.getMultiplyPerCharge());
+        double multiplier = 0.85 + (percentage * ELYTRIAN_CONFIG.getMultiplyPerCharge());
         Vector direction = player.getEyeLocation().getDirection().normalize();
         // Get the player's current velocity
         Vector velocity = player.getVelocity();
@@ -316,14 +309,14 @@ public class Elytrian extends Origin {
         } else if (charge >= maxCharge) {
             this.secondaryToggle(true);
             toggleChestplate();
+            getPlayer().getEquipment().setChestplate(ItemStack.empty());
             this.setSecondaryCooldown(getSecondaryMaxCooldown());
-            getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_VILLAGER_WORK_CARTOGRAPHER, 2, 0.8f);
+            getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.UI_CARTOGRAPHY_TABLE_TAKE_RESULT, 2, 0.8f);
             getPlayer().sendActionBar(Component.text("You feel your wings tear and begin to fall").color(errorColor()));
         } else {
             FragaliciousOrigins.BOSS_BARS.updateBossBar(CHARGE_KEY, getChargeComponent(), getChargePercentage());
         }
     }
-
 
     private float getChargePercentage() {
         float current = charge;
@@ -343,6 +336,6 @@ public class Elytrian extends Origin {
     }
 
     public void generateMaxCharge() {
-        maxCharge = 6f + ((float) (Math.random() * ELYTRIAN_CONFIG.getMaxCharge()));
+        maxCharge = 5f + ((float) (Math.random() * ELYTRIAN_CONFIG.getMaxCharge()));
     }
 }

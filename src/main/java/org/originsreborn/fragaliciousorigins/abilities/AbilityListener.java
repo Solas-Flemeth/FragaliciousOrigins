@@ -1,9 +1,11 @@
 package org.originsreborn.fragaliciousorigins.abilities;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import org.bukkit.GameEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
@@ -106,8 +108,8 @@ public class AbilityListener implements Listener {
     }
 
     @EventHandler
-    public void rightClickEvent(PlayerInteractEvent event) {
-        getOrigin(event).rightClickEvent(event);
+    public void clickEvent(PlayerInteractEvent event) {
+        getOrigin(event).clickEvent(event);
     }
 
     @EventHandler
@@ -250,7 +252,7 @@ public class AbilityListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()){
             //check that it is not an entity attacking them, and then calculate damage
@@ -258,7 +260,7 @@ public class AbilityListener implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.HIGH)
     public void onEntityDamageEntity(EntityDamageByEntityEvent event) {
         DamageUtil.onSpecialDamageEvents(event);
         if (event.getDamager() instanceof Player && !event.isCancelled()) {
@@ -341,23 +343,13 @@ public class AbilityListener implements Listener {
             }
         }
     }
-    /*
+
     @EventHandler
-    public void onClick( PlayerInteractEvent event){
-        Player player = event.getPlayer();
-        String gamemode = player.getGameMode().name();
-        if(event.getAction().isRightClick()){
-            String code = "Player right  click in gamemode " + gamemode;
-            FragaliciousOrigins.INSTANCE.getLogger().fine(code);
-            player.sendMessage(code);
-        }
-        if(event.getAction().isLeftClick()){
-            String code = "Player left click in gamemode " + gamemode;
-            FragaliciousOrigins.INSTANCE.getLogger().fine(code);
-            player.sendMessage(code);
+    public void onJump(PlayerJumpEvent event){
+        if(!event.isCancelled()){
+            getOrigin(event).onJump(event);
         }
     }
-     */
 
     private Origin getOrigin(PlayerEvent event) {
         return FragaliciousOrigins.ORIGINS.getOrigin(event.getPlayer().getUniqueId());
@@ -366,4 +358,6 @@ public class AbilityListener implements Listener {
     private Origin getOrigin(Player player) {
         return FragaliciousOrigins.ORIGINS.getOrigin(player.getUniqueId());
     }
+
+
 }

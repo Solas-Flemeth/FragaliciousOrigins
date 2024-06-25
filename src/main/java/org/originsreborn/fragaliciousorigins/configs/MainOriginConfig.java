@@ -18,7 +18,8 @@ public class MainOriginConfig extends OriginConfig {
             blockInteractRange, entityInteractRange, blockBreakSpeed, gravity, fallDamageMultiplier, safeFallDistance;
     private boolean stepSound;
     //DamageModifiers
-    private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, burnDuration, dodgeChance, meleeAtackMultiplier;
+    private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, dodgeChance, meleeAtackMultiplier;
+    private float burnDuration;
     //permissions & placeholders
     private  int difficulty;
     private List<String> permissions, originDesc;
@@ -150,7 +151,7 @@ public class MainOriginConfig extends OriginConfig {
         waterDamage = getConfigNode().node("damageModifiers").node("waterDamageMultiplier").getDouble();
         magicDamage = getConfigNode().node("damageModifiers").node("magicDamageMultiplier").getDouble();
         fireDamage = getConfigNode().node("damageModifiers").node("fireDamageMultiplier").getDouble();
-        burnDuration = getConfigNode().node("damageModifiers").node("burnDurationMultiplier").getDouble();
+        burnDuration = getConfigNode().node("damageModifiers").node("burnDurationMultiplier").getFloat();
         dodgeChance = getConfigNode().node("damageModifiers").node("dodgeChance").getDouble();
         meleeAtackMultiplier = getConfigNode().node("damageModifiers").node("meleeAttackMultiplier").getDouble();
         sharpness = getConfigNode().node("damageModifiers").node("sharpnessImmune").getBoolean();
@@ -288,7 +289,7 @@ public class MainOriginConfig extends OriginConfig {
         return fireDamage;
     }
 
-    public double getBurnDurationMultiplier() {
+    public float getBurnDurationMultiplier() {
         return burnDuration;
     }
 

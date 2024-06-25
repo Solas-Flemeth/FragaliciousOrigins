@@ -2,7 +2,6 @@ package org.originsreborn.fragaliciousorigins.origins.wip;
 
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
@@ -60,10 +59,6 @@ public class Blazeborn extends Origin {
 
     }
 
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.HARD;
-    }
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
     }
@@ -122,10 +117,6 @@ public class Blazeborn extends Origin {
 
         }
 
-        @Override
-        public OriginDifficulty getDifficulty() {
-            return OriginDifficulty.MEDIUM;
-        }
         public static void onReload() {
             MAIN_ORIGIN_CONFIG.loadConfig();
         }

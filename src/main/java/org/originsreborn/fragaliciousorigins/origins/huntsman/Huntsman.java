@@ -18,7 +18,6 @@ import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
@@ -95,10 +94,7 @@ public class Huntsman extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-        //ParticleUtil.generateParticleAtLocation(Particle.WARPED_SPORE, getPlayer().getLocation(), 1);
-        if(!getPlayer().isSneaking()){
-            ParticleUtil.generateParticleAtLocation(Particle.SPORE_BLOSSOM_AIR, getPlayer().getLocation(), 2);
-        }
+        ParticleUtil.generateParticleAtLocation(Particle.SPORE_BLOSSOM_AIR, getPlayer().getLocation(), 2);
     }
 
 
@@ -175,18 +171,14 @@ public class Huntsman extends Origin {
     }
 
     @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.MEDIUM;
-    }
-    @Override
     public void consume(PlayerItemConsumeEvent event){
         Food food = Food.getFood(event.getItem().getType());
         if(food != null && !food.isMeat()
                 && !food.getType().equals(Material.GLOW_BERRIES)
                 && !food.getType().equals(Material.SWEET_BERRIES)
-                && !food.getType().equals(Material.MUSHROOM_STEM)
+                && !food.getType().equals(Material.MUSHROOM_STEW)
         ){
-            event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
+            event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat and berries").color(errorColor()));
             event.setCancelled(true);
         }
     }

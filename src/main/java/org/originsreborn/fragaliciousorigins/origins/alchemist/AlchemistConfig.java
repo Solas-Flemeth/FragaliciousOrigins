@@ -10,6 +10,9 @@ public class AlchemistConfig extends OriginConfig {
     private double midasTouchChance, repairFreeChance, enchantmentFreeChance, doubleXPChance;
     private double arrowVelocity, explosionDamageModifier, explosionVelocity;
     private float splashRadiusModifier, lingeringRadiusModifier, lingeringDurationModifier, potionVelocityMultiplier, arrowRadius;
+    // New fields for the additional configuration parameters
+    private int drain;
+    private float multiplierDamage, shieldAbsorption, multiplierGain, multiplierDrain;
 
     public AlchemistConfig() {
         super(OriginType.ALCHEMIST, "unique");
@@ -49,11 +52,18 @@ public class AlchemistConfig extends OriginConfig {
             combatNode.node("explosionDamageModifier").set(1.5);
             combatNode.node("explosionVelocityModifier").set(2.0);
 
-            CommentedConfigurationNode potions = getConfigNode().node("potions");
-            potions.node("splashRadiusModifier").set(1.5);
-            potions.node("lingeringRadiusModifier").set(1.5);
-            potions.node("lingeringDurationModifier").set(2.0);
-            potions.node("velocityMultiplier").set(2.0);
+            CommentedConfigurationNode potionsNode = getConfigNode().node("potions");
+            potionsNode.node("splashRadiusModifier").set(1.5);
+            potionsNode.node("lingeringRadiusModifier").set(1.5);
+            potionsNode.node("lingeringDurationModifier").set(2.0);
+            potionsNode.node("velocityMultiplier").set(2.0);
+
+            CommentedConfigurationNode experienceEconomyNode = getConfigNode().node("experienceEconomy");
+            experienceEconomyNode.node("drain").set(1);
+            experienceEconomyNode.node("multiplierDamage").set(1.0);
+            experienceEconomyNode.node("shieldAbsorption").set(0.7);
+            experienceEconomyNode.node("multiplierGain").set(2.0);
+            experienceEconomyNode.node("multiplierDrain").set(1.0);
         } catch (Exception e) {
             // Handle exception
         }
@@ -84,6 +94,13 @@ public class AlchemistConfig extends OriginConfig {
         lingeringRadiusModifier = (float) getConfigNode().node("potions").node("lingeringRadiusModifier").getDouble();
         lingeringDurationModifier = (float) getConfigNode().node("potions").node("lingeringDurationModifier").getDouble();
         potionVelocityMultiplier = (float) getConfigNode().node("potions").node("velocityMultiplier").getDouble();
+        // Define the new experience economy variables
+        drain = getConfigNode().node("experienceEconomy").node("drain").getInt();
+        multiplierDamage =  getConfigNode().node("experienceEconomy").node("multiplierDamage").getFloat();
+        shieldAbsorption = getConfigNode().node("experienceEconomy").node("shieldAbsorption").getFloat();
+        multiplierGain = getConfigNode().node("experienceEconomy").node("multiplierGain").getFloat();
+        multiplierDrain = getConfigNode().node("experienceEconomy").node("multiplierDrain").getFloat();
+
     }
 
     public int getExpierenceGained() {
@@ -164,5 +181,25 @@ public class AlchemistConfig extends OriginConfig {
 
     public float getPotionVelocityMultiplier() {
         return potionVelocityMultiplier;
+    }
+
+    public int getDrain() {
+        return drain;
+    }
+
+    public float getMultiplierDamage() {
+        return multiplierDamage;
+    }
+
+    public float getShieldAbsorption() {
+        return shieldAbsorption;
+    }
+
+    public float getMultiplierGain() {
+        return multiplierGain;
+    }
+
+    public float getMultiplierDrain() {
+        return multiplierDrain;
     }
 }

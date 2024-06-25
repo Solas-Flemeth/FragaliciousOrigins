@@ -11,7 +11,9 @@ import org.originsreborn.fragaliciousorigins.origins.OriginManager;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
-import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
+import org.originsreborn.fragaliciousorigins.origins.feline.Feline;
+import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
+import org.originsreborn.fragaliciousorigins.origins.wip.Enderian;
 import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
@@ -36,6 +38,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
         BOSS_BARS = new BossBarManager();
         ORIGINS = new OriginManager();
         DATASOURCE = new DataSourceManager();
+
         this.getServer().getPluginManager().registerEvents(new AbilityListener(), this);
         registerCommands();
         registerPlaceholderAPI();

@@ -13,7 +13,6 @@ import org.bukkit.potion.PotionEffectType;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.origins.wip.Phytokin;
@@ -154,13 +153,6 @@ public class Bee extends Origin {
         secondaryToggle();
     }
 
-    /**
-     * @return
-     */
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.HARD;
-    }
 
     /**
      *

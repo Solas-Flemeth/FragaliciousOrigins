@@ -1,7 +1,7 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
@@ -36,7 +36,7 @@ public class Human extends Origin {
     @Override
     public void primaryAbility() {
         if(getType().equals(OriginType.HUMAN) && getState().equals(OriginState.NORMAL)){
-            getPlayer().performCommand("cp origin_main");
+            getPlayer().performCommand("cpanel origin_main");
             return;
         };
     }
@@ -65,8 +65,14 @@ public class Human extends Origin {
 
     }
 
+    /**
+     * @param event
+     */
     @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.EASY;
+    public void onRespawn(PlayerRespawnEvent event) {
+        super.onRespawn(event);
+        if(getType().equals(OriginType.HUMAN) && getState().equals(OriginState.NORMAL)){
+            getPlayer().performCommand("cpanel origin_main");
+        }
     }
 }

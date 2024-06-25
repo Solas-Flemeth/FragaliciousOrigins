@@ -1,8 +1,10 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
@@ -10,6 +12,7 @@ import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
+import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
 
 import java.util.*;
 
@@ -133,7 +136,11 @@ public class OriginManager {
                     }
                 }
                 origin.originTick(tick);
-                origin.originParticle(tick);
+                if(origin.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !(origin.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))){
+                    origin.originParticle(tick);
+                }else if(origin instanceof Phantom){
+                    origin.originParticle(tick);
+                }
             } else {
                 //if the player is no longer on, remove them
                 iterator.remove();

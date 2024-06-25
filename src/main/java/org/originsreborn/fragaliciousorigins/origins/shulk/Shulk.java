@@ -13,16 +13,11 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -67,12 +62,6 @@ public class Shulk extends Origin {
             ParticleUtil.generateParticleAtLocation(Particle.DRIPPING_OBSIDIAN_TEAR, getPlayer().getLocation(), remainder);
         }
     }
-
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.EASY;
-    }
-
 
     @Override
     public void primaryAbilityLogic() {

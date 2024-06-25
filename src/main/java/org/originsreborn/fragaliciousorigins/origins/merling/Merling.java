@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
@@ -257,11 +256,6 @@ public class Merling extends Origin {
             return MERLING_CONFIG.getWaterAttributesDodgeChance();
         }
         return super.getDodgeChance();
-    }
-
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.HARD;
     }
 
     /**

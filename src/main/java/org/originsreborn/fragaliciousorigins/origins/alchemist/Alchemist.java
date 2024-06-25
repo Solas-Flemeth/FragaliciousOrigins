@@ -18,13 +18,14 @@ import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
+import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -50,6 +51,8 @@ public class Alchemist extends Origin {
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.ALCHEMIST);
     public CatalystMode mode;
     public static final AlchemistConfig ALCHEMIST_CONFIG = new AlchemistConfig();
+    private static final Particle.DustTransition SHIELD_DUST_TRANSITION =  ParticleUtil.dustTransition(0x0096ff, 0xb867ef, 2f);
+    private static final Particle.DustTransition DAMAGE_DUST_TRANSITION =  ParticleUtil.dustTransition(0xa200ff, 0xff0000, 2f);
     public Alchemist(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.ALCHEMIST, state, customDataString);
         if(mode == null){
@@ -64,7 +67,12 @@ public class Alchemist extends Origin {
 
     @Override
     public void originTick(int tickNum) {
-
+        Player player = getPlayer();
+        int experience = PlayerUtils.getExperience(player);
+        if(player.isSneaking() && experience > 0 && tickNum%3==0 && mode == CatalystMode.MILK){
+            PlayerUtils.removeExperience(player, ALCHEMIST_CONFIG.getDrain());
+            ParticleUtil.generateCircleParticle(Particle.DUST, SHIELD_DUST_TRANSITION, player.getLocation(), 10, 1.2);
+        }
     }
 
     /**
@@ -95,12 +103,13 @@ public class Alchemist extends Origin {
     public void primaryAbilityLogic() {
         Player player = getPlayer();
         player.setEnchantmentSeed(new Random().nextInt(1000000000));
-        player.giveExp(ALCHEMIST_CONFIG.getExpierenceGained());
         ParticleUtil.generateSphereParticle(Particle.ENCHANT, getPlayer().getLocation(),50, 2.5);
         ParticleUtil.generateSphereParticle(Particle.END_ROD, player.getLocation(), 20, 2.0);
         ParticleUtil.generateCircleParticle(Particle.PORTAL, player.getLocation(), 20, 1.5);
-        PotionsUtil.addEffect(player, GLOWING, 0, 60);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 0.5f, 2);
+        int experienceGain = calculatePotionExperienceGain(player.getActivePotionEffects());
+        PlayerUtils.addExperience(player, experienceGain);
+        player.clearActivePotionEffects();
     }
 
     @Override
@@ -112,10 +121,6 @@ public class Alchemist extends Origin {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1f, 1.5f);
     }
 
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.HARD;
-    }
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
         ALCHEMIST_CONFIG.loadConfig();
@@ -162,9 +167,7 @@ public class Alchemist extends Origin {
     public void onShootProjectileHit(ProjectileHitEvent event) {
         super.onShootProjectileHit(event);
         if(event.getEntity() instanceof Arrow arrow){
-            System.out.println("SOLAS SHOT AN ARROW");
             if(arrow.getBasePotionType() != null){
-                System.out.println("SOLAS SHOT AN ARROW WITH POTION EFFECTS");
                 createAreaEffectCloudAtSpot(arrow);
             }
         }
@@ -175,14 +178,21 @@ public class Alchemist extends Origin {
      */
     @Override
     public void onAnvilClick(InventoryClickEvent event) {
-        if (event.getInventory().getType() != InventoryType.ANVIL
-                || event.getSlotType() != InventoryType.SlotType.RESULT
-                || !event.isLeftClick()
-                || !(event.getWhoClicked() instanceof Player player)
-        ){return;}
+        if (event.getInventory().getType() != InventoryType.ANVIL){
+            return;
+        }
+        if(event.getSlotType() != InventoryType.SlotType.RESULT){
+            return;
+        }
+        if(!event.isLeftClick()){
+            return;
+        }
+        if( !(event.getWhoClicked() instanceof Player player)){
+            return;
+        }
         if (Math.random() < ALCHEMIST_CONFIG.getRepairFreeChance()) {
             AnvilInventory anvilInventory = (AnvilInventory) event.getInventory();
-            player.setExp(player.getExp() + anvilInventory.getRepairCost());
+            anvilInventory.setRepairCost(0);
             // Optionally, send a message to the player
             ParticleUtil.generateSphereParticle(Particle.END_ROD, player.getLocation(), 20, 2.0);
             ParticleUtil.generateParticleAtLocation(Particle.ENCHANT, player.getLocation(), 20);
@@ -220,9 +230,7 @@ public class Alchemist extends Origin {
         Player player = event.getEnchanter();
         if (Math.random() < ALCHEMIST_CONFIG.getEnchantmentFreeChance()) {
             int expCost = event.getExpLevelCost();
-            // Refund the experience to the player
-            player.giveExpLevels(expCost);
-            // Optionally, send a message to the player
+            PlayerUtils.addExperience(player,expCost);
             ParticleUtil.generateSphereParticle(Particle.END_ROD, player.getLocation(), 20, 2.0);
             ParticleUtil.generateParticleAtLocation(Particle.ENCHANT, player.getLocation(), 20);
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 2);
@@ -236,9 +244,13 @@ public class Alchemist extends Origin {
     @Override
     public void onBowShoot(EntityShootBowEvent event) {
         super.onBowShoot(event);
-        if(event.getProjectile() instanceof Arrow){
+        if(getPlayer().isSneaking() && mode.equals(CatalystMode.MILK)){
+            event.setCancelled(true);
+            getPlayer().sendActionBar(Component.text("You cannot attack while shielding ").color(Origin.errorColor()));
+        }
+        if(event.getProjectile() instanceof Arrow arrow && arrow.getBasePotionType() == null){
             Vector modifiedVector = event.getProjectile().getVelocity().multiply(ALCHEMIST_CONFIG.getArrowVelocity());
-            event.getProjectile().setVelocity(modifiedVector);
+            arrow.setVelocity(modifiedVector);
         }else if(event.getProjectile() instanceof Firework firework){
             Vector modifiedVector = firework.getVelocity().multiply(ALCHEMIST_CONFIG.getExplosionVelocity());
             firework.setVelocity(modifiedVector);
@@ -265,13 +277,25 @@ public class Alchemist extends Origin {
     public void onPotionEffect(EntityPotionEffectEvent event) {
         if(event.getEntity().hasMetadata("alchemistPotion")){
             event.getEntity().removeMetadata("alchemistPotion", FragaliciousOrigins.INSTANCE);
-            return;
+            return; //potion effect is an catalyst effect
         }
-        if(event.getAction().equals(EntityPotionEffectEvent.Action.ADDED)){
+        Player player = getPlayer();
+        EntityPotionEffectEvent.Action action = event.getAction();
+        if(action.equals(EntityPotionEffectEvent.Action.ADDED)|| action.equals(EntityPotionEffectEvent.Action.CHANGED)){
             PotionEffect potionEffect = event.getNewEffect();
             PotionEffectType effectType = potionEffect.getType();
             int duration = potionEffect.getDuration();
             int amplifier = potionEffect.getAmplifier();
+            int cost = calculatePotionExperienceLoss(potionEffect);
+            if(cost > PlayerUtils.getExperience(player) && (action.equals(EntityPotionEffectEvent.Action.ADDED) || mode.equals(CatalystMode.MILK))){
+                return; //not enough XP to apply effect
+            }
+            if(action.equals(EntityPotionEffectEvent.Action.ADDED) || mode.equals(CatalystMode.MILK)){
+                PlayerUtils.removeExperience(player,cost);
+                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 0.25f, 2.0f);
+                player.sendActionBar(Component.text("You modified the effect with catalyst ").color(Origin.textColor())
+                        .append(Component.text(mode.getMode()).color(mode.getColor())));
+            }
             switch (mode){
                 case GLOWSTONE:
                     duration = (int) (duration * ALCHEMIST_CONFIG.getGlowstoneDurationMultiplier());
@@ -287,11 +311,11 @@ public class Alchemist extends Origin {
                     effectType = getPositiveOpposite(effectType);
                     break;
             }
-            PotionEffect newPotionEffect = potionEffect.withType(effectType);
-            newPotionEffect = newPotionEffect.withDuration(duration);
-            newPotionEffect = newPotionEffect.withAmplifier(amplifier);
-            event.getEntity().setMetadata("alchemistPotion",new FixedMetadataValue(FragaliciousOrigins.INSTANCE,potionEffect.toString()));
-            getPlayer().addPotionEffect(newPotionEffect);
+            if(!mode.equals(CatalystMode.MILK)) {
+                PotionEffect newPotionEffect = potionEffect.withType(effectType).withDuration(duration).withAmplifier(amplifier);
+                event.getEntity().setMetadata("alchemistPotion", new FixedMetadataValue(FragaliciousOrigins.INSTANCE, potionEffect.toString()));
+                getPlayer().addPotionEffect(newPotionEffect);
+            }
             event.setCancelled(true);
         }
     }
@@ -328,6 +352,39 @@ public class Alchemist extends Origin {
         event.getAreaEffectCloud().setDurationOnUse(durationOnUse);
     }
 
+    /**
+     * @param event
+     */
+    @Override
+    public void onDamage(EntityDamageEvent event) {
+        super.onDamage(event);
+        if(event.isCancelled()){
+            return;
+        }
+        if(event.getEntity() instanceof Player player && player.isSneaking() && PlayerUtils.getExperience(player) > 0 && mode.equals(CatalystMode.MILK)){
+            double damage = event.getDamage();
+            int cost = (int) (damage * ALCHEMIST_CONFIG.getMultiplierDamage());
+            damage = damage * (1.0 - ALCHEMIST_CONFIG.getShieldAbsorption());
+            event.setDamage(damage);
+            player.getWorld().playSound(getPlayer().getLocation(), Sound.BLOCK_AMETHYST_CLUSTER_STEP, 1f, 1.0f);
+            ParticleUtil.generateSphereParticle(Particle.DUST, DAMAGE_DUST_TRANSITION, player.getLocation(), 50, 1.0);
+            PlayerUtils.removeExperience(player, cost);
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @Override
+    public void onAttackEntity(EntityDamageByEntityEvent event) {
+        super.onAttackEntity(event);
+        if(event.getDamager() instanceof Player player && player.getUniqueId().equals(getUUID())){
+            if(player.isSneaking() && mode.equals(CatalystMode.MILK)){
+                event.setCancelled(true);
+                getPlayer().sendActionBar(Component.text("You cannot attack while shielding").color(Origin.errorColor()));
+            }
+        }
+    }
 
     private static PotionEffectType getPositiveOpposite(PotionEffectType type){
         if (type.equals(BAD_OMEN)) {
@@ -350,5 +407,38 @@ public class Alchemist extends Origin {
             return GLOWING;
         }
         return type;
+    }
+
+    private int calculatePotionExperienceLoss(Collection<PotionEffect> potionEffects){
+        float cost = 0;
+        for(PotionEffect effect : potionEffects){
+            cost += calculatePotionExperienceLoss(effect);
+        }
+        return (int) cost;
+    }
+    private int calculatePotionExperienceLoss(PotionEffect effect){
+        float duration = effect.getDuration();
+        float amplifier = effect.getAmplifier() +0.5f;
+        float multiplier = getPotionMultiplier(effect.getType());
+        return 1 + (int) ((((amplifier * 2) * duration * multiplier* mode.getMultiplier()) / 20.0f) * ALCHEMIST_CONFIG.getMultiplierDrain());
+    }
+    public int calculatePotionExperienceGain(Collection<PotionEffect> potionEffects){
+        float cost = 0;
+        for(PotionEffect effect : potionEffects){
+            float duration = effect.getDuration();
+            float amplifier = effect.getAmplifier();
+            float multiplier = getPotionMultiplier(effect.getType());
+            cost += 1f + (((amplifier * 2) * duration * multiplier)/20.0f) * ALCHEMIST_CONFIG.getMultiplierGain();
+        }
+        return (int) cost;
+    }
+
+
+    public static float getPotionMultiplier(PotionEffectType effectType){
+        return switch (effectType.getEffectCategory()){
+            case BENEFICIAL -> 0.25f;
+            case NEUTRAL -> 1f;
+            default -> 1.5f;
+        };
     }
 }

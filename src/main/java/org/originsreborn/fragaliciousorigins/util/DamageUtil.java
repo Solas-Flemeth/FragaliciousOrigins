@@ -5,6 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -19,6 +21,8 @@ import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
+import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
+import org.originsreborn.fragaliciousorigins.origins.wip.Blazeborn;
 
 import java.util.List;
 
@@ -61,11 +65,13 @@ public class DamageUtil {
     }
 
     public static void onSpecialDamageEvents(EntityDamageByEntityEvent event) {
+        //huntsman and other arrows
         if (event.getCause().equals(EntityDamageEvent.DamageCause.PROJECTILE) && event.getEntity() instanceof LivingEntity livingEntity) {
             if (event.getDamager() instanceof Projectile arrow) {
                 onArrowEvent(event, livingEntity, arrow);
             }
         }
+        //alchemist explosives
         if(event.getDamager() instanceof Firework firework && firework.getShooter() instanceof Player player){
             Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(player.getUniqueId());
             if(origin != null && origin instanceof Alchemist && firework.isGlowing()){

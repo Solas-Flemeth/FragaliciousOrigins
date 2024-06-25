@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.*;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import java.util.UUID;
@@ -186,10 +185,6 @@ public class Inchling extends Origin {
         }
     }
 
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.MEDIUM;
-    }
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
         INCHLING_CONFIG.loadConfig();

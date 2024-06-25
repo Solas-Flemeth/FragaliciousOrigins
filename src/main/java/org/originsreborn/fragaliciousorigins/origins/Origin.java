@@ -1,12 +1,13 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
+import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
+import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -16,7 +17,6 @@ import org.bukkit.event.world.GenericGameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.DamageUtil;
@@ -49,7 +49,11 @@ public abstract class Origin {
         this.type = type;
         this.state = state;
         setDefaultStats();
-        getPlayer().sendMessage("You are now a " + getType().getDisplay());
+        Player player = getPlayer();
+        player.sendMessage("You are now a " + getType().getDisplay());
+        if(player.getGameMode().equals(GameMode.SPECTATOR)){
+            player.setGameMode(GameMode.SURVIVAL);
+        }
     }
 
     public Origin(UUID uuid, OriginType type, OriginState state, String customDataString) {
@@ -60,8 +64,11 @@ public abstract class Origin {
             deserializeCustomData(customDataString);
         }
         setDefaultStats();
-
-        getPlayer().sendMessage("You are now a " + getType().getDisplay());
+        Player player = getPlayer();
+        player.sendMessage("You are now a " + getType().getDisplay());
+        if(player.getGameMode().equals(GameMode.SPECTATOR)){
+            player.setGameMode(GameMode.SURVIVAL);
+        }
     }
 
     public static void onReload() {
@@ -80,10 +87,6 @@ public abstract class Origin {
         return TextColor.color(0x18FF00);
     }
 
-    public static String formatFloatPercentage(float percentage) {
-        int formatPercentage = (int) (percentage * 100);
-        return formatPercentage + "%";
-    }
 
     public void updateStats() {
     }
@@ -142,7 +145,7 @@ public abstract class Origin {
         setAttribute(player, Attribute.GENERIC_GRAVITY, config.getGravity());
         setAttribute(player, Attribute.GENERIC_SAFE_FALL_DISTANCE, config.getSafeFallDistance());
         setAttribute(player, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, config.getFallDamageMultiplier());
-
+        setAttribute(player, Attribute.GENERIC_BURNING_TIME, config.getBurnDurationMultiplier());
     }
 
     public void onDeath(PlayerDeathEvent event) {
@@ -246,10 +249,14 @@ public abstract class Origin {
         if (getPrimaryCooldown() > 0) {
             player.sendActionBar(primaryAbilityTimerCooldownMsg());
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
-        } else {
+        } else if(player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()){
             primaryAbilityLogic();
             setPrimaryCooldown(getPrimaryMaxCooldown());
         }
+    }
+
+    public boolean primaryConditionCheck() {
+        return true;
     }
 
     public abstract void primaryAbilityLogic();
@@ -320,8 +327,6 @@ public abstract class Origin {
         return getConfig().getSecondaryMaxCooldown();
     }
 
-    public abstract OriginDifficulty getDifficulty();
-
     //////////////////////
     // Player Events
     // See https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/player/package-summary.html
@@ -354,7 +359,6 @@ public abstract class Origin {
     }
 
     public void onIgnite(EntityCombustEvent event) {
-        event.setDuration((int) (((double) event.getDuration()) * getConfig().getBurnDurationMultiplier()));
     }
 
     public void interactStaticEntity(PlayerInteractAtEntityEvent event) {
@@ -363,7 +367,7 @@ public abstract class Origin {
     public void interactEntity(PlayerInteractEntityEvent event) {
     }
 
-    public void rightClickEvent(PlayerInteractEvent event) {
+    public void clickEvent(PlayerInteractEvent event) {
     }
 
     public void toolBreak(PlayerItemBreakEvent event) {
@@ -628,5 +632,54 @@ public abstract class Origin {
     }
 
     public void onOpenInventory(InventoryOpenEvent event) {
+    }
+    public void onJump(PlayerJumpEvent event){
+
+    }
+
+    /**
+     * Generates a percentage between 0 and 1
+     * @param amount
+     * @param total
+     * @return
+     */
+    public static float calculatePercentage(int amount, int total) {
+        float amountf = amount;
+        float totalf = total;
+        float percentage = amountf / totalf;
+        if (percentage < 0.0) {
+            return 0;
+        } else if (percentage > 1.0f) {
+            return 1.0f;
+        } else {
+            return percentage;
+        }
+    }
+
+    /**
+     * Generates a percentage between 0 and 1
+     * @param amount
+     * @param total
+     * @return
+     */
+    public static float calculatePercentage(double amount, double total) {
+        float percentage = (float) (amount / total);
+        if (percentage < 0.0) {
+            return 0;
+        } else if (percentage > 1.0f) {
+            return 1.0f;
+        } else {
+            return percentage;
+        }
+    }
+
+    /**
+     * Formats the float as a percentage
+     * @param percentage
+     * @return
+     */
+    public static String formatFloatPercentage(float percentage) {
+        int formatPercentage = (int) (percentage * 100);
+        return formatPercentage + "%";
     }
 }

@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginDifficulty;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
@@ -85,11 +84,6 @@ public class Giant extends Origin {
     @Override
     public void secondaryAbilityLogic() {
 
-    }
-
-    @Override
-    public OriginDifficulty getDifficulty() {
-        return OriginDifficulty.MEDIUM;
     }
 
     public static void onReload() {
