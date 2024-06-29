@@ -75,7 +75,6 @@ public class Huntsman extends Origin {
         if (getPlayer().isSneaking()) {
             PotionsUtil.addEffect(player, PotionEffectType.INVISIBILITY, 0, HUNTSMAN_CONFIG.getCrouchDuration());
             PotionsUtil.addEffect(player, PotionEffectType.SLOW_FALLING, 0, HUNTSMAN_CONFIG.getCrouchDuration());
-            PotionsUtil.addEffect(player, PotionEffectType.SLOWNESS, 0, HUNTSMAN_CONFIG.getCrouchDuration());
         }
         if (tickNum % 10 == 0) {
             if (invisDuration != 0) {

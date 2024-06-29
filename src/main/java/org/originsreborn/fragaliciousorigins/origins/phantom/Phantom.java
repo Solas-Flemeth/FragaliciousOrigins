@@ -18,6 +18,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
@@ -28,6 +29,8 @@ import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 import org.originsreborn.fragaliciousorigins.util.enums.DayCycle;
 
+import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -119,6 +122,31 @@ public class Phantom extends Origin {
         if(getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             event.setCancelled(true);
         }
+    }
+
+    /**
+     * @param map
+     * @throws Exception
+     */
+    @Override
+    public void additionalDeserialization(HashMap<String, Serializable> map) throws Exception {
+        restTime = (int) map.get("restTime");
+        huntTime = (int) map.get("huntTime");
+        coyoteTime = (int) map.get("coyoteTime");
+        super.additionalDeserialization(map);
+
+    }
+
+    /**
+     * @param map
+     * @return
+     */
+    @Override
+    public @NotNull HashMap<String, Serializable> additionalSerializationOfCustomData(HashMap<String, Serializable> map) {
+        map.put("restTime",getRestTime());
+        map.put("huntTime", getHuntTime());
+        map.put("coyoteTime",getCoyoteTime());
+        return super.additionalSerializationOfCustomData(map);
     }
 
     /**

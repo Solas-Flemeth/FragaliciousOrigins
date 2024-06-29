@@ -23,7 +23,6 @@ public class PlayerUtils {
             AttributeInstance attributeInstance = player.getAttribute(attribute);
             switch (attribute) {
                 //additional
-                case GENERIC_KNOCKBACK_RESISTANCE:
                 case GENERIC_ARMOR:
                 case GENERIC_ARMOR_TOUGHNESS:
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() + amount);

@@ -17,6 +17,7 @@ public class MainOriginConfig extends OriginConfig {
             movementSpeed, scale, stepHeight, jumpstrength,
             blockInteractRange, entityInteractRange, blockBreakSpeed, gravity, fallDamageMultiplier, safeFallDistance;
     private boolean stepSound;
+    private double explosionKnockbackResistance, miningEfficiency, movementEfficiency, oxygenBonus, sneakingSpeed, submergedMiningSpeed, sweepingDamageRatio, waterMovementEfficiency;
     //DamageModifiers
     private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, dodgeChance, meleeAtackMultiplier;
     private float burnDuration;
@@ -58,6 +59,14 @@ public class MainOriginConfig extends OriginConfig {
             attributesNode.node("safeFallDistance").set(3); //NUMERIC
             attributesNode.node("fallDamageMultiplier").set(1.0); //multiplier
             attributesNode.node("stepSound").set(true);
+            attributesNode.node("explosionKnockbackResistance").set(0.0);
+            attributesNode.node("miningEfficiency").set(0.0);
+            attributesNode.node("movementEfficiency").set(0.0);
+            attributesNode.node("oxygenBonus").set(0.0);
+            attributesNode.node("sneakingSpeed").set(0.3);
+            attributesNode.node("submergedMiningSpeed").set(0.2);
+            attributesNode.node("sweepingDamageRatio").set(0.0);
+            attributesNode.node("waterMovementEfficiency").set(0.0);
             CommentedConfigurationNode damageModifiersNode = getConfigNode().node("damageModifiers");
             damageModifiersNode.node("explosionDamageMultiplier").set(1.0);
             damageModifiersNode.node("meleeDamageMultiplier").set(1.0);
@@ -124,8 +133,10 @@ public class MainOriginConfig extends OriginConfig {
      */
     @Override
     public void defineVariables() {
+        //cooldowns
         primaryCooldown = getConfigNode().node("cooldowns").node("primaryMaxCooldown").getInt();
         secondaryCooldown = getConfigNode().node("cooldowns").node("secondaryMaxCooldown").getInt();
+
         armor = getConfigNode().node("attributes").node("armor").getDouble();
         armorToughness = getConfigNode().node("attributes").node("armorToughness").getDouble();
         attack = getConfigNode().node("attributes").node("attackDamage").getDouble();
@@ -145,6 +156,16 @@ public class MainOriginConfig extends OriginConfig {
         safeFallDistance = getConfigNode().node("attributes").node("safeFallDistance").getDouble();
         fallDamageMultiplier = getConfigNode().node("attributes").node("fallDamageMultiplier").getDouble();
         stepSound = getConfigNode().node("attributes").node("stepSound").getBoolean();
+        //1.21 attributes
+        explosionKnockbackResistance = getConfigNode().node("attributes").node("explosionKnockbackResistance").getDouble();
+        miningEfficiency = getConfigNode().node("attributes").node("miningEfficiency").getDouble();
+        movementEfficiency = getConfigNode().node("attributes").node("movementEfficiency").getDouble();
+        oxygenBonus = getConfigNode().node("attributes").node("oxygenBonus").getDouble();
+        sneakingSpeed = getConfigNode().node("attributes").node("sneakingSpeed").getDouble();
+        submergedMiningSpeed = getConfigNode().node("attributes").node("submergedMiningSpeed").getDouble();
+        sweepingDamageRatio = getConfigNode().node("attributes").node("sweepingDamageRatio").getDouble();
+        waterMovementEfficiency = getConfigNode().node("attributes").node("waterMovementEfficiency").getDouble();
+        //damage modifiers
         explosionsDamage = getConfigNode().node("damageModifiers").node("explosionDamageMultiplier").getDouble();
         meleeDamage = getConfigNode().node("damageModifiers").node("meleeDamageMultiplier").getDouble();
         projectileDamage = getConfigNode().node("damageModifiers").node("projectileDamageMultiplier").getDouble();
@@ -158,6 +179,7 @@ public class MainOriginConfig extends OriginConfig {
         smite = getConfigNode().node("damageModifiers").node("smiteImmune").getBoolean();
         arthapods = getConfigNode().node("damageModifiers").node("baneOfArthropodsImmune").getBoolean();
         permissions = getStringsFromNode(getConfigNode().node("permissions"));
+        //info
         originName = getConfigNode().node("placeholders").node("title").node("name").getString();
         originDesc = getStringsFromNode(getConfigNode().node("placeholders").node("title").node("description"));
         icon = getConfigNode().node("placeholders").node("title").node("icon").getString();
@@ -179,7 +201,6 @@ public class MainOriginConfig extends OriginConfig {
             ));
         }
     }
-
 
     public int getPrimaryMaxCooldown() {
         return primaryCooldown;
@@ -263,6 +284,38 @@ public class MainOriginConfig extends OriginConfig {
 
     public boolean hasStepSounds() {
         return stepSound;
+    }
+
+    public double getExplosionKnockbackResistance() {
+        return explosionKnockbackResistance;
+    }
+
+    public double getMiningEfficiency() {
+        return miningEfficiency;
+    }
+
+    public double getMovementEfficiency() {
+        return movementEfficiency;
+    }
+
+    public double getOxygenBonus() {
+        return oxygenBonus;
+    }
+
+    public double getSneakingSpeed() {
+        return sneakingSpeed;
+    }
+
+    public double getSubmergedMiningSpeed() {
+        return submergedMiningSpeed;
+    }
+
+    public double getSweepingDamageRatio() {
+        return sweepingDamageRatio;
+    }
+
+    public double getWaterMovementEfficiency() {
+        return waterMovementEfficiency;
     }
 
     public double getExplosionDamageMultiplier() {

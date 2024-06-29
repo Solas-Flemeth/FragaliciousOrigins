@@ -36,7 +36,7 @@ public class Human extends Origin {
     @Override
     public void primaryAbility() {
         if(getType().equals(OriginType.HUMAN) && getState().equals(OriginState.NORMAL)){
-            getPlayer().performCommand("cpanel origin_main");
+            getPlayer().performCommand("cpanel human");
             return;
         };
     }
@@ -72,7 +72,7 @@ public class Human extends Origin {
     public void onRespawn(PlayerRespawnEvent event) {
         super.onRespawn(event);
         if(getType().equals(OriginType.HUMAN) && getState().equals(OriginState.NORMAL)){
-            getPlayer().performCommand("cpanel origin_main");
+            getPlayer().performCommand("cpanel human");
         }
     }
 }

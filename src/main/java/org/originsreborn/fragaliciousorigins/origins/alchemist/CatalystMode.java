@@ -4,9 +4,9 @@ import net.kyori.adventure.text.format.TextColor;
 
 public enum CatalystMode {
     SPIDER_EYE("Spider Eye", TextColor.color(0xc45c6c), 1.5f),
-    GLOWSTONE("Glowstone", TextColor.color(0xFFD61A), 1.0f),
-    REDSTONE("Redstone", TextColor.color(0xE82E27), 0.5f),
-    MILK("Milk", TextColor.color(0xffffff), 0.25f);
+    GLOWSTONE("Glowstone", TextColor.color(0xFFD61A), 0.9f),
+    REDSTONE("Redstone", TextColor.color(0xE82E27), 0.33f),
+    MILK("Milk", TextColor.color(0xffffff), 0f);
 
     private String mode;
     private TextColor color;

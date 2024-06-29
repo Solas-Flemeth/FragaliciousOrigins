@@ -7,6 +7,7 @@ import org.originsreborn.fragaliciousorigins.bossbars.BossBarManager;
 import org.originsreborn.fragaliciousorigins.commands.*;
 import org.originsreborn.fragaliciousorigins.intergration.OriginPlaceholders;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
+import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
@@ -54,6 +55,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
     public void reload() {
         try {
             CONFIG.loadConfig();
+            Human.onReload();
             Alchemist.onReload();
             Arachnid.onReload();
             Blazeborn.Bee.onReload();

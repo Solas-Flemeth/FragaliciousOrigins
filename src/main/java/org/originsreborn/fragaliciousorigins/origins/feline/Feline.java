@@ -7,15 +7,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
@@ -111,8 +108,7 @@ public class Feline extends Origin {
      */
     @Override
     public boolean primaryConditionCheck() {
-        Entity entity = getPlayer();
-        return getPlayer().getLocation().getPitch() < -5 && entity.isOnGround();
+        return getPlayer().getLocation().getPitch() < -5;
     }
 
     @Override
@@ -150,21 +146,33 @@ public class Feline extends Origin {
      * @param event
      */
     @Override
+    public void onJump(PlayerJumpEvent event) {
+        super.onJump(event);
+        if(dashCooldown > (FELINE_CONFIG.getDashCooldown() * 2/3)){
+            event.setCancelled(true);
+        }
+    }
+
+    /**
+     * @param event
+     */
+    @Override
     public void onToggleSneak(PlayerToggleSneakEvent event) {
         super.onToggleSneak(event);
         Player player = event.getPlayer();
-        if (isSecondaryEnabled() && dashCooldown == 0 && !player.isSwimming() && !player.isGliding() && player.isOnGround()) {
+        if (isSecondaryEnabled() && dashCooldown == 0 && !player.isSwimming() && !player.isGliding() && player.isOnGround() && !player.isSneaking()) {
             double dashX = player.getX() - lastX;
             double dashZ = player.getZ() - lastZ;
             Location location = player.getLocation();
             if(dashX== 0.0 && dashZ == 0.0){
                 return;
             }
-            Vector direction = new Vector(dashX, 0.000001, dashZ).normalize();
-            player.setVelocity(direction.multiply( FELINE_CONFIG.getDashVelocity()));
+            Vector direction = new Vector(dashX, 0.00001, dashZ).normalize();
+            direction.setY(-5.0);
+            player.setVelocity(direction.multiply(FELINE_CONFIG.getDashVelocity()));
             setDashCooldown(FELINE_CONFIG.getDashCooldown());
             player.getWorld().playSound(location, Sound.ENTITY_HORSE_BREATHE, 0.9f, 1.7f);
-            ParticleUtil.generateSphereParticle(Particle.SMALL_GUST, location, 50, 0.7);
+            ParticleUtil.generateSphereParticle(Particle.SMALL_GUST, location, 35, 0.7);
         }
     }
 
@@ -174,6 +182,9 @@ public class Feline extends Origin {
     }
 
     public void setDashCooldown(int dashCooldown) {
+        if(dashCooldown == FELINE_CONFIG.getDashCooldown()/2){
+            ParticleUtil.generateSphereParticle(Particle.SMALL_GUST, getPlayer().getLocation(), 15, 0.7);
+        }
         if(dashCooldown < 0){
             dashCooldown = 0;
         }

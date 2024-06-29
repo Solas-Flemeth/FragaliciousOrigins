@@ -47,7 +47,6 @@ public class FelineConfig extends OriginConfig {
 
         dashVelocity = getConfigNode().node("secondaryAbility").node("dashVelocity").getFloat();
         dashCooldown = getConfigNode().node("secondaryAbility").node("cooldown").getInt();
-        System.out.println("DASH VELOCITY = " + dashVelocity  + "   DASH COOLDOWN =" + dashCooldown );
         nineLivesChance = getConfigNode().node("nineLivesChance").getDouble();
 
         weaknessDuration = getConfigNode().node("waterWeakness").node("weaknessDuration").getInt();

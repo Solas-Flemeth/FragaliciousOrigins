@@ -6,7 +6,7 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 public class MerlingConfig extends OriginConfig {
-    private double swimMultiplier, blockBreakSpeed, entityInteractRange, blockInteractRange, deathAvoidChance, dodgeChance, waterBreathingPotionChance, respirationChance, tridentMeleeMultiplier, tridentRangeMultiplier, tridentVelocityMultiplier;
+    private double swimMultiplier, entityInteractRange, blockInteractRange, deathAvoidChance, dodgeChance, waterBreathingPotionChance, respirationChance, tridentMeleeMultiplier, tridentRangeMultiplier, tridentVelocityMultiplier;
     private int secondaryAbilityRange, secondaryAbilityPotionDuration, secondaryAbilityDolphinsGraceAmplifier, waterAttributesDolphinsGraceAmplifier, hydrationDuration, minArmorToApply, ceilingHeight, slownessAmplifier;
 
     public MerlingConfig() {
@@ -25,7 +25,6 @@ public class MerlingConfig extends OriginConfig {
             secondaryAbilityNode.node("dolphinsGraceAmplifier").set(0);
 
             CommentedConfigurationNode waterAttributesNode = getConfigNode().node("waterAttributes");
-            waterAttributesNode.node("blockBreakSpeed").set(5.0);
             waterAttributesNode.node("entityInteractRange").set(2.0);
             waterAttributesNode.node("blockInteractRange").set(2.0);
             waterAttributesNode.node("dolphinsGraceAmplifier").set(2);
@@ -54,7 +53,6 @@ public class MerlingConfig extends OriginConfig {
         secondaryAbilityPotionDuration = getConfigNode().node("secondaryAbility").node("potionDuration").getInt();
         secondaryAbilityDolphinsGraceAmplifier = getConfigNode().node("secondaryAbility").node("dolphinsGraceAmplifier").getInt();
 
-        blockBreakSpeed = getConfigNode().node("waterAttributes").node("blockBreakSpeed").getDouble();
         entityInteractRange = getConfigNode().node("waterAttributes").node("entityInteractRange").getDouble();
         blockInteractRange = getConfigNode().node("waterAttributes").node("blockInteractRange").getDouble();
         waterAttributesDolphinsGraceAmplifier = getConfigNode().node("waterAttributes").node("dolphinsGraceAmplifier").getInt();
@@ -84,10 +82,6 @@ public class MerlingConfig extends OriginConfig {
 
     public int getSecondaryAbilityDolphinsGraceAmplifier() {
         return secondaryAbilityDolphinsGraceAmplifier;
-    }
-
-    public double getBlockBreakSpeed() {
-        return blockBreakSpeed;
     }
 
     public double getEntityInteractRange() {

@@ -146,6 +146,14 @@ public abstract class Origin {
         setAttribute(player, Attribute.GENERIC_SAFE_FALL_DISTANCE, config.getSafeFallDistance());
         setAttribute(player, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, config.getFallDamageMultiplier());
         setAttribute(player, Attribute.GENERIC_BURNING_TIME, config.getBurnDurationMultiplier());
+        setAttribute(player, Attribute.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE, config.getExplosionKnockbackResistance()); // cap at 1
+        setAttribute(player, Attribute.PLAYER_MINING_EFFICIENCY, config.getMiningEfficiency());
+        setAttribute(player, Attribute.GENERIC_MOVEMENT_EFFICIENCY, config.getMovementEfficiency()); // cap at 1
+        setAttribute(player, Attribute.GENERIC_OXYGEN_BONUS, config.getOxygenBonus());
+        setAttribute(player, Attribute.PLAYER_SNEAKING_SPEED, config.getSneakingSpeed()); // cap at 1
+        setAttribute(player, Attribute.PLAYER_SUBMERGED_MINING_SPEED, config.getSubmergedMiningSpeed());
+        setAttribute(player, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, config.getSweepingDamageRatio()); // cap at 1
+        setAttribute(player, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, config.getWaterMovementEfficiency()); // cap at 1
     }
 
     public void onDeath(PlayerDeathEvent event) {

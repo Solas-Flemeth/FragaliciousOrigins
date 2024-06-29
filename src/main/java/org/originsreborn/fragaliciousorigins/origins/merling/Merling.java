@@ -58,7 +58,7 @@ public class Merling extends Origin {
     public Merling(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.MERLING, state, customDataString);
         HYDRATION_KEY = getUUID().toString() + "_HYDRATION";
-        if(hydration == null){
+        if (hydration == null) {
             hydration = MERLING_CONFIG.getHydrationDuration();
         }
         FragaliciousOrigins.BOSS_BARS.createBossBar(HYDRATION_KEY, getHydrationComponent(), getHydrationPercentage(), HYDRATION_COLOR, HYDRATION_OVERLAY, getPlayer());
@@ -107,7 +107,7 @@ public class Merling extends Origin {
     public void originTick(int tickNum) {
         Player player = getPlayer();
         if (player.isInWater()) {
-            if(isSecondaryEnabled()){
+            if (isSecondaryEnabled()) {
                 PotionsUtil.addEffect(player, PotionEffectType.DOLPHINS_GRACE, MERLING_CONFIG.getWaterAttributesDolphinsGraceAmplifier(), 19);
             }
             PotionsUtil.addEffect(player, PotionEffectType.CONDUIT_POWER, 2, 19);
@@ -185,7 +185,7 @@ public class Merling extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateParticleAtLocation( Particle.BUBBLE_COLUMN_UP, getPlayer().getLocation(), 1);
+        ParticleUtil.generateParticleAtLocation(Particle.BUBBLE_COLUMN_UP, getPlayer().getLocation(), 1);
     }
 
     @Override
@@ -284,14 +284,9 @@ public class Merling extends Origin {
 
     public void enterWater() {
         Player player = getPlayer();
-        if(isSecondaryEnabled()){
-            player.setGravity(false);
-        }else{
-            player.setGravity(true);
-        }
+        player.setGravity(!isSecondaryEnabled());
         setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MERLING_CONFIG.getBlockInteractRange());
         setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MERLING_CONFIG.getEntityInteractRange());
-        setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, MERLING_CONFIG.getBlockBreakSpeed());
     }
 
     public void exitWater() {
@@ -299,7 +294,6 @@ public class Merling extends Origin {
         player.setGravity(true);
         setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
         setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
-        setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, MAIN_ORIGIN_CONFIG.getBlockBreakSpeed());
     }
 
     private float getHydrationPercentage() {
