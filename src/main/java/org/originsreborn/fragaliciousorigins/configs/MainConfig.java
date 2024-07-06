@@ -13,6 +13,9 @@ public class MainConfig {
     private static String DIFFICULTY_MEDIUM_ICON;
     private static String DIFFICULTY_HARD_ICON;
     private static String DIFFICULTY_EXTREME_ICON;
+    private static String DISCORD_GUILD;
+    private static String DISCORD_CHANNEL;
+    private static String BOT_TOKEN;
     public MainConfig() {
         mainConfig = FragaliciousOrigins.INSTANCE.getConfig();
         buildConfig();
@@ -33,6 +36,9 @@ public class MainConfig {
         mainConfig.addDefault("Difficulty Medium Icon", "medium");
         mainConfig.addDefault("Difficulty Hard Icon", "hard");
         mainConfig.addDefault("Difficulty Extreme Icon", "extreme");
+        mainConfig.addDefault("Discord Guild","1158515580802969620");
+        mainConfig.addDefault("Discord Channel","1169047609810370560");
+        mainConfig.addDefault("Bot Token", "token");
         mainConfig.options().copyDefaults(true);
         FragaliciousOrigins.INSTANCE.saveConfig();
     }
@@ -50,6 +56,9 @@ public class MainConfig {
         DIFFICULTY_MEDIUM_ICON = mainConfig.getString("Difficulty Medium Icon", "medium");
         DIFFICULTY_HARD_ICON = mainConfig.getString("Difficulty Hard Icon", "hard");
         DIFFICULTY_EXTREME_ICON = mainConfig.getString("Difficulty Extreme Icon", "extreme");
+        DISCORD_GUILD = mainConfig.getString("Discord Guild","1158515580802969620");
+        DISCORD_CHANNEL = mainConfig.getString("Discord Channel","1169047609810370560");
+        BOT_TOKEN = mainConfig.getString("Bot Token", "token");
     }
 
     public static String getJdbcUrl() {
@@ -86,5 +95,17 @@ public class MainConfig {
 
     public static String getDifficultyExtremeIcon() {
         return DIFFICULTY_EXTREME_ICON;
+    }
+
+    public static String getDiscordChannel() {
+        return DISCORD_CHANNEL;
+    }
+
+    public static String getBotToken() {
+        return BOT_TOKEN;
+    }
+
+    public static String getDiscordGuild() {
+        return DISCORD_GUILD;
     }
 }

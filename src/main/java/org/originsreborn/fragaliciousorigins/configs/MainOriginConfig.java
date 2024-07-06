@@ -418,6 +418,23 @@ public class MainOriginConfig extends OriginConfig {
         }
         return abilities.get(ability - 1).getDescription();
     }
+
+    public List<Ability> getAbilities() {
+        return abilities;
+    }
+
+    public Ability getCrouch() {
+        return crouch;
+    }
+
+    public Ability getSecondary() {
+        return secondary;
+    }
+
+    public Ability getPrimary() {
+        return primary;
+    }
+
     public int getDifficulty(){
         return difficulty;
     }

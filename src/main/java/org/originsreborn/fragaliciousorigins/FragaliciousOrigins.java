@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.originsreborn.fragaliciousorigins.abilities.AbilityListener;
 import org.originsreborn.fragaliciousorigins.bossbars.BossBarManager;
 import org.originsreborn.fragaliciousorigins.commands.*;
+import org.originsreborn.fragaliciousorigins.intergration.DiscordIntegration;
 import org.originsreborn.fragaliciousorigins.intergration.OriginPlaceholders;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.Human;
@@ -32,6 +33,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
     public static BossBarManager BOSS_BARS;
     public static MainConfig CONFIG;
     public static DataSourceManager DATASOURCE;
+    public static DiscordIntegration DISCORD;
     @Override
     public void onEnable() {
         INSTANCE = this;
@@ -39,7 +41,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
         BOSS_BARS = new BossBarManager();
         ORIGINS = new OriginManager();
         DATASOURCE = new DataSourceManager();
-
+        DISCORD = new DiscordIntegration();
         this.getServer().getPluginManager().registerEvents(new AbilityListener(), this);
         registerCommands();
         registerPlaceholderAPI();
@@ -74,6 +76,9 @@ public final class FragaliciousOrigins extends JavaPlugin {
             Stoneborn.onReload();
             Vampire.onReload();
             Bee.onReload();
+            Bukkit.getAsyncScheduler().runNow(this,  scheduledTask -> {
+                        FragaliciousOrigins.DISCORD.updateOriginDiscordChannel();
+                    });
         }catch (Exception e){
 
         }

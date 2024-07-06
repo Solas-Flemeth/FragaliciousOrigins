@@ -4,10 +4,7 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.enchantments.Enchantment;
@@ -17,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.EquipmentSlotGroup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffectType;
@@ -229,8 +228,8 @@ public class Elytrian extends Origin {
     private ItemStack getElytra() {
         ItemStack elytra = new ItemStack(Material.ELYTRA);
         ItemMeta elytraMeta = elytra.getItemMeta();
-        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier("elytra_armor", ELYTRIAN_CONFIG.getElytraArmor(), AttributeModifier.Operation.ADD_NUMBER));
-        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier("elytra_toughness", ELYTRIAN_CONFIG.getElytraToughness(), AttributeModifier.Operation.ADD_NUMBER));
+        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(new NamespacedKey("elytra.armor","elytra.armor"), ELYTRIAN_CONFIG.getElytraArmor(), AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST));
+        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(new NamespacedKey("elytra.toughness", "elytra.toughness"), ELYTRIAN_CONFIG.getElytraToughness(), AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST));
         elytraMeta.setHideTooltip(true);
         elytraMeta.setUnbreakable(true);
         elytraMeta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
@@ -265,15 +264,16 @@ public class Elytrian extends Origin {
         if(!isNull){
             isElytra = (chestplate.getType().equals(Material.ELYTRA) && chestplate.getItemMeta().isUnbreakable());
         }
-        if (!isSecondaryEnabled()) {
-            if (isNull == false && isElytra == false) {
-                player.getWorld().dropItem(player.getLocation(), chestplate);
-                player.sendActionBar(Component.text("Your chestplate falls on the ground as you spread your wings").color(errorColor()));
+        if (!isSecondaryEnabled()) { //giving chestplate
+            if (!isNull && !isElytra) { //if wearing chesplate that isnt special elytra
+                player.sendActionBar(Component.text("You try to spread you wings but sprain them due to armor constricting them"));
+                player.damage(1.0);
+                secondaryToggle(true);
+            }else{
+                player.getInventory().setChestplate(getElytra());
             }
-            player.getInventory().setChestplate(getElytra());
-        } else if (isSecondaryEnabled() && isElytra == true) {  //unequip
+        } else if (isSecondaryEnabled() && isElytra) {  //unequip
             player.getEquipment().setChestplate(ItemStack.empty());
-
         }
         updateArmor();
     }

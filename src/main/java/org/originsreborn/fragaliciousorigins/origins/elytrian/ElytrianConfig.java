@@ -91,11 +91,11 @@ public class ElytrianConfig extends OriginConfig {
         return flyingVelocityMultiplier;
     }
 
-    public int getElytraArmor() {
+    public double getElytraArmor() {
         return armor;
     }
 
-    public int getElytraToughness() {
+    public double getElytraToughness() {
         return toughness;
     }
 

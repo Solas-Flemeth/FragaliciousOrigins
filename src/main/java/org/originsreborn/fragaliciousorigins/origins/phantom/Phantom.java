@@ -61,10 +61,7 @@ public class Phantom extends Origin {
     private final String KEY_HAUNT;
     private final String KEY_FOOD_DRAIN;
     private boolean isNightVisionActive = false;
-
-
-    //TODO: Add shadow bonuses + nether mining bonus
-    //TODO: Add db saving system
+    
     public Phantom(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.PHANTOM, state, customDataString);
         getPlayer().setGameMode(GameMode.SURVIVAL);
