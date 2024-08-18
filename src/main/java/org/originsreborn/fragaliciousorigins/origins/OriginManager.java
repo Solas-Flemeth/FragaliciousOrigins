@@ -1,17 +1,12 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
 import org.bukkit.GameMode;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
-import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
 
 import java.util.*;
@@ -61,7 +56,7 @@ public class OriginManager {
      * @param origin
      */
     public void updateOrigin(Origin origin) {
-        if(containsUUID(origin.getUUID())){
+        if (containsUUID(origin.getUUID())) {
             getOrigin(origin.getUUID()).onRemoveOrigin();
         }
         origin.setDefaultStats(); //force override to make sure stats reset
@@ -124,21 +119,25 @@ public class OriginManager {
             if (origin.getPlayer() != null) {
                 if (isCoolDownTick) {
                     origin.cooldownTick();
-                    if (origin.getState().equals(OriginState.TEMPORARY)) {
-                        int timeRemaining = origin.getTempTimeRemaining();
-                        if (timeRemaining == 0) {
-                            iterator.remove();
-                            outdatedTempOrigins.add(origin);
-                            continue;
-                        } else {
-                            origin.setTempTimeRemaining(timeRemaining - 1);
-                        }
+                    switch (origin.getState()) {
+                        case EVENT:
+                        case TEMPORARY:
+                        case SHAPESHIFTER:
+                            int timeRemaining = origin.getTempTimeRemaining();
+                            if (timeRemaining == 0) {
+                                iterator.remove();
+                                outdatedTempOrigins.add(origin);
+                                continue;
+                            } else {
+                                origin.setTempTimeRemaining(timeRemaining - 1);
+                            }
+                            break;
                     }
                 }
                 origin.originTick(tick);
-                if(origin.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !(origin.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))){
+                if (origin.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !(origin.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                     origin.originParticle(tick);
-                }else if(origin instanceof Phantom){
+                } else if (origin instanceof Phantom) {
                     origin.originParticle(tick);
                 }
             } else {

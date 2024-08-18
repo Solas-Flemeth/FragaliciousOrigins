@@ -121,6 +121,10 @@ public class AbilityListener implements Listener {
     public void consume(PlayerItemConsumeEvent event) {
         getOrigin(event).consume(event);
     }
+    @EventHandler (priority = EventPriority.MONITOR)
+    public void consumePost(PlayerItemConsumeEvent event){
+        event.getPlayer().updateInventory(); //fix fake potions
+    }
 
     @EventHandler
     public void itemDamage(PlayerItemDamageEvent event) {
@@ -252,6 +256,10 @@ public class AbilityListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        getOrigin(event.getPlayer()).onWorldChange(event);
+    }
     @EventHandler (priority = EventPriority.HIGH)
     public void onDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()){

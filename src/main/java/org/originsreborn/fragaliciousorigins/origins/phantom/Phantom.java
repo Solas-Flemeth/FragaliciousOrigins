@@ -415,7 +415,7 @@ public class Phantom extends Origin {
         double range = PHANTOM_CONFIG.getHauntSlownessRange();
         setHuntTime(huntTime-1);
         Player player = getPlayer();
-        PlayerUtils.setAttribute(player, Attribute.GENERIC_STEP_HEIGHT, PHANTOM_CONFIG.getCoyoteDrain());
+        //PlayerUtils.setAttribute(player, Attribute.GENERIC_STEP_HEIGHT, PHANTOM_CONFIG.getCoyoteDrain());
         List<Entity> entities = player.getNearbyEntities(range, range, range);
         for(Entity entity : entities){
             if(entity instanceof LivingEntity livingEntity){

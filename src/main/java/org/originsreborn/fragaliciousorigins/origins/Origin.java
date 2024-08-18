@@ -493,6 +493,9 @@ public abstract class Origin {
 
     }
 
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+
+    }
     public void onStep(GenericGameEvent event) {
         if (!getConfig().hasStepSounds()) {
             event.setCancelled(true);
@@ -690,4 +693,6 @@ public abstract class Origin {
         int formatPercentage = (int) (percentage * 100);
         return formatPercentage + "%";
     }
+
+
 }

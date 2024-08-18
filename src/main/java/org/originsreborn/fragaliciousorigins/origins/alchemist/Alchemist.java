@@ -108,7 +108,7 @@ public class Alchemist extends Origin {
         ParticleUtil.generateCircleParticle(Particle.PORTAL, player.getLocation(), 20, 1.5);
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BEACON_POWER_SELECT, 0.5f, 2);
         int experienceGain = calculatePotionExperienceGain(player.getActivePotionEffects());
-        PlayerUtils.addExperience(player, experienceGain);
+        PlayerUtils.addExperience(player, Math.abs(experienceGain) + 10);
         player.clearActivePotionEffects();
     }
 

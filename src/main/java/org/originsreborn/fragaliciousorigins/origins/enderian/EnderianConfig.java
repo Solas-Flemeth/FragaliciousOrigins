@@ -22,7 +22,9 @@ public class EnderianConfig extends OriginConfig {
     private int primaryOverworldRange, primaryOverworldCost, primaryEndRange, primaryEndCost;
     private int secondaryOverworldRange, secondaryOverworldCost, secondaryEndRange, secondaryEndCost;
     private int enderpearlEndRefill, enderpearlOverworldRefill;
-
+    private double secondaryOverworldDodgeChance, secondaryEndDodgeChance;
+    private int chargeCapacity, invulnFrames;
+    private double health, blockInteractionRange, entityInteractionRange;
     public EnderianConfig() {
         super(OriginType.ENDERIAN, "unique");
     }
@@ -33,7 +35,7 @@ public class EnderianConfig extends OriginConfig {
             CommentedConfigurationNode primaryAbilityNode = getConfigNode().node("primaryability");
             CommentedConfigurationNode primaryOverworldNode = primaryAbilityNode.node("overworld");
             primaryOverworldNode.node("range").set(20);
-            primaryOverworldNode.node("cost").set(15);
+            primaryOverworldNode.node("cost").set(12);
 
             CommentedConfigurationNode primaryEndNode = primaryAbilityNode.node("end");
             primaryEndNode.node("range").set(50);
@@ -43,15 +45,23 @@ public class EnderianConfig extends OriginConfig {
             CommentedConfigurationNode secondaryOverworldNode = secondaryAbilityNode.node("overworld");
             secondaryOverworldNode.node("range").set(10);
             secondaryOverworldNode.node("cost").set(5);
+            secondaryOverworldNode.node("dodgeChance").set(0.15);
 
             CommentedConfigurationNode secondaryEndNode = secondaryAbilityNode.node("end");
             secondaryEndNode.node("range").set(5);
             secondaryEndNode.node("cost").set(2);
+            secondaryEndNode.node("dodgeChance").set(0.3);
 
             CommentedConfigurationNode chargeNode = getConfigNode().node("charge");
             CommentedConfigurationNode enderpearlNode = chargeNode.node("enderpearl");
-            enderpearlNode.node("endRefill").set(10);
-            enderpearlNode.node("overworldRefill").set(5);
+            enderpearlNode.node("endRefill").set(30);
+            enderpearlNode.node("overworldRefill").set(15);
+            chargeNode.node("chargeCapacity").set(120);
+            getConfigNode().node("invulnFrames").set(5);
+            CommentedConfigurationNode endStatsNode = getConfigNode().node("endStats");
+            endStatsNode.node("health").set(28.0);
+            endStatsNode.node("blockInteractRange").set(1.75);
+            endStatsNode.node("entityInteractRange").set(1.75);
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
@@ -66,11 +76,19 @@ public class EnderianConfig extends OriginConfig {
 
         secondaryOverworldRange = getConfigNode().node("secondaryability").node("overworld").node("range").getInt();
         secondaryOverworldCost = getConfigNode().node("secondaryability").node("overworld").node("cost").getInt();
+        secondaryOverworldDodgeChance = getConfigNode().node("secondaryability").node("overworld").node("dodgeChance").getDouble();
         secondaryEndRange = getConfigNode().node("secondaryability").node("end").node("range").getInt();
         secondaryEndCost = getConfigNode().node("secondaryability").node("end").node("cost").getInt();
+        secondaryEndDodgeChance = getConfigNode().node("secondaryability").node("end").node("dodgeChance").getDouble();
 
         enderpearlEndRefill = getConfigNode().node("charge").node("enderpearl").node("endRefill").getInt();
         enderpearlOverworldRefill = getConfigNode().node("charge").node("enderpearl").node("overworldRefill").getInt();
+        chargeCapacity = getConfigNode().node("charge").node("chargeCapacity").getInt();
+        invulnFrames = getConfigNode().node("invulnFrames").getInt();
+        health = getConfigNode().node("endStats").node("health").getDouble();
+        blockInteractionRange = getConfigNode().node("endStats").node("blockInteractRange").getDouble();
+        entityInteractionRange = getConfigNode().node("endStats").node("entityInteractRange").getDouble();
+
     }
 
     public int getPrimaryOverworldRange() {
@@ -111,5 +129,32 @@ public class EnderianConfig extends OriginConfig {
 
     public int getEnderpearlOverworldRefill() {
         return enderpearlOverworldRefill;
+    }
+
+    public int getChargeCapacity() {
+        return chargeCapacity;
+    }
+
+    public double getSecondaryOverworldDodgeChance() {
+        return secondaryOverworldDodgeChance;
+    }
+
+    public double getSecondaryEndDodgeChance() {
+        return secondaryEndDodgeChance;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public double getBlockInteractionRange() {
+        return blockInteractionRange;
+    }
+
+    public double getEntityInteractionRange() {
+        return entityInteractionRange;
+    }
+    public int getInvulnFrames(){
+        return invulnFrames;
     }
 }

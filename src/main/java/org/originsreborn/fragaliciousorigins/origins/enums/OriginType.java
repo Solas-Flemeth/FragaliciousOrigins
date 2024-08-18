@@ -6,9 +6,9 @@ import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
-import org.originsreborn.fragaliciousorigins.origins.feline.Feline;
+import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
-import org.originsreborn.fragaliciousorigins.origins.wip.Enderian;
+import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
 import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
@@ -31,7 +31,7 @@ public enum OriginType {
     BLAZEBORN("Blazeborn"),
     ENDERIAN("Enderian"),
     ELYTRIAN("Elytrian"),
-    FELINE("Feline"),
+    PAWSWORN("Pawsworn"),
     GIANT("Giant"),
     INCHLING("Inchling"),
     HUNTSMAN("Huntsman"),
@@ -80,8 +80,8 @@ public enum OriginType {
                 return new Enderian(uuid,originState,customDataString);
             case ELYTRIAN:
                 return new Elytrian(uuid,originState,customDataString);
-            case FELINE:
-                return new Feline(uuid,originState,customDataString);
+            case PAWSWORN:
+                return new Pawsworn(uuid,originState,customDataString);
             case GIANT:
                 return new Giant(uuid,originState,customDataString);
             case INCHLING:
@@ -133,8 +133,8 @@ public enum OriginType {
                 return Enderian.MAIN_ORIGIN_CONFIG;
             case ELYTRIAN:
                 return Elytrian.MAIN_ORIGIN_CONFIG;
-            case FELINE:
-                return Feline.MAIN_ORIGIN_CONFIG;
+            case PAWSWORN:
+                return Pawsworn.MAIN_ORIGIN_CONFIG;
             case GIANT:
                 return Giant.MAIN_ORIGIN_CONFIG;
             case INCHLING:

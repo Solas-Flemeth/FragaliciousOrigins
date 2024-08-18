@@ -140,7 +140,6 @@ public class PlayerUtils {
      */
     public static void addExperience(Player player, int value){
         int total = getExperience(player);
-        System.out.println("Has a total expierence of " + total + " and adding " + value);
         if(value >= 0){
             player.setExperienceLevelAndProgress(total+value);
         }
@@ -154,7 +153,6 @@ public class PlayerUtils {
      */
     public static void removeExperience(Player player, int value){
         int total = getExperience(player);
-        System.out.println("Has a total expierence of " + total + " and removing " + value);
         if(total > value){
             player.setExperienceLevelAndProgress(total-value);
         }else {

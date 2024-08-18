@@ -1,16 +1,16 @@
-package org.originsreborn.fragaliciousorigins.origins.feline;
+package org.originsreborn.fragaliciousorigins.origins.pawsworn;
 
 import org.originsreborn.fragaliciousorigins.configs.OriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 
-public class FelineConfig extends OriginConfig {
+public class PawswornConfig extends OriginConfig {
     private float leapVelocity, dashVelocity;
     private int speedDuration, speedAmplifier, strengthDuration, strengthAmplifier, dashCooldown, weaknessDuration, weaknessAmplifier;
     private double nineLivesChance;
 
-    public FelineConfig() {
-        super(OriginType.FELINE, "unique");
+    public PawswornConfig() {
+        super(OriginType.PAWSWORN, "unique");
     }
 
     @Override

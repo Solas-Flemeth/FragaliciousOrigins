@@ -1,4 +1,4 @@
-package org.originsreborn.fragaliciousorigins.origins.feline;
+package org.originsreborn.fragaliciousorigins.origins.pawsworn;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import net.kyori.adventure.text.Component;
@@ -40,13 +40,13 @@ import java.util.UUID;
  *  - 1/8 chance to avoid death
  *  - 1.5x gravity
  */
-public class Feline extends Origin {
-    public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.FELINE);
-    public static final FelineConfig FELINE_CONFIG = new FelineConfig();
+public class Pawsworn extends Origin {
+    public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.PAWSWORN);
+    public static final PawswornConfig PAWSWORN_CONFIG = new PawswornConfig();
     private double lastX, lastZ, lastX2, lastZ2;
     private int dashCooldown;
-    public Feline(UUID uuid, OriginState state, String customDataString) {
-        super(uuid, OriginType.FELINE, state, customDataString);
+    public Pawsworn(UUID uuid, OriginState state, String customDataString) {
+        super(uuid, OriginType.PAWSWORN, state, customDataString);
         dashCooldown = 0;
         lastX2 = getPlayer().getX();
         lastZ2 = getPlayer().getZ();
@@ -61,7 +61,7 @@ public class Feline extends Origin {
     public void originTick(int tickNum) {
         Player player = getPlayer();
         if(player.isInWaterOrRain() && !player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)){
-            PotionsUtil.addEffect(player, PotionEffectType.WEAKNESS, FELINE_CONFIG.getWeaknessAmplifier(), FELINE_CONFIG.getWeaknessDuration());
+            PotionsUtil.addEffect(player, PotionEffectType.WEAKNESS, PAWSWORN_CONFIG.getWeaknessAmplifier(), PAWSWORN_CONFIG.getWeaknessDuration());
         }
         if(dashCooldown > 0){
             setDashCooldown(dashCooldown-1);
@@ -95,11 +95,11 @@ public class Feline extends Origin {
     public void primaryAbilityLogic() {
         Player player = getPlayer();
         Vector lookDirection = player.getEyeLocation().getDirection().normalize();
-        Vector leapVelocity = lookDirection.multiply(FELINE_CONFIG.getLeapVelocity());
+        Vector leapVelocity = lookDirection.multiply(PAWSWORN_CONFIG.getLeapVelocity());
         leapVelocity.setY(leapVelocity.getY() + 0.1);
         player.setVelocity(leapVelocity);
-        PotionsUtil.addEffect(player, PotionEffectType.SPEED, FELINE_CONFIG.getSpeedAmplifier(), FELINE_CONFIG.getSpeedDuration());
-        PotionsUtil.addEffect(player, PotionEffectType.STRENGTH, FELINE_CONFIG.getStrengthAmplifier(), FELINE_CONFIG.getStrengthDuration());
+        PotionsUtil.addEffect(player, PotionEffectType.SPEED, PAWSWORN_CONFIG.getSpeedAmplifier(), PAWSWORN_CONFIG.getSpeedDuration());
+        PotionsUtil.addEffect(player, PotionEffectType.STRENGTH, PAWSWORN_CONFIG.getStrengthAmplifier(), PAWSWORN_CONFIG.getStrengthDuration());
         player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CAT_HURT, 3f, 0.3f);
     }
 
@@ -122,7 +122,7 @@ public class Feline extends Origin {
     @Override
     public void onDeath(PlayerDeathEvent event) {
         super.onDeath(event);
-        if(!event.isCancelled() && Math.random() < FELINE_CONFIG.getNineLivesChance()){
+        if(!event.isCancelled() && Math.random() < PAWSWORN_CONFIG.getNineLivesChance()){
             Player player = event.getPlayer();
             event.setCancelled(true);
             event.deathMessage(player.displayName().append(Component.text("Avoided death using one of their nine lives").color(TextColor.color(0xffffff))));
@@ -148,7 +148,7 @@ public class Feline extends Origin {
     @Override
     public void onJump(PlayerJumpEvent event) {
         super.onJump(event);
-        if(dashCooldown > (FELINE_CONFIG.getDashCooldown() * 2/3)){
+        if(dashCooldown > (PAWSWORN_CONFIG.getDashCooldown() * 2/3)){
             event.setCancelled(true);
         }
     }
@@ -169,8 +169,8 @@ public class Feline extends Origin {
             }
             Vector direction = new Vector(dashX, 0.00001, dashZ).normalize();
             direction.setY(-5.0);
-            player.setVelocity(direction.multiply(FELINE_CONFIG.getDashVelocity()));
-            setDashCooldown(FELINE_CONFIG.getDashCooldown());
+            player.setVelocity(direction.multiply(PAWSWORN_CONFIG.getDashVelocity()));
+            setDashCooldown(PAWSWORN_CONFIG.getDashCooldown());
             player.getWorld().playSound(location, Sound.ENTITY_HORSE_BREATHE, 0.9f, 1.7f);
             ParticleUtil.generateSphereParticle(Particle.SMALL_GUST, location, 35, 0.7);
         }
@@ -178,11 +178,11 @@ public class Feline extends Origin {
 
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
-        FELINE_CONFIG.loadConfig();
+        PAWSWORN_CONFIG.loadConfig();
     }
 
     public void setDashCooldown(int dashCooldown) {
-        if(dashCooldown == FELINE_CONFIG.getDashCooldown()/2){
+        if(dashCooldown == PAWSWORN_CONFIG.getDashCooldown()/2){
             ParticleUtil.generateSphereParticle(Particle.SMALL_GUST, getPlayer().getLocation(), 15, 0.7);
         }
         if(dashCooldown < 0){
