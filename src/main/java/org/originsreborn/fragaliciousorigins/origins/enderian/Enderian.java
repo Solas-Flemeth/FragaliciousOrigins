@@ -401,7 +401,7 @@ public class Enderian extends Origin {
         double pitch = Math.toDegrees(Math.atan(deltaY / distanceXZ));
 
         // Update the final location with the calculated pitch and yaw
-        finalLocation.setYaw((float) yaw);
+        finalLocation.setYaw(startLocation.getYaw());
         finalLocation.setPitch((float) pitch);
 
         return finalLocation;

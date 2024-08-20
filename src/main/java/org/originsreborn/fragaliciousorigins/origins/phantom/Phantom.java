@@ -61,7 +61,7 @@ public class Phantom extends Origin {
     private final String KEY_HAUNT;
     private final String KEY_FOOD_DRAIN;
     private boolean isNightVisionActive = false;
-    
+    private double veilwalkEfficency = 0.0;
     public Phantom(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.PHANTOM, state, customDataString);
         getPlayer().setGameMode(GameMode.SURVIVAL);
@@ -202,6 +202,7 @@ public class Phantom extends Origin {
         Player player = event.getPlayer();
         GameMode newMode = event.getNewGameMode();
         GameMode currentMode = player.getGameMode();
+        veilwalkEfficency = 0.0;
         if (newMode == GameMode.SURVIVAL && currentMode == GameMode.SPECTATOR) {
             List<Player> players = player.getWorld().getPlayers();
             for (Player otherPlayer : players) {
@@ -217,6 +218,13 @@ public class Phantom extends Origin {
             PotionsUtil.addEffect(player, PotionEffectType.NIGHT_VISION, 0);
             PotionsUtil.addEffect(player, PotionEffectType.DARKNESS, 0);
             updateFood();
+            if(saturation > 0f){
+                setSaturation(getSaturation()-1f);
+                player.setSaturation(saturation);
+            }else if(food > PHANTOM_CONFIG.getMinimumHunger()){
+                setFood(food-1);
+                player.setFoodLevel(food);
+            }
             List<Player> players = player.getWorld().getPlayers();
             for (Player otherPlayer : players) {
                 player.hidePlayer(FragaliciousOrigins.INSTANCE, otherPlayer);
@@ -374,7 +382,9 @@ public class Phantom extends Origin {
         playEtherealSound();
         if((player.getWorld().getEnvironment() == World.Environment.NORMAL && tickNum% PHANTOM_CONFIG.getTicksPerHunger() == 0)
                 || (player.getWorld().getEnvironment() != World.Environment.NORMAL && tickNum% PHANTOM_CONFIG.getTicksPerHunger() == 0)){
-            if(saturation > 0f){
+            if(veilwalkEfficency > Math.random()){
+
+            } else if(saturation > 0f){
                 setSaturation(getSaturation()-1f);
                 player.setSaturation(saturation);
             }else if(food > PHANTOM_CONFIG.getMinimumHunger()){
@@ -382,6 +392,9 @@ public class Phantom extends Origin {
                 player.setFoodLevel(food);
             }else{
                 player.setGameMode(GameMode.SURVIVAL);
+            }
+            if(veilwalkEfficency < PHANTOM_CONFIG.getChanceToNotDrainMax()){
+                veilwalkEfficency += PHANTOM_CONFIG.getChanceToNotDrainInterval();
             }
             updateFoodDrainBar();
         }

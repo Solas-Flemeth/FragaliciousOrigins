@@ -7,7 +7,7 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 public class PhantomConfig extends OriginConfig {
     private int ticksPerHunger, minimumHunger, hauntSlownessDuration, hauntDuration, restDuration, regenLightLevel, nightVisionLevel, disableNightVisionLevel;
     private int coyoteCharge, coyoteDrain;
-    private double velocity, hauntAttackDamageMultiplier, hauntDamageTakenMultiplier, hauntSlownessRange, restAttackDamageMultiplier, restDamageTakenMultiplier;
+    private double velocity, hauntAttackDamageMultiplier, hauntDamageTakenMultiplier, hauntSlownessRange, restAttackDamageMultiplier, restDamageTakenMultiplier, chanceToNotDrainMax, chanceToNotDrainInterval;
     private double speedLightMultiplier, miningMultiplier, attackSpeed, dodgeChance, fireResistanceDamageReduction, miningSpeed, secondaryCooldownMultiplier;
 
     public PhantomConfig() {
@@ -21,6 +21,8 @@ public class PhantomConfig extends OriginConfig {
             primaryAbilityNode.node("ticksPerHunger").set(3); //int
             primaryAbilityNode.node("minimumHunger").set(3); //int
             primaryAbilityNode.node("velocity").set(0.2);
+            primaryAbilityNode.node("chanceToNotDrainInterval").set(0.03);
+            primaryAbilityNode.node("chanceToNotDrainMax").set(0.80);
             CommentedConfigurationNode secondaryAbilityNode = getConfigNode().node("secondaryAbility");
             CommentedConfigurationNode hauntNode = secondaryAbilityNode.node("haunt");
             hauntNode.node("attackDamageMultiplier").set(1.25);
@@ -62,8 +64,9 @@ public class PhantomConfig extends OriginConfig {
         ticksPerHunger = getConfigNode().node("primaryAbility").node("ticksPerHunger").getInt();
         minimumHunger = getConfigNode().node("primaryAbility").node("minimumHunger").getInt();
         velocity = getConfigNode().node("primaryAbility").node("velocity").getDouble();
-
-        hauntAttackDamageMultiplier = getConfigNode().node("s['econdaryAbility").node("haunt").node("attackDamageMultiplier").getDouble();
+        chanceToNotDrainMax =  getConfigNode().node("primaryAbility").node("chanceToNotDrainMax").getDouble();
+        chanceToNotDrainInterval = getConfigNode().node("primaryAbility").node("chanceToNotDrainInterval").getDouble();
+        hauntAttackDamageMultiplier = getConfigNode().node("secondaryAbility").node("haunt").node("attackDamageMultiplier").getDouble();
         hauntDamageTakenMultiplier = getConfigNode().node("secondaryAbility").node("haunt").node("damageTakenMultiplier").getDouble();
         hauntSlownessDuration = getConfigNode().node("secondaryAbility").node("haunt").node("slownessDuration").getInt();
         hauntSlownessRange = getConfigNode().node("secondaryAbility").node("haunt").node("slownessRange").getDouble();
@@ -102,6 +105,14 @@ public class PhantomConfig extends OriginConfig {
 
     public double getVelocity() {
         return velocity;
+    }
+
+    public double getChanceToNotDrainMax() {
+        return chanceToNotDrainMax;
+    }
+
+    public double getChanceToNotDrainInterval() {
+        return chanceToNotDrainInterval;
     }
 
     public double getHauntAttackDamageMultiplier() {
