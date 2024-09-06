@@ -8,12 +8,13 @@ import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.world.GenericGameEvent;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
@@ -22,6 +23,8 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.DamageUtil;
 import org.originsreborn.fragaliciousorigins.util.PermissionsUtil;
 import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
+import org.originsreborn.fragaliciousorigins.util.enums.DayCycle;
+import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -32,6 +35,7 @@ import java.util.UUID;
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
 
 public abstract class Origin {
+    private static final Random RANDOM = new Random();
     private final UUID uuid;
     private final OriginType type;
     private final OriginState state;
@@ -41,7 +45,6 @@ public abstract class Origin {
     private boolean secondaryEnabled = false;
     private int tempTimeRemaining = 0;
     private UUID bondedUUID = null;
-    private static final Random RANDOM = new Random();
 
     //Initial creation
     public Origin(UUID uuid, OriginType type, OriginState state) {
@@ -51,7 +54,7 @@ public abstract class Origin {
         setDefaultStats();
         Player player = getPlayer();
         player.sendMessage("You are now a " + getType().getDisplay());
-        if(player.getGameMode().equals(GameMode.SPECTATOR)){
+        if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
     }
@@ -60,13 +63,13 @@ public abstract class Origin {
         this.uuid = uuid;
         this.type = type;
         this.state = state;
-        if(customDataString != null && !customDataString.isEmpty()){
+        if (customDataString != null && !customDataString.isEmpty()) {
             deserializeCustomData(customDataString);
         }
         setDefaultStats();
         Player player = getPlayer();
         player.sendMessage("You are now a " + getType().getDisplay());
-        if(player.getGameMode().equals(GameMode.SPECTATOR)){
+        if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
     }
@@ -87,6 +90,58 @@ public abstract class Origin {
         return TextColor.color(0x18FF00);
     }
 
+    public static Random getRandom() {
+        return RANDOM;
+    }
+
+    /**
+     * Generates a percentage between 0 and 1
+     *
+     * @param amount
+     * @param total
+     * @return
+     */
+    public static float calculatePercentage(int amount, int total) {
+        float amountf = amount;
+        float totalf = total;
+        float percentage = amountf / totalf;
+        if (percentage < 0.0) {
+            return 0;
+        } else if (percentage > 1.0f) {
+            return 1.0f;
+        } else {
+            return percentage;
+        }
+    }
+
+    /**
+     * Generates a percentage between 0 and 1
+     *
+     * @param amount
+     * @param total
+     * @return
+     */
+    public static float calculatePercentage(double amount, double total) {
+        float percentage = (float) (amount / total);
+        if (percentage < 0.0) {
+            return 0;
+        } else if (percentage > 1.0f) {
+            return 1.0f;
+        } else {
+            return percentage;
+        }
+    }
+
+    /**
+     * Formats the float as a percentage
+     *
+     * @param percentage
+     * @return
+     */
+    public static String formatFloatPercentage(float percentage) {
+        int formatPercentage = (int) (percentage * 100);
+        return formatPercentage + "%";
+    }
 
     public void updateStats() {
     }
@@ -154,6 +209,8 @@ public abstract class Origin {
         setAttribute(player, Attribute.PLAYER_SUBMERGED_MINING_SPEED, config.getSubmergedMiningSpeed());
         setAttribute(player, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, config.getSweepingDamageRatio()); // cap at 1
         setAttribute(player, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, config.getWaterMovementEfficiency()); // cap at 1
+        player.setAllowFlight(false);
+        player.setFlying(false);
     }
 
     public void onDeath(PlayerDeathEvent event) {
@@ -257,7 +314,7 @@ public abstract class Origin {
         if (getPrimaryCooldown() > 0) {
             player.sendActionBar(primaryAbilityTimerCooldownMsg());
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
-        } else if(player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()){
+        } else if (player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()) {
             primaryAbilityLogic();
             setPrimaryCooldown(getPrimaryMaxCooldown());
         }
@@ -266,7 +323,9 @@ public abstract class Origin {
     public boolean primaryConditionCheck() {
         return true;
     }
-
+    public boolean secondaryConditionCheck() {
+        return true;
+    }
     public abstract void primaryAbilityLogic();
 
     public void secondaryAbility() {
@@ -278,7 +337,7 @@ public abstract class Origin {
         if (getSecondaryCooldown() > 0) {
             player.sendActionBar(secondaryAbilityTimerCooldownMsg());
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
-        } else {
+        } else if(player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()){
             secondaryAbilityLogic();
             setSecondaryCooldown(getSecondaryMaxCooldown());
         }
@@ -393,13 +452,12 @@ public abstract class Origin {
     public void onMove(PlayerMoveEvent event) {
     }
 
-    public void onPotionLingering(LingeringPotionSplashEvent event){
+    public void onPotionLingering(LingeringPotionSplashEvent event) {
     }
 
-    public void onPotionSplash(PotionSplashEvent event){
+    public void onPotionSplash(PotionSplashEvent event) {
 
     }
-
 
     public void pickupArrow(PlayerPickupArrowEvent event) {
     }
@@ -495,11 +553,6 @@ public abstract class Origin {
 
     public void onWorldChange(PlayerChangedWorldEvent event) {
 
-    }
-    public void onStep(GenericGameEvent event) {
-        if (!getConfig().hasStepSounds()) {
-            event.setCancelled(true);
-        }
     }
 
     public Component primaryAbilityTimerCooldownMsg() {
@@ -635,64 +688,57 @@ public abstract class Origin {
 
     public void onAnvilClick(InventoryClickEvent event) {
     }
-    public static Random getRandom(){
-        return RANDOM;
-    }
 
     public void onTradeClick(InventoryClickEvent event) {
     }
 
     public void onOpenInventory(InventoryOpenEvent event) {
     }
-    public void onJump(PlayerJumpEvent event){
+
+    public void onJump(PlayerJumpEvent event) {
 
     }
 
-    /**
-     * Generates a percentage between 0 and 1
-     * @param amount
-     * @param total
-     * @return
-     */
-    public static float calculatePercentage(int amount, int total) {
-        float amountf = amount;
-        float totalf = total;
-        float percentage = amountf / totalf;
-        if (percentage < 0.0) {
-            return 0;
-        } else if (percentage > 1.0f) {
-            return 1.0f;
-        } else {
-            return percentage;
+    public void onPostHurtByEntity(EntityDamageByEntityEvent event) {
+    }
+
+    public void onPostAttackEntity(EntityDamageByEntityEvent event) {
+    }
+
+    public void onSculkSensorTrigger(BlockReceiveGameEvent event) {
+        if (!getConfig().hasStepSounds()) {
+            event.setCancelled(true);
         }
     }
-
-    /**
-     * Generates a percentage between 0 and 1
-     * @param amount
-     * @param total
-     * @return
-     */
-    public static float calculatePercentage(double amount, double total) {
-        float percentage = (float) (amount / total);
-        if (percentage < 0.0) {
-            return 0;
-        } else if (percentage > 1.0f) {
-            return 1.0f;
-        } else {
-            return percentage;
+    public void onTimeChange(DayCycle dayCycle, MoonCycle moonCycle){
+        switch (dayCycle){
+            case SUNRISE:
+                onSunrise(moonCycle);
+                break;
+            case DAY:
+                onDay(moonCycle);
+                break;
+            case SUNSET:
+                onSunset(moonCycle);
+                break;
+            case NIGHT:
+                onNight(moonCycle);
+                break;
         }
     }
+    public void onSunrise(MoonCycle moonCycle){
+    }
+    public void onDay(MoonCycle moonCycle){
 
-    /**
-     * Formats the float as a percentage
-     * @param percentage
-     * @return
-     */
-    public static String formatFloatPercentage(float percentage) {
-        int formatPercentage = (int) (percentage * 100);
-        return formatPercentage + "%";
+    }
+    public void onSunset(MoonCycle moonCycle){
+
+    }
+    public void onNight(MoonCycle moonCycle){
+
     }
 
+    public void onBlockbreak(BlockBreakEvent event) {
 
+    }
 }

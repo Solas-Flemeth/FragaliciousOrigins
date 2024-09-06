@@ -43,7 +43,7 @@ public class PhantomConfig extends OriginConfig {
             shadowSkinNode.node("attackSpeed").set(0.03);
             shadowSkinNode.node("nightVisionLevel").set(4);
             shadowSkinNode.node("disableNightVisionLevel").set(12);
-            shadowSkinNode.node("dodgeChance").set(0.2); // Assuming a default value
+            shadowSkinNode.node("dodgeChance").set(0.02); // Assuming a default value
             shadowSkinNode.node("fireResistanceDamageReduction").set(0.5);
 
             CommentedConfigurationNode otherworldlyNode = getConfigNode().node("otherworldly");

@@ -1,7 +1,6 @@
 package org.originsreborn.fragaliciousorigins.util.enums;
 
 import org.bukkit.World;
-import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 
 public enum MoonCycle {
     FULL_MOON,
@@ -24,6 +23,15 @@ public enum MoonCycle {
             case 6 -> MoonCycle.WAXING_CRESCENT;
             case 7 -> MoonCycle.FIRST_QUARTER;
             default -> MoonCycle.WAXING_GIBBOUS;
+        };
+    }
+    public static double getPercentageTillFull(MoonCycle moonCycle) {
+        return switch (moonCycle) {
+            case MoonCycle.FULL_MOON -> 1.0;
+            case MoonCycle.WANING_GIBBOUS, MoonCycle.WAXING_GIBBOUS -> 0.75;
+            case MoonCycle.LAST_QUARTER, MoonCycle.FIRST_QUARTER -> 0.5;
+            case MoonCycle.WANING_CRESCENT, MoonCycle.WAXING_CRESCENT -> 0.25;
+            case MoonCycle.NEW_MOON -> 0.0;
         };
     }
 }

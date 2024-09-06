@@ -1,6 +1,7 @@
 package org.originsreborn.fragaliciousorigins.origins;
 
 import org.bukkit.GameMode;
+import org.bukkit.World;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.Nullable;
@@ -8,6 +9,8 @@ import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
+import org.originsreborn.fragaliciousorigins.util.enums.DayCycle;
+import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
 import java.util.*;
 
@@ -15,7 +18,8 @@ public class OriginManager {
     private static final int MAX_TICK = 864000; //1 day of ticks if alternating ticks
     private final HashMap<UUID, Origin> originsMap;
     private int tick = 0;
-
+    private final World world = FragaliciousOrigins.INSTANCE.getServer().getWorlds().getFirst();
+    private DayCycle dayCycle = DayCycle.getCurrentTime(world);
     public OriginManager() {
         originsMap = new HashMap<UUID, Origin>();
         BukkitScheduler scheduler = FragaliciousOrigins.INSTANCE.getServer().getScheduler();
@@ -108,6 +112,15 @@ public class OriginManager {
      * @param tick
      */
     public void tickOrigins(int tick) {
+        boolean changeTime = false;
+        MoonCycle moonCycle = MoonCycle.getMoonCycle(world);
+        if(tick%100 == 0){
+            DayCycle tempDayCycle = DayCycle.getCurrentTime(world);
+            if(tempDayCycle != dayCycle){
+                dayCycle = tempDayCycle;
+                changeTime = true;
+            }
+        }
         if (originsMap.isEmpty()) {
             return;
         }
@@ -135,11 +148,15 @@ public class OriginManager {
                     }
                 }
                 origin.originTick(tick);
+                if(changeTime){ //change time of day
+                    origin.onTimeChange(dayCycle, moonCycle);
+                }
                 if (origin.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !(origin.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))) {
                     origin.originParticle(tick);
                 } else if (origin instanceof Phantom) {
                     origin.originParticle(tick);
                 }
+
             } else {
                 //if the player is no longer on, remove them
                 iterator.remove();

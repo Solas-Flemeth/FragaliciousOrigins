@@ -2,17 +2,17 @@ package org.originsreborn.fragaliciousorigins.abilities;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
-import org.bukkit.GameEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.event.world.GenericGameEvent;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
@@ -140,6 +140,12 @@ public class AbilityListener implements Listener {
     public void onMove(PlayerMoveEvent event) {
         if(!event.isCancelled()){
             getOrigin(event).onMove(event);
+        }
+    }
+    @EventHandler
+    public void onBlockbreak(BlockBreakEvent event){
+        if(!event.isCancelled()){
+            getOrigin(event.getPlayer()).onBlockbreak(event);
         }
     }
 
@@ -278,8 +284,22 @@ public class AbilityListener implements Listener {
             getOrigin((Player) event.getEntity()).onHurtByEntity(event);
         }
     }
+    @EventHandler (priority = EventPriority.MONITOR)
+    public void onPostEntityDamageEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager() instanceof Player && !event.isCancelled()) {
+            getOrigin((Player) event.getDamager()).onPostAttackEntity(event);
+        }
+        if (event.getEntity() instanceof Player && !event.isCancelled()) {
+            getOrigin((Player) event.getEntity()).onPostHurtByEntity(event);
+        }
+    }
+    @EventHandler
+    public void onSculkSensorTrigger(BlockReceiveGameEvent e) {
+        if (e.getEntity() instanceof Player player){
+            getOrigin(player).onSculkSensorTrigger(e);
+        }
 
-
+    }
     @EventHandler
     public void onToggleSwim(EntityToggleSwimEvent event) {
         if (event.getEntity() instanceof Player && !event.isCancelled()) {
@@ -341,14 +361,6 @@ public class AbilityListener implements Listener {
     public void onHungerChangeEvent(FoodLevelChangeEvent event){
         if(event.getEntity() instanceof Player player && !event.isCancelled()){
             getOrigin(player).onHungerChange(event);
-        }
-    }
-    @EventHandler
-    public void genericEvents(GenericGameEvent event){
-        if(!event.isCancelled() && event.getEntity() instanceof Player player){
-            if(event.getEvent().equals(GameEvent.STEP)){
-                getOrigin(player).onStep(event);
-            }
         }
     }
 

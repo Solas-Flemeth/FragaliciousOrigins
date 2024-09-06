@@ -32,6 +32,9 @@ public class MainOriginConfig extends OriginConfig {
     public MainOriginConfig(OriginType type) {
         super(type, "general");
     }
+    public MainOriginConfig(OriginType type, String mode) {
+        super(type, mode);
+    }
 
 
     public void populateDefaultConfig() {

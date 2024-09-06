@@ -36,6 +36,7 @@ public class Giant extends Origin {
      * Bonus damage from Fire & explosions
      */
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.GIANT);
+    public static final MainOriginConfig GIANT_ENALRGED = new MainOriginConfig(OriginType.GIANT, "enlarged");
     public static final GiantConfig GIANT_CONFIG = new GiantConfig();
     public Giant(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.GIANT, state, customDataString);
@@ -43,6 +44,9 @@ public class Giant extends Origin {
 
     @Override
     public MainOriginConfig getConfig() {
+        if(isSecondaryEnabled()){
+            return GIANT_ENALRGED;
+        }
         return MAIN_ORIGIN_CONFIG;
     }
 
@@ -50,9 +54,15 @@ public class Giant extends Origin {
     public void originTick(int tickNum) {
         if(tickNum%60 ==0){
             Player player = getPlayer();
-            int foodlevel = player.getFoodLevel();
-            if(Math.random() < GIANT_CONFIG.getHungerLossChance() && foodlevel > 10){
-                player.setFoodLevel(foodlevel-1);
+            if(isSecondaryEnabled()){
+                if(Math.random() < GIANT_CONFIG.getHungerLossChance()*2){
+                    player.setExhaustion(player.getExhaustion()-0.25f);
+                }
+            }else{
+                if(Math.random() < GIANT_CONFIG.getHungerLossChance()){
+                    player.setExhaustion(player.getExhaustion()-0.1f);
+                    PotionsUtil.addEffect(player, PotionEffectType.REGENERATION, 0, 20);
+                }
             }
             if (player.getName().startsWith(".")) {
                 PotionsUtil.addEffect(player, PotionEffectType.JUMP_BOOST, 1, 130);
@@ -83,12 +93,14 @@ public class Giant extends Origin {
 
     @Override
     public void secondaryAbilityLogic() {
-
+        secondaryToggle();
+        setDefaultStats();
     }
 
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
         GIANT_CONFIG.loadConfig();
+        GIANT_ENALRGED.loadConfig();
     }
 
     public void primaryAbilityOnPlayer(Player player) {

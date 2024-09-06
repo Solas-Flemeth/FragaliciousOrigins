@@ -1,4 +1,4 @@
-package org.originsreborn.fragaliciousorigins.origins.wip.postrelease;
+package org.originsreborn.fragaliciousorigins.origins.wip;
 
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;

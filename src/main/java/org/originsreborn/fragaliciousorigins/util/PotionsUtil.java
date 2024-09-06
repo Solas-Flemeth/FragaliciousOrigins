@@ -17,7 +17,9 @@ public class PotionsUtil {
     public static void addEffect(Player player, PotionEffectType effectType, int amplifier) {
         player.addPotionEffect(new PotionEffect(effectType, PotionEffect.INFINITE_DURATION, amplifier, false, false, false));
     }
-
+    public static void addEffect(LivingEntity entity, PotionEffectType effectType, int amplifier) {
+        entity.addPotionEffect(new PotionEffect(effectType, PotionEffect.INFINITE_DURATION, amplifier, false, false, false));
+    }
     public static void addEffect(LivingEntity entity, PotionEffectType effectType, int amplifier, int duration) {
         entity.addPotionEffect(new PotionEffect(effectType, duration, amplifier, false, false, false));
     }

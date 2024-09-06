@@ -4,7 +4,9 @@ import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.*;
 import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
+import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
+import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
@@ -14,9 +16,9 @@ import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
 import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
-import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.ShapeShifter;
-import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Stoneborn;
+import org.originsreborn.fragaliciousorigins.origins.wip.ShapeShifter;
 import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
 
 import java.util.ArrayList;
@@ -39,9 +41,10 @@ public enum OriginType {
     PHANTOM("Phantom"),
     PHYTOKIN("Phytokin"),
     SHULK("Shulk"),
-    STONEBORN("Stoneborn"),
     SHAPESHIFTER("Shapeshifter"),
-    VAMPIRE("Vampire");
+    VAMPIRE("Vampire"),
+    WEREWOLF("Werewolf"),
+    CHICKEN("Chicken");
 
     private String display;
     OriginType(String display){
@@ -96,8 +99,10 @@ public enum OriginType {
                 return new Phytokin(uuid,originState, customDataString);
             case SHULK:
                 return new Shulk(uuid,originState, customDataString);
-            case STONEBORN:
-                return new Stoneborn(uuid,originState, customDataString);
+            case WEREWOLF:
+                return new Werewolf(uuid,originState, customDataString);
+            case CHICKEN:
+                return new Chicken(uuid,originState, customDataString);
             case SHAPESHIFTER:
                 return new ShapeShifter(uuid,originState,customDataString);
             case VAMPIRE:
@@ -149,8 +154,10 @@ public enum OriginType {
                 return  Phytokin.MAIN_ORIGIN_CONFIG;
             case SHULK:
                 return  Shulk.MAIN_ORIGIN_CONFIG;
-            case STONEBORN:
-                return  Stoneborn.MAIN_ORIGIN_CONFIG;
+            case WEREWOLF:
+                return  Werewolf.WEREWOLF_HUMAN_FORM_CONFIG;
+            case CHICKEN:
+                return  Chicken.MAIN_ORIGIN_CONFIG;
             case SHAPESHIFTER:
                 return ShapeShifter.MAIN_ORIGIN_CONFIG;
             case VAMPIRE:

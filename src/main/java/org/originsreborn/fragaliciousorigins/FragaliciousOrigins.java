@@ -11,7 +11,9 @@ import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
+import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
+import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
@@ -21,10 +23,10 @@ import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
 import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.configs.MainConfig;
-import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.ShapeShifter;
-import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Stoneborn;
+import org.originsreborn.fragaliciousorigins.origins.wip.ShapeShifter;
 import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
 
 public final class FragaliciousOrigins extends JavaPlugin {
@@ -72,9 +74,12 @@ public final class FragaliciousOrigins extends JavaPlugin {
             Phytokin.onReload();
             ShapeShifter.onReload();
             Shulk.onReload();
-            Stoneborn.onReload();
             Vampire.onReload();
             Bee.onReload();
+            Werewolf.onReload();
+            ShapeShifter.onReload();
+            Chicken.onReload();
+            //DO FIRST - this reloads
             Bukkit.getAsyncScheduler().runNow(this,  scheduledTask -> {
                         FragaliciousOrigins.DISCORD.updateOriginDiscordChannel();
                     });

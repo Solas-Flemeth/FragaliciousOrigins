@@ -6,6 +6,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class PlayerUtils {
     /**
@@ -27,6 +28,40 @@ public class PlayerUtils {
                 case GENERIC_ARMOR_TOUGHNESS:
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() + amount);
                     player.updateInventory();
+                    break;
+                //multiplicative
+                case GENERIC_ATTACK_SPEED:
+                case GENERIC_SCALE:
+                case GENERIC_STEP_HEIGHT:
+                case GENERIC_JUMP_STRENGTH:
+                case PLAYER_BLOCK_BREAK_SPEED:
+                case GENERIC_GRAVITY:
+                case GENERIC_FALL_DAMAGE_MULTIPLIER:
+                case PLAYER_BLOCK_INTERACTION_RANGE:
+                case PLAYER_ENTITY_INTERACTION_RANGE:
+                case GENERIC_BURNING_TIME:
+                    attributeInstance.setBaseValue(attributeInstance.getDefaultValue() * amount);
+                    break;
+                case GENERIC_MOVEMENT_SPEED:
+                    attributeInstance.setBaseValue(0.1 * amount);
+                    break;
+                //setters
+                default:
+                    attributeInstance.setBaseValue(amount);
+                    break;
+            }
+        } catch (NullPointerException e) {
+            System.err.println(attribute.name() + " is not a valid attribute for players");
+        }
+    }
+    public static void setAttribute(LivingEntity entity, Attribute attribute, double amount) {
+        try {
+            AttributeInstance attributeInstance = entity.getAttribute(attribute);
+            switch (attribute) {
+                //additional
+                case GENERIC_ARMOR:
+                case GENERIC_ARMOR_TOUGHNESS:
+                    attributeInstance.setBaseValue(attributeInstance.getDefaultValue() + amount);
                     break;
                 //multiplicative
                 case GENERIC_ATTACK_SPEED:
@@ -159,6 +194,15 @@ public class PlayerUtils {
             player.setExperienceLevelAndProgress(0);
 
         }
+    }
+
+    /**
+     * Spawns an item underneath the player
+     * @param player
+     * @param item
+     */
+    public static void spawnItemOnPlayer(Player player, ItemStack item){
+        player.getWorld().dropItem(player.getLocation(), item);
     }
 
 }

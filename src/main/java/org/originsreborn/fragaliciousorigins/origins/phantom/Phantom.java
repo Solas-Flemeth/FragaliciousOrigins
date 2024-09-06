@@ -213,10 +213,8 @@ public class Phantom extends Origin {
             player.setFreezeTicks(0);
             FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_FOOD_DRAIN);
             player.removePotionEffect(PotionEffectType.NIGHT_VISION);
-            player.removePotionEffect(PotionEffectType.DARKNESS);
         } else if (newMode == GameMode.SPECTATOR && currentMode == GameMode.SURVIVAL) {
             PotionsUtil.addEffect(player, PotionEffectType.NIGHT_VISION, 0);
-            PotionsUtil.addEffect(player, PotionEffectType.DARKNESS, 0);
             updateFood();
             if(saturation > 0f){
                 setSaturation(getSaturation()-1f);
@@ -255,7 +253,6 @@ public class Phantom extends Origin {
         super.onRemoveOrigin();
         getPlayer().setGameMode(GameMode.SURVIVAL);
         getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
-        getPlayer().removePotionEffect(PotionEffectType.DARKNESS);
         getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
         FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_FOOD_DRAIN);
         FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_HAUNT);
@@ -442,7 +439,7 @@ public class Phantom extends Origin {
      */
     @Override
     public double getDodgeChance() {
-        return super.getDodgeChance() + PHANTOM_CONFIG.getDodgeChance() * 15 - ((double) getPlayer().getEyeLocation().getBlock().getLightLevel());
+        return super.getDodgeChance() + PHANTOM_CONFIG.getDodgeChance() * (double) (15 - getPlayer().getEyeLocation().getBlock().getLightLevel());
     }
 
     public boolean isHuntMode(){
