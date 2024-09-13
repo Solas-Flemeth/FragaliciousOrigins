@@ -4,9 +4,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
-import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
-import org.originsreborn.fragaliciousorigins.configs.OriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 
@@ -64,6 +62,8 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                             return config.getPlaceholdersNodeTitleDescription().get(Integer.parseInt(args[3]));
                         case "difficulty":
                             return convertDifficulty(config.getDifficulty());
+                        case "model":
+                            return String.valueOf(config.getModel());
                         case "count":
                             return String.valueOf(type.getConfig().getPlaceholdersNodeTitleDescription().size());
                     }
@@ -75,6 +75,8 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                             return config.getPlaceholdersPrimaryAbilityDescription().get(Integer.parseInt(args[3]));
                         case "count":
                             return String.valueOf(type.getConfig().getPlaceholdersPrimaryAbilityDescription().size());
+                        case "model":
+                            return String.valueOf(config.getPrimary().getCustomModelID());
                         case "enabled":
                             return String.valueOf(!config.getPlaceholdersPrimaryAbilityName().equals("primaryAbility"));
                     }
@@ -86,8 +88,10 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                             return config.getPlaceholdersSecondaryAbilityDescription().get(Integer.parseInt(args[3]));
                         case "count":
                             return String.valueOf(type.getConfig().getPlaceholdersSecondaryAbilityDescription().size());
+                        case "model":
+                            return String.valueOf(config.getSecondary().getCustomModelID());
                         case "enabled":
-                                return String.valueOf(!config.getPlaceholdersPrimaryAbilityName().equals("secondaryAbility"));
+                                return String.valueOf(!config.getPlaceholdersSecondaryAbilityName().equals("secondaryAbility"));
                     }
                     case "crouch":
                         switch (args[2]) {
@@ -97,6 +101,8 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                                 return config.getPlaceholdersCrouchAbilityDescription().get(Integer.parseInt(args[3]));
                             case "count":
                                 return String.valueOf(type.getConfig().getPlaceholdersCrouchAbilityDescription().size());
+                            case "model":
+                                return String.valueOf(config.getCrouch().getCustomModelID());
                             case "enabled":
                                 return String.valueOf(!config.getPlaceholdersCrouchAbilityName().equals("abilityName"));
                     }
@@ -109,20 +115,22 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                             return config.getAbilityDescription(abilityNum).get(Integer.parseInt(args[4]));
                         case "count":
                             return String.valueOf(config.getAbilityDescription(abilityNum).size());
+                        case "model":
+                            return String.valueOf(config.getAbilities().get(abilityNum).getCustomModelID());
                         case "enabled":
                             return String.valueOf(!config.getPlaceholderAbilityName(abilityNum).equals("abilityName"));
                     }
             }
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         return "";
     }
     private static String convertDifficulty(int difficulty){
-        return switch (difficulty){
-            case 1 -> MainConfig.getDifficultyMediumIcon();
-            case 2 -> MainConfig.getDifficultyHardIcon();
-            case 3 -> MainConfig.getDifficultyExtremeIcon();
-            default -> MainConfig.getDifficultyEasyIcon(); //0 or 4
+        return switch (difficulty) {
+            case 2 -> "2";
+            case 3 -> "3";
+            case 4 -> "4";
+            default -> "1";
         };
     }
 }

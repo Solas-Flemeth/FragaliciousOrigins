@@ -4,11 +4,9 @@ import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -17,10 +15,9 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerShearEntityEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.Nullable;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
@@ -29,9 +26,9 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
+import org.originsreborn.fragaliciousorigins.util.enums.Food;
 import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
-import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -138,6 +135,10 @@ public class Werewolf extends Origin {
                 PotionsUtil.addEffect(wolf, PotionEffectType.SPEED, WEREWOLF_CONFIG.getWolfSpeedAmplifier(), WEREWOLF_CONFIG.getWolfSpeedDuration());
             }
         });
+        PotionsUtil.addEffect(player, PotionEffectType.STRENGTH, WEREWOLF_CONFIG.getPlayerStrengthAmplifier(), WEREWOLF_CONFIG.getPlayerStrengthDuration());
+        PotionsUtil.addEffect(player, PotionEffectType.REGENERATION, WEREWOLF_CONFIG.getPlayerRegenerationAmplifier(), WEREWOLF_CONFIG.getPlayerRegenerationDuration());
+        PotionsUtil.addEffect(player, PotionEffectType.RESISTANCE, WEREWOLF_CONFIG.getPlayerResistanceAmplifier(), WEREWOLF_CONFIG.getPlayerResistanceDuration());
+        PotionsUtil.addEffect(player, PotionEffectType.SPEED, WEREWOLF_CONFIG.getPlayerSpeedAmplifier(), WEREWOLF_CONFIG.getPlayerSpeedDuration());
     }
 
     /**
@@ -233,23 +234,19 @@ public class Werewolf extends Origin {
         super.onBlockbreak(event);
         boolean isHandEmpty = getPlayer().getEquipment().getItemInMainHand().isEmpty();
         if(isSecondaryEnabled()){
-            if(isHandEmpty){
+            if(!isHandEmpty){
                 event.setCancelled(true);
                 cannotDoActivity( "use tools");
-            }else{
-                Location location = event.getBlock().getLocation();
-                ItemStack ironSilkPickaxe = new ItemStack(Material.IRON_PICKAXE);
-                ironSilkPickaxe.addEnchantment(Enchantment.SILK_TOUCH, 1);
-                Collection<ItemStack> drops = event.getBlock().getDrops(ironSilkPickaxe);
-                if(!drops.isEmpty()){
-                    event.setDropItems(false);
-                    event.setExpToDrop(0);
-                    event.getBlock().setType(Material.AIR);
-                    for (ItemStack itemStack : drops) {
-                        location.getWorld().dropItemNaturally(location, itemStack);
-                    }
-                }
             }
+        }
+    }
+    @Override
+    public void consume(PlayerItemConsumeEvent event){
+        super.consume(event);
+        Food food = Food.getFood(event.getItem().getType());
+        if(food != null && !food.isMeat()){
+            event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
+            event.setCancelled(true);
         }
     }
 
@@ -265,6 +262,7 @@ public class Werewolf extends Origin {
         }
         boolean isHandEmpty = getPlayer().getEquipment().getItemInMainHand().isEmpty();
         LivingEntity entity = (LivingEntity) event.getEntity();
+        Player player = getPlayer();
         //calculate enemy gear
         double armor = PlayerUtils.getAttribute(entity, Attribute.GENERIC_ARMOR);
         double toughness = PlayerUtils.getAttribute(entity, Attribute.GENERIC_ARMOR_TOUGHNESS);
@@ -276,6 +274,14 @@ public class Werewolf extends Origin {
                         * (1.0 + (WEREWOLF_CONFIG.getWolfDamageMultiplierPerArmour() * armor))
                         * (1.0 + (toughness * WEREWOLF_CONFIG.getWolfDamageMultiplierPerToughness()));
                 event.setDamage(damage);
+                if(Math.random() < 0.05){
+                    player.setSaturation(player.getSaturation() + 4f);
+                    player.setFoodLevel(getPlayer().getFoodLevel() + 1);
+                }
+                if(Math.random() < 0.05){
+                    player.heal(1f);
+                    PotionsUtil.addEffect(player, PotionEffectType.REGENERATION, 2, 15);
+                }
             }else{
                 event.setCancelled(true);
                 cannotDoActivity( "attack with items");
@@ -285,6 +291,14 @@ public class Werewolf extends Origin {
                     * (1.0 + (WEREWOLF_CONFIG.getHumanDamageMultiplierPerArmour() * armor))
                     * (1.0 + (toughness * WEREWOLF_CONFIG.getHumanDamageMultiplierPerToughness()));
             event.setDamage(damage);
+            if(Math.random() < 0.015){
+                player.setSaturation(player.getSaturation() + 4f);
+                player.setFoodLevel(getPlayer().getFoodLevel() + 1);
+            }
+            if(Math.random() < 0.015){
+                player.heal(1f);
+                PotionsUtil.addEffect(player, PotionEffectType.REGENERATION, 2, 15);
+            }
         }
         super.onAttackEntity(event);
     }
@@ -314,6 +328,7 @@ public class Werewolf extends Origin {
         super.onSunrise(moonCycle);
         if(getRandom().nextDouble() < MoonCycle.getPercentageTillFull(moonCycle) && isSecondaryEnabled()){
             transform();
+            getPlayer().sendActionBar(Component.text("The rise of the sun caused you to transform back to human form").color(Origin.textColor()));
         }
     }
 
@@ -325,6 +340,7 @@ public class Werewolf extends Origin {
         super.onSunset(moonCycle);
         if(getRandom().nextDouble() < MoonCycle.getPercentageTillFull(moonCycle) && !isSecondaryEnabled()){
             transform();
+            getPlayer().sendActionBar(Component.text("The moon causes you to turn back to human form").color(Origin.textColor()));
         }
     }
 
@@ -333,8 +349,15 @@ public class Werewolf extends Origin {
      */
     @Override
     public boolean secondaryConditionCheck() {
-        MoonCycle moonCycle = getMoonCycle(getPlayer().getWorld());
+        Player player = getPlayer();
+        MoonCycle moonCycle = getMoonCycle(player.getWorld());
         if(moonCycle == FULL_MOON || moonCycle == NEW_MOON){
+            if(moonCycle == FULL_MOON){
+                player.sendActionBar(Component.text("You cannot control transformation during a Full Moon").color(Origin.textColor()));
+            }else{
+                player.sendActionBar(Component.text("You cannot control transformation during a New Moon").color(Origin.textColor()));
+            }
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
             return false;
         }
         return super.secondaryConditionCheck();

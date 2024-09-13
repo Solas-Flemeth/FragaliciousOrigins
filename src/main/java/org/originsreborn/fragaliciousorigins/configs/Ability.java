@@ -5,10 +5,12 @@ import java.util.List;
 public class Ability {
     private String name;
     private List<String> description;
+    private int customModelID;
 
-    public Ability(String name, List<String> description) {
+    public Ability(String name, List<String> description, int CustomModelID) {
         this.name = name;
         this.description = description;
+        this.customModelID = CustomModelID;
     }
 
     public String getName() {
@@ -17,5 +19,9 @@ public class Ability {
 
     public List<String> getDescription() {
         return description;
+    }
+
+    public int getCustomModelID() {
+        return customModelID;
     }
 }

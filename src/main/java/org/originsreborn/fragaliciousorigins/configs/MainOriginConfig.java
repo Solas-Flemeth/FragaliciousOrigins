@@ -22,7 +22,8 @@ public class MainOriginConfig extends OriginConfig {
     private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, dodgeChance, meleeAtackMultiplier;
     private float burnDuration;
     //permissions & placeholders
-    private  int difficulty;
+    private int difficulty;
+    private int model;
     private List<String> permissions, originDesc;
     private Ability primary, secondary, crouch;
     private List<Ability> abilities;
@@ -92,40 +93,52 @@ public class MainOriginConfig extends OriginConfig {
             placeholdersNodeTitle.node("name").set("defaultName");
             placeholdersNodeTitle.node("description").set(Collections.singletonList(""));
             placeholdersNodeTitle.node("icon").set("icon");
-            placeholdersNodeTitle.node("difficulty").set(0);
+            placeholdersNodeTitle.node("model").set(0);
+            placeholdersNodeTitle.node("difficulty").set(1);
             CommentedConfigurationNode placeholdersPrimaryAbility = placeholdersNode.node("primaryAbility");
             placeholdersPrimaryAbility.node("name").set("primaryAbility");
             placeholdersPrimaryAbility.node("description").set(Collections.singletonList(""));
+            placeholdersPrimaryAbility.node("modelData").set(4024);
             CommentedConfigurationNode placeholdersSecondaryAbility = placeholdersNode.node("secondaryAbility");
             placeholdersSecondaryAbility.node("name").set("secondaryAbility");
             placeholdersSecondaryAbility.node("description").set(Collections.singletonList(""));
+            placeholdersSecondaryAbility.node("modelData").set(4025);
             CommentedConfigurationNode placeholderCrouchAbility = placeholdersNode.node("crouchAbility");
             placeholderCrouchAbility.node("name").set("abilityName");
             placeholderCrouchAbility.node("description").set(Collections.singletonList(""));
+            placeholderCrouchAbility.node("modelData").set(4026);
             CommentedConfigurationNode placeholderAbility1 = placeholdersNode.node("ability1");
             placeholderAbility1.node("name").set("abilityName");
             placeholderAbility1.node("description").set(Collections.singletonList(""));
+            placeholderAbility1.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility2 = placeholdersNode.node("ability2");
             placeholderAbility2.node("name").set("abilityName");
             placeholderAbility2.node("description").set(Collections.singletonList(""));
+            placeholderAbility2.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility3 = placeholdersNode.node("ability3");
             placeholderAbility3.node("name").set("abilityName");
             placeholderAbility3.node("description").set(Collections.singletonList(""));
+            placeholderAbility3.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility4 = placeholdersNode.node("ability4");
             placeholderAbility4.node("name").set("abilityName");
             placeholderAbility4.node("description").set(Collections.singletonList(""));
+            placeholderAbility4.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility5 = placeholdersNode.node("ability5");
             placeholderAbility5.node("name").set("abilityName");
             placeholderAbility5.node("description").set(Collections.singletonList(""));
+            placeholderAbility5.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility6 = placeholdersNode.node("ability6");
             placeholderAbility6.node("name").set("abilityName");
             placeholderAbility6.node("description").set(Collections.singletonList(""));
+            placeholderAbility6.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility7 = placeholdersNode.node("ability7");
             placeholderAbility7.node("name").set("abilityName");
             placeholderAbility7.node("description").set(Collections.singletonList(""));
+            placeholderAbility7.node("modelData").set(4024);
             CommentedConfigurationNode placeholderAbility8 = placeholdersNode.node("ability8");
             placeholderAbility8.node("name").set("abilityName");
             placeholderAbility8.node("description").set(Collections.singletonList(""));
+            placeholderAbility8.node("modelData").set(4024);
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
@@ -186,21 +199,26 @@ public class MainOriginConfig extends OriginConfig {
         originName = getConfigNode().node("placeholders").node("title").node("name").getString();
         originDesc = getStringsFromNode(getConfigNode().node("placeholders").node("title").node("description"));
         icon = getConfigNode().node("placeholders").node("title").node("icon").getString();
-        difficulty = getConfigNode().node("placeholders").node("difficulty").getInt();
+        difficulty = getConfigNode().node("placeholders").node("difficulty").getInt(1);
+        model = getConfigNode().node("placeholders").node("model").getInt(0);
         abilities = new ArrayList<Ability>(8);
         primary = new Ability(getConfigNode().node("placeholders").node("primaryAbility").node("name").getString(),
-                getStringsFromNode(getConfigNode().node("placeholders").node("primaryAbility").node("description"))
+                getStringsFromNode(getConfigNode().node("placeholders").node("primaryAbility").node("description")),
+                getConfigNode().node("placeholders").node("primaryAbility").node("modelData").getInt(4024)
         );
         secondary = new Ability(getConfigNode().node("placeholders").node("secondaryAbility").node("name").getString(),
-                getStringsFromNode(getConfigNode().node("placeholders").node("secondaryAbility").node("description"))
+                getStringsFromNode(getConfigNode().node("placeholders").node("secondaryAbility").node("description")),
+                getConfigNode().node("placeholders").node("secondaryAbility").node("modelData").getInt(4025)
         );
         crouch = new Ability(getConfigNode().node("placeholders").node("crouchAbility").node("name").getString(),
-                getStringsFromNode(getConfigNode().node("placeholders").node("crouchAbility").node("description"))
+                getStringsFromNode(getConfigNode().node("placeholders").node("crouchAbility").node("description")),
+                getConfigNode().node("placeholders").node("primaryAbility").node("modelData").getInt(4026)
         );
         for (int ability = 1; ability < 9; ability++) {
             abilities.add(new Ability(
                     getConfigNode().node("placeholders").node("ability" + ability).node("name").getString(),
-                    getStringsFromNode(getConfigNode().node("placeholders").node("ability" + ability).node("description"))
+                    getStringsFromNode(getConfigNode().node("placeholders").node("ability" + ability).node("description")),
+                    getConfigNode().node("placeholders").node("ability" + ability).node("modelData").getInt(4027)
             ));
         }
     }
@@ -442,4 +460,7 @@ public class MainOriginConfig extends OriginConfig {
         return difficulty;
     }
 
+    public int getModel() {
+        return model;
+    }
 }
