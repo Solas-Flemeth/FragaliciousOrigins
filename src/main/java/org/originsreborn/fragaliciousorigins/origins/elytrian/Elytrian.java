@@ -91,7 +91,12 @@ public class Elytrian extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateSphereParticle(Particle.CLOUD, getPlayer().getLocation(), 2, MAIN_ORIGIN_CONFIG.getScale());
+        if(tickNum%3 == 0){
+            ParticleUtil.generateSphereParticle(Particle.CLOUD, getPlayer().getLocation(), 2, MAIN_ORIGIN_CONFIG.getScale());
+        }
+        if(tickNum%4==0){
+            ParticleUtil.generateSphereParticle(Particle.END_ROD, getPlayer().getLocation(), 2, MAIN_ORIGIN_CONFIG.getScale());
+        }
     }
 
 

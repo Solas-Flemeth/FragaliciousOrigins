@@ -6,6 +6,7 @@ import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
+import org.originsreborn.fragaliciousorigins.origins.blazeborn.Blazeborn;
 import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
@@ -133,7 +134,7 @@ public enum OriginType {
             case BEE:
                 return Bee.MAIN_ORIGIN_CONFIG;
             case BLAZEBORN:
-                return Blazeborn.MAIN_ORIGIN_CONFIG;
+                return Blazeborn.HEAT_CONFIG_2;
             case ENDERIAN:
                 return Enderian.MAIN_ORIGIN_CONFIG;
             case ELYTRIAN:

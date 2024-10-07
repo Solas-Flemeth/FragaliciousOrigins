@@ -4,10 +4,7 @@ import io.papermc.paper.entity.LookAnchor;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
-import org.bukkit.Location;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
@@ -16,6 +13,7 @@ import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
@@ -27,9 +25,7 @@ import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
 
@@ -54,6 +50,7 @@ public class Enderian extends Origin {
     private static final BossBar.Overlay FLUX_OVERLAY = BossBar.Overlay.PROGRESS;
     private int invulnFrames = 0;
     private final String FLUX_KEY;
+    private final Set<Material> TRANSPARENT_BLOCKS = transparentMaterials();
     private Integer capacity;
 
     public Enderian(UUID uuid, OriginState state, String customDataString) {
@@ -63,7 +60,6 @@ public class Enderian extends Origin {
         }
         FLUX_KEY = getUUID().toString() + "_FLUX";
         FragaliciousOrigins.BOSS_BARS.createBossBar(FLUX_KEY, getFluxComponent(), getFluxPercentage(), FLUX_COLOR, FLUX_OVERLAY, getPlayer());
-
     }
     @Override
     public void onRemoveOrigin() {
@@ -87,8 +83,8 @@ public class Enderian extends Origin {
         }
         if (tickNum % 10 == 0) {
             //deal water damage
-            if (player.isInWaterOrRain() && !player.hasPotionEffect(PotionEffectType.CONDUIT_POWER)) {
-                player.damage(4, DamageSource.builder(DamageType.DROWN).build());
+            if (player.isInWaterOrRain() && !player.hasPotionEffect(PotionEffectType.CONDUIT_POWER) && !player.isDead()) {
+                player.damage(4, DamageSource.builder(DamageType.OUTSIDE_BORDER).build());
                 player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1f, 1.5f);
             }
             if (capacity < ENDERIAN_CONFIG.getChargeCapacity()) {
@@ -100,11 +96,14 @@ public class Enderian extends Origin {
             }
             FragaliciousOrigins.BOSS_BARS.updateBossBar(FLUX_KEY, getFluxComponent(), getFluxPercentage(), FLUX_COLOR);
         }
+        boolean isOverworld = getPlayer().getWorld().getEnvironment().equals(World.Environment.NORMAL);
+        if(!isOverworld && player.getFireTicks() > 0){
+            player.setFireTicks(0);
+        }
     }
-
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateSphereParticle(Particle.PORTAL, getPlayer().getLocation(), 1, 2.5);
+        ParticleUtil.generateSphereParticle(Particle.PORTAL, getPlayer().getLocation(), 1, 2);
     }
 
     /**
@@ -138,13 +137,18 @@ public class Enderian extends Origin {
             cost = ENDERIAN_CONFIG.getPrimaryEndCost();
             range = ENDERIAN_CONFIG.getPrimaryEndRange();
         }
+        PotionEffect weakness = player.getPotionEffect(PotionEffectType.WEAKNESS);
+        if(weakness !=  null){
+            int divider = 2 +  weakness.getAmplifier();
+            range = range / divider;
+        }
         if (cost > getCapacity()) {
             sendLackOfFlux(player);
             return;
         }
         float yaw = player.getLocation().getYaw();
         float pitch = player.getLocation().getPitch();
-        Location targetLocation = player.getTargetBlock(null, range).getLocation();
+        Location targetLocation = player.getTargetBlock(TRANSPARENT_BLOCKS, range).getLocation();
         targetLocation = findRelativelySafeLocation(targetLocation, -2, 5);
         if(targetLocation != null){
             world.playSound(targetLocation, Sound.ENTITY_ENDERMAN_TELEPORT, 1f, 1.5f);
@@ -191,6 +195,11 @@ public class Enderian extends Origin {
             } else {
                 cost = ENDERIAN_CONFIG.getSecondaryEndCost();
                 range = ENDERIAN_CONFIG.getSecondaryEndRange();
+            }
+            PotionEffect weakness = player.getPotionEffect(PotionEffectType.WEAKNESS);
+            if(weakness !=  null){
+                int divider = 2 +  weakness.getAmplifier();
+                range = range / divider;
             }
             if (cost > capacity) {
                 sendLackOfFlux(player);
@@ -335,7 +344,7 @@ public class Enderian extends Origin {
         return null;
     }
     private Location findSafeTeleportLocation(Player player, int range) {
-        Location targetLocation = player.getTargetBlock(null, range).getLocation();
+        Location targetLocation = player.getTargetBlock(TRANSPARENT_BLOCKS, range).getLocation();
         if (targetLocation != null) {
             int randomXOffset = random.nextInt(range) - range / 2;
             int randomZOffset = random.nextInt(range) - range / 2;
@@ -405,5 +414,14 @@ public class Enderian extends Origin {
         finalLocation.setPitch((float) pitch);
 
         return finalLocation;
+    }
+    private static Set<Material> transparentMaterials(){
+        return Set.of(Material.SHORT_GRASS, Material.AIR, Material.CAVE_AIR, Material.VINE,
+                Material.CAVE_VINES, Material.SPORE_BLOSSOM, Material.SUGAR_CANE,
+                Material.TALL_GRASS, Material.DANDELION, Material.SNOW, Material.MOSS_CARPET,
+                Material.BLACK_CARPET, Material.BLUE_CARPET, Material.CYAN_CARPET, Material.BROWN_CARPET,
+                Material.GRAY_CARPET, Material.GREEN_CARPET, Material.LIGHT_BLUE_CARPET, Material.LIGHT_GRAY_CARPET,
+                Material.LIME_CARPET, Material.MAGENTA_CARPET, Material.ORANGE_CARPET, Material.PINK_CARPET,
+                Material.PURPLE_CARPET, Material.RED_CARPET, Material.WHITE_CARPET, Material.YELLOW_CARPET);
     }
 }

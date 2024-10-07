@@ -10,7 +10,7 @@ public class PawswornConfig extends OriginConfig {
     private double nineLivesChance;
 
     public PawswornConfig() {
-        super(OriginType.PAWSWORN, "unique");
+        super(OriginType.PAWSWORN, "unique.yaml");
     }
 
     @Override

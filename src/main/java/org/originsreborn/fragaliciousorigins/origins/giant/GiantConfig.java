@@ -10,7 +10,7 @@ public class GiantConfig extends OriginConfig {
     private double hungerLossChance;
 
     public GiantConfig() {
-        super(OriginType.GIANT, "unique");
+        super(OriginType.GIANT, "unique.yaml");
     }
 
     @Override

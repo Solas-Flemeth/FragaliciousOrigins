@@ -100,7 +100,9 @@ public class Phantom extends Origin {
         Player player = getPlayer();
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             spectatorManagement(tickNum);
-            ParticleUtil.generateCircleParticle(Particle.SOUL,getPlayer().getLocation(),2,0.5);
+            ParticleUtil.generateCircleParticle(Particle.SOUL,getPlayer().getLocation(),2,.8);
+            ParticleUtil.generateCircleParticle(Particle.SMOKE,getPlayer().getLocation(),3,0.5);
+            ParticleUtil.generateCircleParticle(Particle.PORTAL,getPlayer().getLocation(),2,1.25);
         } else {
             if (tickNum % 10 == 0) {
                 coyoteTimeManagement();
@@ -167,8 +169,8 @@ public class Phantom extends Origin {
 
     @Override
     public void primaryAbilityLogic() {
-        if (getPlayer().getGameMode().equals(GameMode.SURVIVAL) && isHuntMode() == isRestMode() && getPlayer().getFoodLevel() > PHANTOM_CONFIG.getMinimumHunger()) {
-            Player player = getPlayer();
+        Player player = getPlayer();
+        if (player.getGameMode().equals(GameMode.SURVIVAL) && isHuntMode() == isRestMode() && player.getFoodLevel() > PHANTOM_CONFIG.getMinimumHunger() && !player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             player.setGameMode(GameMode.SPECTATOR);
         }
     }
@@ -189,6 +191,7 @@ public class Phantom extends Origin {
         super.onRespawn(event);
         if(getPlayer().getGameMode().equals(GameMode.SPECTATOR)){
             getPlayer().setGameMode(GameMode.SURVIVAL);
+            setCoyoteTime(PHANTOM_CONFIG.getCoyoteMaxCharge());
         }
         PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,0);
     }
@@ -361,8 +364,10 @@ public class Phantom extends Origin {
                 }
                 ParticleUtil.generateSphereParticle(Particle.FLAME, player.getLocation(), 30, 1.5);
                 ParticleUtil.generateSphereParticle(Particle.SOUL_FIRE_FLAME, player.getLocation(), 15, 0.5);
-            } else {
+            } else if(!player.isDead()){
                 setCoyoteTime(coyoteTime - PHANTOM_CONFIG.getCoyoteDrain());
+            }else{
+                setCoyoteTime(PHANTOM_CONFIG.getCoyoteMaxCharge()/2);
             }
             updateCoyoteBar();
         } else if (coyoteTime < PHANTOM_CONFIG.getCoyoteMaxCharge()) {

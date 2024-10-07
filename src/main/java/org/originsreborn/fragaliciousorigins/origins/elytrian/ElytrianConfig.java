@@ -11,7 +11,7 @@ public class ElytrianConfig extends OriginConfig {
     private int armor, toughness, modelData, minArmorToApply, ceilingHeight, slownessAmplifier, maxCharge;
 
     public ElytrianConfig() {
-        super(OriginType.ELYTRIAN, "unique");
+        super(OriginType.ELYTRIAN, "unique.yaml");
     }
 
     @Override

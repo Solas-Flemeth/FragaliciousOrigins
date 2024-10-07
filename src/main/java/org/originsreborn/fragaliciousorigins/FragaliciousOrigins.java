@@ -13,6 +13,7 @@ import org.originsreborn.fragaliciousorigins.origins.OriginManager;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
+import org.originsreborn.fragaliciousorigins.origins.blazeborn.Blazeborn;
 import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
@@ -28,6 +29,7 @@ import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.origins.wip.ShapeShifter;
 import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
+import org.originsreborn.fragaliciousorigins.util.DisguiseUtil;
 
 public final class FragaliciousOrigins extends JavaPlugin {
     public static FragaliciousOrigins INSTANCE;
@@ -41,9 +43,11 @@ public final class FragaliciousOrigins extends JavaPlugin {
         INSTANCE = this;
         CONFIG = new MainConfig();//Register as a valid config file
         BOSS_BARS = new BossBarManager();
+        DisguiseUtil disguiseUtil = new DisguiseUtil();
         ORIGINS = new OriginManager();
         DATASOURCE = new DataSourceManager();
         DISCORD = new DiscordIntegration();
+
         this.getServer().getPluginManager().registerEvents(new AbilityListener(), this);
         registerCommands();
         registerPlaceholderAPI();

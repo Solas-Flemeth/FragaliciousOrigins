@@ -9,7 +9,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 public class ShulkConfig extends OriginConfig {
     private int radius, playerDuration, enemyDuration, resistanceDuration,resistanceAmp;
     public ShulkConfig() {
-        super(OriginType.SHULK, "unique");
+        super(OriginType.SHULK, "unique.yaml");
     }
 
     public void populateDefaultConfig() {

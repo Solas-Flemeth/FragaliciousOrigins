@@ -13,8 +13,10 @@ import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
+import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
@@ -22,6 +24,7 @@ import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
 import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
+import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
 
 import java.awt.*;
 import java.time.Instant;
@@ -68,13 +71,14 @@ public class DiscordIntegration {
         System.out.println("SENDING ORIGINS");
         indexMap.put(sendOriginDiscordEmbeds(Human.MAIN_ORIGIN_CONFIG), Human.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Alchemist.MAIN_ORIGIN_CONFIG), Alchemist.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
-        // indexMap.put(sendOriginDiscordEmbeds(sendOriginDiscordEmbeds(Arachnid.MAIN_ORIGIN_CONFIG);
+        indexMap.put(sendOriginDiscordEmbeds(Arachnid.MAIN_ORIGIN_CONFIG), Arachnid.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Bee.MAIN_ORIGIN_CONFIG), Bee.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         //sendOriginDiscordEmbeds(Blazeborn.MAIN_ORIGIN_CONFIG);
         indexMap.put(sendOriginDiscordEmbeds(Elytrian.MAIN_ORIGIN_CONFIG), Elytrian.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
-        //sendOriginDiscordEmbeds(Enderian.MAIN_ORIGIN_CONFIG);
+        sendOriginDiscordEmbeds(Enderian.MAIN_ORIGIN_CONFIG);
         indexMap.put(sendOriginDiscordEmbeds(Pawsworn.MAIN_ORIGIN_CONFIG), Pawsworn.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Giant.MAIN_ORIGIN_CONFIG), Giant.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
+        sendAdditionalForm(Giant.GIANT_ENALRGED);
         indexMap.put(sendOriginDiscordEmbeds(Huntsman.MAIN_ORIGIN_CONFIG), Huntsman.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Inchling.MAIN_ORIGIN_CONFIG), Inchling.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Merling.MAIN_ORIGIN_CONFIG), Merling.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
@@ -82,6 +86,8 @@ public class DiscordIntegration {
         //sendOriginDiscordEmbeds(Phytokin.MAIN_ORIGIN_CONFIG);
         //sendOriginDiscordEmbeds(ShapeShifter.MAIN_ORIGIN_CONFIG);
         indexMap.put(sendOriginDiscordEmbeds(Shulk.MAIN_ORIGIN_CONFIG), Shulk.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
+        indexMap.put(sendOriginDiscordEmbeds(Werewolf.WEREWOLF_HUMAN_FORM_CONFIG), Werewolf.WEREWOLF_HUMAN_FORM_CONFIG.getPlaceholdersNodeTitleName());
+        sendAdditionalForm(Werewolf.WEREWOLF_WOLF_FORM_CONFIG);
         //sendOriginDiscordEmbeds(Stoneborn.MAIN_ORIGIN_CONFIG);
         //sendOriginDiscordEmbeds(Vampire.MAIN_ORIGIN_CONFIG);
         System.out.println("FINISHED SENDING ORIGINS - UPDATING INDEX");
@@ -114,7 +120,7 @@ public class DiscordIntegration {
 
     private String sendOriginDiscordEmbeds(MainOriginConfig config) {
         String id = "";
-        id = sendStats(config);
+        id = sendStats(config, true);
         //Abilities
         sendAbility(config.getPrimary(), "Primary Ability", config.getPrimaryMaxCooldown());
         sendAbility(config.getSecondary(), "Secondary Ability", config.getSecondaryMaxCooldown());
@@ -124,15 +130,23 @@ public class DiscordIntegration {
         }
         return id;
     }
+    private void sendAdditionalForm(MainOriginConfig config) {
+        sendStats(config, false);
+    }
 
-    private String sendStats(MainOriginConfig config) {
+    private String sendStats(MainOriginConfig config, boolean isPrimary) {
         StringBuilder abilityDescriptionString = new StringBuilder();
         for (String description : config.getPlaceholdersNodeTitleDescription()) {
             abilityDescriptionString.append(description).append("\n");
         }
         EmbedBuilder embedBuilder = new EmbedBuilder();
-        embedBuilder.setTitle("General Stats:" + config.getPlaceholdersNodeTitleName());
-        embedBuilder.addField("Difficulty / Complexity:", String.valueOf(config.getDifficulty()), true);
+        if(isPrimary){
+            embedBuilder.setTitle("General Stats:" + config.getPlaceholdersNodeTitleName());
+            embedBuilder.addField("Difficulty / Complexity:", String.valueOf(config.getDifficulty()), true);
+            embedBuilder.setDescription(abilityDescriptionString);
+        }else{
+            embedBuilder.setTitle("Additional Form Stats:" + config.getPlaceholdersNodeTitleName());
+        }
         embedBuilder.setDescription(abilityDescriptionString);
         embedBuilder.addField("Mobility", "**Speed:** " + formatPercentage(config.getMovementSpeed()) + " (**Sneaking**: " + formatPercentage(config.getSneakingSpeed()) + ")" + " **Jump Height:**" +formatPercentage(config.getJumpStrength()) + " ( **Gravity:** " + formatPercentage(config.getGravity()) + ")", false);
         embedBuilder.addField("Luck", String.valueOf(config.getLuck()), true);
@@ -153,8 +167,12 @@ public class DiscordIntegration {
         embedBuilder.addField("Magic Damage Taken", formatPercentage(config.getMagicDamageMultiplier()), true);
         embedBuilder.addField("Water Damage Taken", formatPercentage(config.getWaterDamageMultiplier()), true);
         embedBuilder.addField("Fall Damage Taken", formatPercentage(config.getFallDamageMultiplier()) + " (**Fall Height:** " + config.getSafeFallDistance() + " blocks)", true);
-        embedBuilder.setFooter("Stats may change based upon gameplay conditions. These are only base stats");
-        embedBuilder.setColor(new Color(0x6900FF));
+        embedBuilder.setFooter("Stats may change based upon gameplay conditions.");
+        if(isPrimary){
+            embedBuilder.setColor(new Color(0x6900FF));
+        }else{
+            embedBuilder.setColor(new Color(0x6CFFD4));
+        }
         embedBuilder.setTimestamp(Instant.now());
         return channel.sendMessageEmbeds(embedBuilder.build()).complete().getId();
     }

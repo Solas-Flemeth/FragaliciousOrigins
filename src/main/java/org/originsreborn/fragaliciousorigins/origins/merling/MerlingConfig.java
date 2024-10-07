@@ -10,7 +10,7 @@ public class MerlingConfig extends OriginConfig {
     private int secondaryAbilityRange, secondaryAbilityPotionDuration, secondaryAbilityDolphinsGraceAmplifier, waterAttributesDolphinsGraceAmplifier, hydrationDuration, minArmorToApply, ceilingHeight, slownessAmplifier;
 
     public MerlingConfig() {
-        super(OriginType.MERLING, "unique");
+        super(OriginType.MERLING, "unique.yaml");
     }
 
     @Override

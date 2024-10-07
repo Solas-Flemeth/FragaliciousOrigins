@@ -81,13 +81,13 @@ public class Pawsworn extends Origin {
     public void originParticle(int tickNum) {
         double math = Math.random();
         if(math > 0.77){
-            ParticleUtil.generateParticleAtLocation(Material.WHITE_WOOL, getPlayer().getLocation(), 1);
+            ParticleUtil.generateSphereParticle(Material.WHITE_WOOL, getPlayer().getLocation(), 1, 1.5);
         } else if(math > 0.55){
-            ParticleUtil.generateParticleAtLocation(Material.BROWN_WOOL, getPlayer().getLocation(), 1);
+            ParticleUtil.generateSphereParticle(Material.BROWN_WOOL, getPlayer().getLocation(), 1,  1.5);
         }else if (math > 0.35) {
-            ParticleUtil.generateParticleAtLocation(Material.BLACK_WOOL, getPlayer().getLocation(), 1);
+            ParticleUtil.generateSphereParticle(Material.BLACK_WOOL, getPlayer().getLocation(), 1,  1.5);
         }else{
-            ParticleUtil.generateParticleAtLocation(Material.ORANGE_WOOL, getPlayer().getLocation(), 2);
+            ParticleUtil.generateSphereParticle(Material.ORANGE_WOOL, getPlayer().getLocation(), 2,  1.5);
         }
     }
 

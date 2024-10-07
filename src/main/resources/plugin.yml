@@ -2,7 +2,11 @@ name: FragaliciousOrigins
 version: '${project.version}'
 main: org.originsreborn.fragaliciousorigins.FragaliciousOrigins
 api-version: '1.21'
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, LibsDisguises]
+libraries:
+  - com.zaxxer:HikariCP:5.0.1
+  - org.spongepowered:configurate-yaml:4.1.0
+  - net.dv8tion:JDA:5.0.0-beta.24
 commands:
   originreload:
     description: Reloads the Origins for a player

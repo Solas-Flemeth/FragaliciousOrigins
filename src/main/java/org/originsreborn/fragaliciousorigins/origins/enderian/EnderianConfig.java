@@ -26,7 +26,7 @@ public class EnderianConfig extends OriginConfig {
     private int chargeCapacity, invulnFrames;
     private double health, blockInteractionRange, entityInteractionRange;
     public EnderianConfig() {
-        super(OriginType.ENDERIAN, "unique");
+        super(OriginType.ENDERIAN, "unique.yaml");
     }
 
     @Override

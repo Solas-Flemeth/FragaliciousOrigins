@@ -11,7 +11,7 @@ public class PhantomConfig extends OriginConfig {
     private double speedLightMultiplier, miningMultiplier, attackSpeed, dodgeChance, fireResistanceDamageReduction, miningSpeed, secondaryCooldownMultiplier;
 
     public PhantomConfig() {
-        super(OriginType.PHANTOM, "unique");
+        super(OriginType.PHANTOM, "unique.yaml");
     }
 
     @Override

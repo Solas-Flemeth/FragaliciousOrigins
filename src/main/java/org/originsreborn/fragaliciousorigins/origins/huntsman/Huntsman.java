@@ -93,7 +93,7 @@ public class Huntsman extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateParticleAtLocation(Particle.SPORE_BLOSSOM_AIR, getPlayer().getLocation(), 2);
+        ParticleUtil.generateSphereParticle(Particle.SPORE_BLOSSOM_AIR, getPlayer().getLocation(), 2, 1.25);
     }
 
 

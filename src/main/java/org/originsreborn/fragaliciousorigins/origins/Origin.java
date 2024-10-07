@@ -24,6 +24,7 @@ import org.originsreborn.fragaliciousorigins.util.DamageUtil;
 import org.originsreborn.fragaliciousorigins.util.PermissionsUtil;
 import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
 import org.originsreborn.fragaliciousorigins.util.enums.DayCycle;
+import org.originsreborn.fragaliciousorigins.util.DisguiseUtil;
 import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
 import java.io.IOException;
@@ -72,6 +73,7 @@ public abstract class Origin {
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
+        DisguiseUtil.undisguisedPlayer(player);
     }
 
     public static void onReload() {
@@ -323,9 +325,11 @@ public abstract class Origin {
     public boolean primaryConditionCheck() {
         return true;
     }
+
     public boolean secondaryConditionCheck() {
         return true;
     }
+
     public abstract void primaryAbilityLogic();
 
     public void secondaryAbility() {
@@ -337,7 +341,7 @@ public abstract class Origin {
         if (getSecondaryCooldown() > 0) {
             player.sendActionBar(secondaryAbilityTimerCooldownMsg());
             player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
-        } else if(player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()){
+        } else if (player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()) {
             secondaryAbilityLogic();
             setSecondaryCooldown(getSecondaryMaxCooldown());
         }
@@ -710,8 +714,9 @@ public abstract class Origin {
             event.setCancelled(true);
         }
     }
-    public void onTimeChange(DayCycle dayCycle, MoonCycle moonCycle){
-        switch (dayCycle){
+
+    public void onTimeChange(DayCycle dayCycle, MoonCycle moonCycle) {
+        switch (dayCycle) {
             case SUNRISE:
                 onSunrise(moonCycle);
                 break;
@@ -726,15 +731,19 @@ public abstract class Origin {
                 break;
         }
     }
-    public void onSunrise(MoonCycle moonCycle){
+
+    public void onSunrise(MoonCycle moonCycle) {
     }
-    public void onDay(MoonCycle moonCycle){
+
+    public void onDay(MoonCycle moonCycle) {
 
     }
-    public void onSunset(MoonCycle moonCycle){
+
+    public void onSunset(MoonCycle moonCycle) {
 
     }
-    public void onNight(MoonCycle moonCycle){
+
+    public void onNight(MoonCycle moonCycle) {
 
     }
 

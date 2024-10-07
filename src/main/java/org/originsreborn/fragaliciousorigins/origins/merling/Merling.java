@@ -185,7 +185,13 @@ public class Merling extends Origin {
 
     @Override
     public void originParticle(int tickNum) {
-        ParticleUtil.generateParticleAtLocation(Particle.BUBBLE_COLUMN_UP, getPlayer().getLocation(), 1);
+        if(tickNum%3 == 0){
+            ParticleUtil.generateSphereParticle(Particle.BUBBLE_COLUMN_UP, getPlayer().getLocation(), 2, 1.5);
+        }
+        if(tickNum%2 == 0){
+            ParticleUtil.generateSphereParticle(Particle.FALLING_WATER, getPlayer().getLocation(), 1, 1.5);
+        }
+
     }
 
     @Override
