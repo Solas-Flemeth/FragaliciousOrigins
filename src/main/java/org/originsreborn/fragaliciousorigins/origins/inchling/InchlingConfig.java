@@ -9,7 +9,7 @@ public class InchlingConfig extends OriginConfig {
     private double speedModifier, jumpHeightModifier, sizeModifier, dodgeChance, hungerLossCancelChance, saturationGainChance;
 
     public InchlingConfig() {
-        super(OriginType.INCHLING, "unique.yaml");
+        super(OriginType.INCHLING, "unique");
     }
 
     @Override

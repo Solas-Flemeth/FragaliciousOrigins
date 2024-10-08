@@ -17,6 +17,7 @@ import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
+import org.originsreborn.fragaliciousorigins.origins.fairy.Fairy;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
@@ -65,23 +66,22 @@ public class DiscordIntegration {
         HashMap<String, String>indexMap = new HashMap<>();
         getChannel();
         clearTextChannel();
-        System.out.println("SENDING INDEX");
         String indexID = sendIndex();
         //send origin info
-        System.out.println("SENDING ORIGINS");
-        indexMap.put(sendOriginDiscordEmbeds(Human.MAIN_ORIGIN_CONFIG), Human.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Alchemist.MAIN_ORIGIN_CONFIG), Alchemist.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Arachnid.MAIN_ORIGIN_CONFIG), Arachnid.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Bee.MAIN_ORIGIN_CONFIG), Bee.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         //sendOriginDiscordEmbeds(Blazeborn.MAIN_ORIGIN_CONFIG);
         indexMap.put(sendOriginDiscordEmbeds(Elytrian.MAIN_ORIGIN_CONFIG), Elytrian.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
-        sendOriginDiscordEmbeds(Enderian.MAIN_ORIGIN_CONFIG);
-        indexMap.put(sendOriginDiscordEmbeds(Pawsworn.MAIN_ORIGIN_CONFIG), Pawsworn.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
+        indexMap.put(sendOriginDiscordEmbeds(Enderian.MAIN_ORIGIN_CONFIG), Enderian.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
+        indexMap.put(sendOriginDiscordEmbeds(Fairy.MAIN_ORIGIN_CONFIG),Fairy.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Giant.MAIN_ORIGIN_CONFIG), Giant.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         sendAdditionalForm(Giant.GIANT_ENALRGED);
+        indexMap.put(sendOriginDiscordEmbeds(Human.MAIN_ORIGIN_CONFIG), Human.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Huntsman.MAIN_ORIGIN_CONFIG), Huntsman.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Inchling.MAIN_ORIGIN_CONFIG), Inchling.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Merling.MAIN_ORIGIN_CONFIG), Merling.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
+        indexMap.put(sendOriginDiscordEmbeds(Pawsworn.MAIN_ORIGIN_CONFIG), Pawsworn.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Phantom.MAIN_ORIGIN_CONFIG), Phantom.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         //sendOriginDiscordEmbeds(Phytokin.MAIN_ORIGIN_CONFIG);
         //sendOriginDiscordEmbeds(ShapeShifter.MAIN_ORIGIN_CONFIG);
@@ -90,19 +90,15 @@ public class DiscordIntegration {
         sendAdditionalForm(Werewolf.WEREWOLF_WOLF_FORM_CONFIG);
         //sendOriginDiscordEmbeds(Stoneborn.MAIN_ORIGIN_CONFIG);
         //sendOriginDiscordEmbeds(Vampire.MAIN_ORIGIN_CONFIG);
-        System.out.println("FINISHED SENDING ORIGINS - UPDATING INDEX");
         editIndex(indexMap, indexID);
-        System.out.println("UPDATED INDEX");
     }
 
     private void editIndex(HashMap<String,String> map, String messageID) {
-        System.out.println("UPDATING INDEX");
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Origin Index:");
         embedBuilder.setColor(new Color(0x6900FF));
         embedBuilder.setDescription("Below is a list of the current Origins (In the beta) and their stats");
         //iterate through map
-        System.out.println("WE HAVE " + map.size() + " INDEXES TO ADD");
         map.forEach((id, name) ->
                 embedBuilder.addField(name, "https://discord.com/channels/" + guild + "/" + channelID + "/" + id, false)
         );

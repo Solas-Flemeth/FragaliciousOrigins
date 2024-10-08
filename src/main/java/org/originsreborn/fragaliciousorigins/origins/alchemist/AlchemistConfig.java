@@ -15,7 +15,7 @@ public class AlchemistConfig extends OriginConfig {
     private float multiplierDamage, shieldAbsorption, multiplierGain, multiplierDrain;
 
     public AlchemistConfig() {
-        super(OriginType.ALCHEMIST, "unique.yaml");
+        super(OriginType.ALCHEMIST, "unique");
     }
 
     /**

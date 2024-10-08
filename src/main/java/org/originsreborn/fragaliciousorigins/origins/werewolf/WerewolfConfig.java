@@ -13,7 +13,7 @@ public class WerewolfConfig extends OriginConfig {
     private float humanDamageMultiplierPerArmour, humanDamageMultiplierPerToughness,humanBaseMelee;
     private double speedPenaltyArmor, attackPenaltyArmor, damagePenaltyArmor, speedPenaltyToughness, attackPenaltyToughness, damagePenaltyToughness;
     public WerewolfConfig() {
-        super(OriginType.WEREWOLF, "unique.yaml");
+        super(OriginType.WEREWOLF, "unique");
     }
 
     /**

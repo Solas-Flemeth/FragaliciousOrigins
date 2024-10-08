@@ -9,6 +9,7 @@ import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.blazeborn.Blazeborn;
 import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.fairy.Fairy;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
 import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
@@ -34,6 +35,7 @@ public enum OriginType {
     BLAZEBORN("Blazeborn"),
     ENDERIAN("Enderian"),
     ELYTRIAN("Elytrian"),
+    FAIRY("Fairy"),
     PAWSWORN("Pawsworn"),
     GIANT("Giant"),
     INCHLING("Inchling"),
@@ -46,6 +48,7 @@ public enum OriginType {
     VAMPIRE("Vampire"),
     WEREWOLF("Werewolf"),
     CHICKEN("Chicken");
+
 
     private String display;
     OriginType(String display){
@@ -84,6 +87,8 @@ public enum OriginType {
                 return new Enderian(uuid,originState,customDataString);
             case ELYTRIAN:
                 return new Elytrian(uuid,originState,customDataString);
+            case FAIRY:
+                return new Fairy(uuid, originState, customDataString);
             case PAWSWORN:
                 return new Pawsworn(uuid,originState,customDataString);
             case GIANT:
@@ -139,6 +144,8 @@ public enum OriginType {
                 return Enderian.MAIN_ORIGIN_CONFIG;
             case ELYTRIAN:
                 return Elytrian.MAIN_ORIGIN_CONFIG;
+            case FAIRY:
+                return Fairy.MAIN_ORIGIN_CONFIG;
             case PAWSWORN:
                 return Pawsworn.MAIN_ORIGIN_CONFIG;
             case GIANT:

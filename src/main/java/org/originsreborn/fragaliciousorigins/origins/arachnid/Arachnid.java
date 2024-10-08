@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.LivingEntity;
@@ -38,7 +39,6 @@ public class  Arachnid extends Origin {
     private static final ConcurrentHashMap<Location, Integer> cobwebMap;
     public Arachnid(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.ARACHNID, state, customDataString);
-        System.out.println(ARACHNID_CONFIG.toString());
     }
 
     @Override
@@ -88,14 +88,17 @@ public class  Arachnid extends Origin {
     @Override
     public void secondaryAbilityLogic() {
         secondaryToggle();
+        getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_PARROT_IMITATE_SPIDER, 2, 0.5f);
     }
     @Override
     public void consume(PlayerItemConsumeEvent event){
         super.consume(event);
         Food food = Food.getFood(event.getItem().getType());
+        Player player = getPlayer();
         if(food != null && !food.isMeat()){
-            event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
+            player.sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
             event.setCancelled(true);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_SPIDER_HURT, 2, 0.5f);
         }
     }
 
@@ -152,9 +155,10 @@ public class  Arachnid extends Origin {
             boolean hasUpperWest = !player.getLocation().getBlock().getRelative(-1, 1, 0).isPassable();
             boolean hasRoof = !player.getLocation().getBlock().getRelative(0, 2, 0).isPassable();
             boolean hasFloor = !player.getLocation().getBlock().getRelative(0, -1, 0).isPassable();
-            if (((hasWallNorth || hasWallSouth || hasWallEast || hasWallWest) && !hasFloor)
-                    || (hasUpperEast || hasUpperWest || hasUpperNorth || hasUpperSouth)
-                    || (hasRoof && !hasFloor)) {
+            boolean onGround = player.isOnGround();
+            if (((hasWallNorth || hasWallSouth || hasWallEast || hasWallWest) && !hasFloor && !onGround)
+                    || (hasUpperEast || hasUpperWest || hasUpperNorth || hasUpperSouth && !onGround)
+                    || (hasRoof && !hasFloor && !onGround)) {
                 if (!player.isFlying()) {
                     player.setAllowFlight(true);
                     player.setFlying(true);

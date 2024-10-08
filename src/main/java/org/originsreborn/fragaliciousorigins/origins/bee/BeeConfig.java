@@ -13,7 +13,7 @@ public class BeeConfig extends OriginConfig {
     private int hiveradius, hiveBeeAmp, hivePhytoAmp, hivePhytoDuration, hiveBeeDuration;
     private double hiveBeeChance, hivePhytoChance;
     public BeeConfig() {
-        super(OriginType.BEE, "unique.yaml");
+        super(OriginType.BEE, "unique");
     }
 
     /**

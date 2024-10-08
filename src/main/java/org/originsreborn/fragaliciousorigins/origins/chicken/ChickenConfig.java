@@ -10,7 +10,7 @@ public class ChickenConfig extends OriginConfig {
     private float explosionPower;
     private double eggDamage;
     public ChickenConfig() {
-        super(OriginType.CHICKEN, "unique.yaml");
+        super(OriginType.CHICKEN, "unique");
     }
 
     /**

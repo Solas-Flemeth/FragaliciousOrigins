@@ -290,8 +290,13 @@ public class Werewolf extends Origin {
         super.consume(event);
         Food food = Food.getFood(event.getItem().getType());
         if (food != null && !food.isMeat()) {
+            Player player = event.getPlayer();
             event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
             event.setCancelled(true);
+            if(isSecondaryEnabled()){
+                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_WOLF_WHINE, 1, 0.3f);
+            }
+
         }
     }
 
@@ -336,13 +341,15 @@ public class Werewolf extends Origin {
                     * (1.0 + (WEREWOLF_CONFIG.getHumanDamageMultiplierPerArmour() * armor))
                     * (1.0 + (toughness * WEREWOLF_CONFIG.getHumanDamageMultiplierPerToughness()));
             event.setDamage(damage);
-            if (Math.random() < 0.015) {
+            if (Math.random() < 0.017) {
                 player.setSaturation(player.getSaturation() + 4f);
                 player.setFoodLevel(getPlayer().getFoodLevel() + 1);
+                ParticleUtil.generateSphereParticle(Particle.HEART, player.getLocation(), 3, 2);
             }
-            if (Math.random() < 0.015) {
+            if (Math.random() < 0.017) {
                 player.heal(1f);
                 PotionsUtil.addEffect(player, PotionEffectType.REGENERATION, 2, 15);
+                ParticleUtil.generateSphereParticle(Particle.DUST, ParticleUtil.dustOptions(0xff0000, 1f), player.getLocation(), 3, 2);
             }
         }
         super.onAttackEntity(event);
@@ -410,6 +417,10 @@ public class Werewolf extends Origin {
 
     private void transform() {
         secondaryToggle();
+        Player player = getPlayer();
+        ParticleUtil.generateSphereParticle(Particle.LARGE_SMOKE, player.getLocation(), 15, 3f);
+        ParticleUtil.generateSphereParticle(Particle.EXPLOSION, player.getLocation(), 10, 3.2);
+        ParticleUtil.generateSphereParticle(Particle.WHITE_SMOKE, player.getLocation(), 15, 3.5);
         if (isSecondaryEnabled()) {
             DisguiseUtil.disguisePlayer(getPlayer(), PremadeDisguise.WEREWOLF);
             getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_WOLF_HOWL, 1f, 0.5f);

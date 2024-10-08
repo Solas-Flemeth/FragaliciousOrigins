@@ -12,7 +12,7 @@ public class ArachnidConfig extends OriginConfig{
     private int webMeleeDuration, webMeleePoisonDuration, webMeleePoisonAmplifier;
     private int webRangeDuration, webRangePoisonDuration, webRangePoisonAmplifier;
     public ArachnidConfig() {
-        super(OriginType.ARACHNID, "unique.yaml");
+        super(OriginType.ARACHNID, "unique");
     }
 
     /**

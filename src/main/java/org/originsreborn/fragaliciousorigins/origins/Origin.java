@@ -20,11 +20,8 @@ import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
-import org.originsreborn.fragaliciousorigins.util.DamageUtil;
-import org.originsreborn.fragaliciousorigins.util.PermissionsUtil;
-import org.originsreborn.fragaliciousorigins.util.SerializationUtils;
+import org.originsreborn.fragaliciousorigins.util.*;
 import org.originsreborn.fragaliciousorigins.util.enums.DayCycle;
-import org.originsreborn.fragaliciousorigins.util.DisguiseUtil;
 import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
 import java.io.IOException;
@@ -48,7 +45,7 @@ public abstract class Origin {
     private UUID bondedUUID = null;
 
     //Initial creation
-    public Origin(UUID uuid, OriginType type, OriginState state) {
+    public Origin(UUID uuid, @NotNull OriginType type, OriginState state) {
         this.uuid = uuid;
         this.type = type;
         this.state = state;
@@ -60,7 +57,7 @@ public abstract class Origin {
         }
     }
 
-    public Origin(UUID uuid, OriginType type, OriginState state, String customDataString) {
+    public Origin(UUID uuid, @NotNull OriginType type, OriginState state, String customDataString) {
         this.uuid = uuid;
         this.type = type;
         this.state = state;
@@ -211,6 +208,7 @@ public abstract class Origin {
         setAttribute(player, Attribute.PLAYER_SUBMERGED_MINING_SPEED, config.getSubmergedMiningSpeed());
         setAttribute(player, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, config.getSweepingDamageRatio()); // cap at 1
         setAttribute(player, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, config.getWaterMovementEfficiency()); // cap at 1
+        PlayerUtils.setFlySpeed(player, (float) config.getFlyingSpeed());
         player.setAllowFlight(false);
         player.setFlying(false);
     }
@@ -286,7 +284,7 @@ public abstract class Origin {
     public void onRemoveOrigin() {
 
     }
-
+    @NotNull
     public OriginType getType() {
         return type;
     }
@@ -310,12 +308,12 @@ public abstract class Origin {
     public void primaryAbility() {
         Player player = getPlayer();
         if (getConfig().getPlaceholdersPrimaryAbilityName().equals("primaryAbility")) {
-            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            playNegativeSound(player);
             player.sendActionBar(Component.text("Your origin does not have a primary ability").color(TextColor.color(errorColor())));
         }
         if (getPrimaryCooldown() > 0) {
             player.sendActionBar(primaryAbilityTimerCooldownMsg());
-            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            playNegativeSound(player);
         } else if (player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()) {
             primaryAbilityLogic();
             setPrimaryCooldown(getPrimaryMaxCooldown());
@@ -335,12 +333,12 @@ public abstract class Origin {
     public void secondaryAbility() {
         Player player = getPlayer();
         if (getConfig().getPlaceholdersSecondaryAbilityName().equals("secondaryAbility")) {
-            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            playNegativeSound(player);
             player.sendActionBar(Component.text("Your origin does not have a secondary ability").color(TextColor.color(errorColor())));
         }
         if (getSecondaryCooldown() > 0) {
             player.sendActionBar(secondaryAbilityTimerCooldownMsg());
-            player.playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
+            playNegativeSound(player);
         } else if (player.getGameMode().equals(GameMode.SURVIVAL) && primaryConditionCheck()) {
             secondaryAbilityLogic();
             setSecondaryCooldown(getSecondaryMaxCooldown());
@@ -749,5 +747,8 @@ public abstract class Origin {
 
     public void onBlockbreak(BlockBreakEvent event) {
 
+    }
+    public static void playNegativeSound(Player player){
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BIT, 1, 0.4f);
     }
 }

@@ -137,8 +137,10 @@ public class Pawsworn extends Origin {
         super.consume(event);
         Food food = Food.getFood(event.getItem().getType());
         if(food != null && !food.isMeat()){
-            event.getPlayer().sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
+            Player player = event.getPlayer();
+            player.sendActionBar(Component.text("Yuck! You can only eat meat").color(errorColor()));
             event.setCancelled(true);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_FOX_SPIT, 1, 0.3f);
         }
     }
 

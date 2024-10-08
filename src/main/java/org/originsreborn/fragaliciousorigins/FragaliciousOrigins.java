@@ -16,6 +16,7 @@ import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
 import org.originsreborn.fragaliciousorigins.origins.blazeborn.Blazeborn;
 import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
+import org.originsreborn.fragaliciousorigins.origins.fairy.Fairy;
 import org.originsreborn.fragaliciousorigins.origins.pawsworn.Pawsworn;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
 import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
@@ -69,6 +70,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
             Blazeborn.onReload();
             Elytrian.onReload();
             Enderian.onReload();
+            Fairy.onReload();
             Pawsworn.onReload();
             Giant.onReload();
             Huntsman.onReload();
@@ -78,11 +80,10 @@ public final class FragaliciousOrigins extends JavaPlugin {
             Phytokin.onReload();
             ShapeShifter.onReload();
             Shulk.onReload();
-            Vampire.onReload();
             Bee.onReload();
             Werewolf.onReload();
-            ShapeShifter.onReload();
             Chicken.onReload();
+
             //DO FIRST - this reloads
             Bukkit.getAsyncScheduler().runNow(this,  scheduledTask -> {
                         FragaliciousOrigins.DISCORD.updateOriginDiscordChannel();

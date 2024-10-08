@@ -15,7 +15,7 @@ public class HuntsmanConfig extends OriginConfig {
     private boolean stunArrowSlownessEnabled, stunArrowDarknessEnabled, stunArrowMiningFatigueEnabled;
 
     public HuntsmanConfig() {
-        super(OriginType.HUNTSMAN, "unique.yaml");
+        super(OriginType.HUNTSMAN, "unique");
     }
 
     @Override
