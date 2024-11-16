@@ -9,6 +9,7 @@ public class FairyConfig extends OriginConfig {
     private int primaryRegenDuration, primaryAmplifier;
     private int speedDuration, speedAmplifier;
     private int hasteDuration, hasteAmplifier;
+    private float flightExhaustion;
     public FairyConfig() {
         super(OriginType.FAIRY, "unique");
     }
@@ -31,6 +32,7 @@ public class FairyConfig extends OriginConfig {
             CommentedConfigurationNode hasteNode  = foodConsumeNode.node("haste");
             hasteNode.node("duration").set(100);
             hasteNode.node("amplifier").set(2);
+            getConfigNode().node("flightExhaustion").set(0.2f);
         }catch (Exception ignored){
 
         }
@@ -49,6 +51,7 @@ public class FairyConfig extends OriginConfig {
         speedDuration = getConfigNode().node("foodConsumeNode").node("speed").node("amplifier").getInt(2);
         hasteDuration = getConfigNode().node("foodConsumeNode").node("haste").node("duration").getInt(100);
         hasteAmplifier = getConfigNode().node("foodConsumeNode").node("haste").node("amplifier").getInt(2);
+        flightExhaustion = getConfigNode().node().getFloat(0.2f);
     }
 
     public float getPrimaryRange() {
@@ -81,5 +84,9 @@ public class FairyConfig extends OriginConfig {
 
     public int getHasteAmplifier() {
         return hasteAmplifier;
+    }
+
+    public float getFlightExhaustion() {
+        return flightExhaustion;
     }
 }

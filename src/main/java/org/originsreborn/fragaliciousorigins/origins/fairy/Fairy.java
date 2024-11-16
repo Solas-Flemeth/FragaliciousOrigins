@@ -3,6 +3,7 @@ package org.originsreborn.fragaliciousorigins.origins.fairy;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -61,7 +62,10 @@ public class Fairy extends Origin {
      */
     @Override
     public void originTick(int tickNum) {
-
+        Player player = getPlayer();
+        if(player.isFlying()){
+            player.setExhaustion(player.getExhaustion()+ FAIRY_CONFIG.getFlightExhaustion());
+        }
     }
 
     /**
@@ -71,6 +75,8 @@ public class Fairy extends Origin {
     public void onAttackEntity(EntityDamageByEntityEvent event) {
         Player player = getPlayer();
         player.sendActionBar(Component.text("I don't want to hurt people").color(errorColor()));
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_HURT, 1, 0.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 0.8f);
         event.setCancelled(true);
         playNegativeSound(player);
     }
@@ -94,6 +100,8 @@ public class Fairy extends Origin {
     public void onRocketLaunch(ProjectileLaunchEvent event) {
         Player player = getPlayer();
         player.sendActionBar(Component.text("I don't want to hurt people").color(errorColor()));
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_HURT, 1, 0.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 0.8f);
         event.setCancelled(true);
         playNegativeSound(player);
     }
@@ -105,6 +113,8 @@ public class Fairy extends Origin {
     public void onArrowLaunch(ProjectileLaunchEvent event) {
         Player player = getPlayer();
         player.sendActionBar(Component.text("I don't want to hurt people").color(errorColor()));
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_HURT, 1, 0.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 0.8f);
         event.setCancelled(true);
         playNegativeSound(player);
     }
@@ -117,6 +127,8 @@ public class Fairy extends Origin {
     public void onTridentLaunch(ProjectileLaunchEvent event) {
         Player player = getPlayer();
         player.sendActionBar(Component.text("I don't want to hurt people").color(errorColor()));
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_HURT, 1, 0.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 0.8f);
         event.setCancelled(true);
         playNegativeSound(player);
     }
@@ -128,6 +140,8 @@ public class Fairy extends Origin {
     public void onBowShoot(EntityShootBowEvent event) {
         Player player = getPlayer();
         player.sendActionBar(Component.text("I don't want to hurt people").color(errorColor()));
+        player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_HURT, 1, 0.5f);
+        player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_HIT, 1, 0.8f);
         event.setCancelled(true);
         playNegativeSound(player);
     }
@@ -137,9 +151,7 @@ public class Fairy extends Origin {
      */
     @Override
     public void originParticle(int tickNum) {
-        if(tickNum%3 == 0){
-            ParticleUtil.generateSphereParticle(Particle.CHERRY_LEAVES, getPlayer().getLocation(), 1, 0.75);
-        }
+            ParticleUtil.generateSphereParticle(Particle.DUST, ParticleUtil.dustOptions(0xffee00, 1), getPlayer().getLocation(), 1, 0.75);
     }
     @Override
     public void consume(PlayerItemConsumeEvent event){
@@ -149,10 +161,11 @@ public class Fairy extends Origin {
         if(food != null && !food.isSweet()){
             player.sendActionBar(Component.text("Yuck! This is too bitter").color(errorColor()));
             event.setCancelled(true);
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 1, 1.5f);
+            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_ITEM_TAKEN, 1, 0.5f);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_STEP, 1, 0.8f);
         }else{
             PotionsUtil.addEffect(player, PotionEffectType.SPEED, FAIRY_CONFIG.getSpeedAmplifier(), FAIRY_CONFIG.getSpeedDuration());
-            PotionsUtil.addEffect(player, PotionEffectType.SPEED, FAIRY_CONFIG.getSpeedAmplifier(), FAIRY_CONFIG.getSpeedDuration());
+            PotionsUtil.addEffect(player, PotionEffectType.HASTE, FAIRY_CONFIG.getHasteAmplifier(), FAIRY_CONFIG.getHasteDuration());
         }
     }
 
@@ -180,13 +193,16 @@ public class Fairy extends Origin {
                         System.err.println(target.getName() + " does not have an origin when used with fairy primary");
                     }
                 }
-                target.sendActionBar(player.displayName().append(Component.text(" makes you feel refreshed and ready").color(Origin.enableColor())));
+                target.sendActionBar(player.displayName().append(Component.text(" you feel energized").color(Origin.enableColor())));
                 PotionsUtil.addEffect(target, PotionEffectType.REGENERATION, FAIRY_CONFIG.getPrimaryAmplifier(),FAIRY_CONFIG.getPrimaryRegenDuration());
                 target.setExhaustion(0f);
                 ParticleUtil.generateSphereParticle(Particle.HEART, target.getLocation(), 25, 2.5f);
+            }else if(entity instanceof Creeper creeper){
+                creeper.setPowered(true);
             }
             ParticleUtil.generateCircleParticle(Particle.HAPPY_VILLAGER, player.getLocation(), 50, FAIRY_CONFIG.getPrimaryRange());
             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1, 1.5f);
+            player.getWorld().playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1, 1.9f);
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ALLAY_ITEM_GIVEN, 2, 1.5f);
         }
     }

@@ -7,6 +7,7 @@ import org.originsreborn.fragaliciousorigins.bossbars.BossBarManager;
 import org.originsreborn.fragaliciousorigins.commands.*;
 import org.originsreborn.fragaliciousorigins.intergration.DiscordIntegration;
 import org.originsreborn.fragaliciousorigins.intergration.OriginPlaceholders;
+import org.originsreborn.fragaliciousorigins.intergration.anomaly.AnomalyHook;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
@@ -29,8 +30,7 @@ import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
 import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.origins.wip.ShapeShifter;
-import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
-import org.originsreborn.fragaliciousorigins.util.DisguiseUtil;
+import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseUtil;
 
 public final class FragaliciousOrigins extends JavaPlugin {
     public static FragaliciousOrigins INSTANCE;
@@ -39,6 +39,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
     public static MainConfig CONFIG;
     public static DataSourceManager DATASOURCE;
     public static DiscordIntegration DISCORD;
+    public static AnomalyHook ANOMALY;
     @Override
     public void onEnable() {
         INSTANCE = this;
@@ -48,7 +49,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
         ORIGINS = new OriginManager();
         DATASOURCE = new DataSourceManager();
         DISCORD = new DiscordIntegration();
-
+        ANOMALY = new AnomalyHook();
         this.getServer().getPluginManager().registerEvents(new AbilityListener(), this);
         registerCommands();
         registerPlaceholderAPI();

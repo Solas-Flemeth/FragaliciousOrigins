@@ -1,4 +1,4 @@
-package org.originsreborn.fragaliciousorigins.util;
+package org.originsreborn.fragaliciousorigins.intergration.disguiselib;
 
 import me.libraryaddict.disguise.DisguiseAPI;
 import me.libraryaddict.disguise.LibsDisguises;
@@ -8,7 +8,6 @@ import me.libraryaddict.disguise.disguisetypes.watchers.LivingWatcher;
 import org.bukkit.entity.*;
 import org.bukkit.plugin.Plugin;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
-import org.originsreborn.fragaliciousorigins.util.enums.PremadeDisguise;
 
 public class DisguiseUtil {
     private static boolean isEnabled;

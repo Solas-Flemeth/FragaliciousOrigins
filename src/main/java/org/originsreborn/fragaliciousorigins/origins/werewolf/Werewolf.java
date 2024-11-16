@@ -23,13 +23,13 @@ import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
-import org.originsreborn.fragaliciousorigins.util.DisguiseUtil;
+import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseUtil;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 import org.originsreborn.fragaliciousorigins.util.enums.Food;
 import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
-import org.originsreborn.fragaliciousorigins.util.enums.PremadeDisguise;
+import org.originsreborn.fragaliciousorigins.intergration.disguiselib.PremadeDisguise;
 
 import java.util.Objects;
 import java.util.UUID;

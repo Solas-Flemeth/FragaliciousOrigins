@@ -18,6 +18,7 @@ public class MainOriginConfig extends OriginConfig {
             blockInteractRange, entityInteractRange, blockBreakSpeed, gravity, fallDamageMultiplier, safeFallDistance;
     private boolean stepSound;
     private double explosionKnockbackResistance, miningEfficiency, movementEfficiency, oxygenBonus, sneakingSpeed, submergedMiningSpeed, sweepingDamageRatio, waterMovementEfficiency;
+    private float exhaustionAdjustment;
     //DamageModifiers
     private double knockbackResistance, explosionsDamage, meleeDamage, projectileDamage, magicDamage, fireDamage, waterDamage, dodgeChance, meleeAtackMultiplier;
     private float burnDuration;
@@ -71,6 +72,7 @@ public class MainOriginConfig extends OriginConfig {
             attributesNode.node("submergedMiningSpeed").set(0.2);
             attributesNode.node("sweepingDamageRatio").set(0.0);
             attributesNode.node("waterMovementEfficiency").set(0.0);
+            attributesNode.node("exhaustion").set(0.0f);
             CommentedConfigurationNode damageModifiersNode = getConfigNode().node("damageModifiers");
             damageModifiersNode.node("explosionDamageMultiplier").set(1.0);
             damageModifiersNode.node("meleeDamageMultiplier").set(1.0);
@@ -95,46 +97,57 @@ public class MainOriginConfig extends OriginConfig {
             placeholdersNodeTitle.node("icon").set("icon");
             placeholdersNodeTitle.node("model").set(0);
             placeholdersNodeTitle.node("difficulty").set(1);
+
             CommentedConfigurationNode placeholdersPrimaryAbility = placeholdersNode.node("primaryAbility");
             placeholdersPrimaryAbility.node("name").set("primaryAbility");
             placeholdersPrimaryAbility.node("description").set(Collections.singletonList(""));
             placeholdersPrimaryAbility.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholdersSecondaryAbility = placeholdersNode.node("secondaryAbility");
             placeholdersSecondaryAbility.node("name").set("secondaryAbility");
             placeholdersSecondaryAbility.node("description").set(Collections.singletonList(""));
             placeholdersSecondaryAbility.node("modelData").set(4025);
+
             CommentedConfigurationNode placeholderCrouchAbility = placeholdersNode.node("crouchAbility");
             placeholderCrouchAbility.node("name").set("abilityName");
             placeholderCrouchAbility.node("description").set(Collections.singletonList(""));
             placeholderCrouchAbility.node("modelData").set(4026);
+
             CommentedConfigurationNode placeholderAbility1 = placeholdersNode.node("ability1");
             placeholderAbility1.node("name").set("abilityName");
             placeholderAbility1.node("description").set(Collections.singletonList(""));
             placeholderAbility1.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility2 = placeholdersNode.node("ability2");
             placeholderAbility2.node("name").set("abilityName");
             placeholderAbility2.node("description").set(Collections.singletonList(""));
             placeholderAbility2.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility3 = placeholdersNode.node("ability3");
             placeholderAbility3.node("name").set("abilityName");
             placeholderAbility3.node("description").set(Collections.singletonList(""));
             placeholderAbility3.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility4 = placeholdersNode.node("ability4");
             placeholderAbility4.node("name").set("abilityName");
             placeholderAbility4.node("description").set(Collections.singletonList(""));
             placeholderAbility4.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility5 = placeholdersNode.node("ability5");
             placeholderAbility5.node("name").set("abilityName");
             placeholderAbility5.node("description").set(Collections.singletonList(""));
             placeholderAbility5.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility6 = placeholdersNode.node("ability6");
             placeholderAbility6.node("name").set("abilityName");
             placeholderAbility6.node("description").set(Collections.singletonList(""));
             placeholderAbility6.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility7 = placeholdersNode.node("ability7");
             placeholderAbility7.node("name").set("abilityName");
             placeholderAbility7.node("description").set(Collections.singletonList(""));
             placeholderAbility7.node("modelData").set(4024);
+
             CommentedConfigurationNode placeholderAbility8 = placeholdersNode.node("ability8");
             placeholderAbility8.node("name").set("abilityName");
             placeholderAbility8.node("description").set(Collections.singletonList(""));
@@ -181,6 +194,7 @@ public class MainOriginConfig extends OriginConfig {
         submergedMiningSpeed = getConfigNode().node("attributes").node("submergedMiningSpeed").getDouble();
         sweepingDamageRatio = getConfigNode().node("attributes").node("sweepingDamageRatio").getDouble();
         waterMovementEfficiency = getConfigNode().node("attributes").node("waterMovementEfficiency").getDouble();
+        exhaustionAdjustment  = getConfigNode().node("attributes").node("exhaustion").getFloat(0.0f);
         //damage modifiers
         explosionsDamage = getConfigNode().node("damageModifiers").node("explosionDamageMultiplier").getDouble();
         meleeDamage = getConfigNode().node("damageModifiers").node("meleeDamageMultiplier").getDouble();
@@ -199,8 +213,8 @@ public class MainOriginConfig extends OriginConfig {
         originName = getConfigNode().node("placeholders").node("title").node("name").getString();
         originDesc = getStringsFromNode(getConfigNode().node("placeholders").node("title").node("description"));
         icon = getConfigNode().node("placeholders").node("title").node("icon").getString();
-        difficulty = getConfigNode().node("placeholders").node("difficulty").getInt(1);
-        model = getConfigNode().node("placeholders").node("model").getInt(0);
+        difficulty = getConfigNode().node("placeholders").node("title").node("difficulty").getInt(1);
+        model = getConfigNode().node("placeholders").node("title").node("model").getInt(0);
         abilities = new ArrayList<Ability>(8);
         primary = new Ability(getConfigNode().node("placeholders").node("primaryAbility").node("name").getString(),
                 getStringsFromNode(getConfigNode().node("placeholders").node("primaryAbility").node("description")),
@@ -212,7 +226,7 @@ public class MainOriginConfig extends OriginConfig {
         );
         crouch = new Ability(getConfigNode().node("placeholders").node("crouchAbility").node("name").getString(),
                 getStringsFromNode(getConfigNode().node("placeholders").node("crouchAbility").node("description")),
-                getConfigNode().node("placeholders").node("primaryAbility").node("modelData").getInt(4026)
+                getConfigNode().node("placeholders").node("crouchAbility").node("modelData").getInt(4026)
         );
         for (int ability = 1; ability < 9; ability++) {
             abilities.add(new Ability(
@@ -305,6 +319,10 @@ public class MainOriginConfig extends OriginConfig {
 
     public boolean hasStepSounds() {
         return stepSound;
+    }
+
+    public float getExhaustionAdjustment() {
+        return exhaustionAdjustment;
     }
 
     public double getExplosionKnockbackResistance() {
@@ -462,5 +480,63 @@ public class MainOriginConfig extends OriginConfig {
 
     public int getModel() {
         return model;
+    }
+
+    @Override
+    public String toString() {
+        return "MainOriginConfig{" +
+                "sharpness=" + sharpness +
+                ", smite=" + smite +
+                ", arthapods=" + arthapods +
+                ", primaryCooldown=" + primaryCooldown +
+                ", secondaryCooldown=" + secondaryCooldown +
+                ", armor=" + armor +
+                ", attack=" + attack +
+                ", armorToughness=" + armorToughness +
+                ", attackSpeed=" + attackSpeed +
+                ", flySpeed=" + flySpeed +
+                ", luck=" + luck +
+                ", maxHealth=" + maxHealth +
+                ", movementSpeed=" + movementSpeed +
+                ", scale=" + scale +
+                ", stepHeight=" + stepHeight +
+                ", jumpstrength=" + jumpstrength +
+                ", blockInteractRange=" + blockInteractRange +
+                ", entityInteractRange=" + entityInteractRange +
+                ", blockBreakSpeed=" + blockBreakSpeed +
+                ", gravity=" + gravity +
+                ", fallDamageMultiplier=" + fallDamageMultiplier +
+                ", safeFallDistance=" + safeFallDistance +
+                ", stepSound=" + stepSound +
+                ", explosionKnockbackResistance=" + explosionKnockbackResistance +
+                ", miningEfficiency=" + miningEfficiency +
+                ", movementEfficiency=" + movementEfficiency +
+                ", oxygenBonus=" + oxygenBonus +
+                ", sneakingSpeed=" + sneakingSpeed +
+                ", submergedMiningSpeed=" + submergedMiningSpeed +
+                ", sweepingDamageRatio=" + sweepingDamageRatio +
+                ", waterMovementEfficiency=" + waterMovementEfficiency +
+                ", exhaustionAdjustment=" + exhaustionAdjustment +
+                ", knockbackResistance=" + knockbackResistance +
+                ", explosionsDamage=" + explosionsDamage +
+                ", meleeDamage=" + meleeDamage +
+                ", projectileDamage=" + projectileDamage +
+                ", magicDamage=" + magicDamage +
+                ", fireDamage=" + fireDamage +
+                ", waterDamage=" + waterDamage +
+                ", dodgeChance=" + dodgeChance +
+                ", meleeAtackMultiplier=" + meleeAtackMultiplier +
+                ", burnDuration=" + burnDuration +
+                ", difficulty=" + difficulty +
+                ", model=" + model +
+                ", permissions=" + permissions +
+                ", originDesc=" + originDesc +
+                ", primary=" + primary +
+                ", secondary=" + secondary +
+                ", crouch=" + crouch +
+                ", abilities=" + abilities +
+                ", originName='" + originName + '\'' +
+                ", icon='" + icon + '\'' +
+                '}';
     }
 }

@@ -2,7 +2,7 @@ name: FragaliciousOrigins
 version: '${project.version}'
 main: org.originsreborn.fragaliciousorigins.FragaliciousOrigins
 api-version: '1.21'
-softdepend: [PlaceholderAPI, LibsDisguises]
+softdepend: [PlaceholderAPI, LibsDisguises, FragaliciousAnomaly]
 libraries:
   - com.zaxxer:HikariCP:5.0.1
   - org.spongepowered:configurate-yaml:4.1.0

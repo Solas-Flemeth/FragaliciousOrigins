@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.GameMode;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
@@ -18,6 +19,7 @@ import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
+import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseUtil;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.*;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
 
+import static org.bukkit.damage.DamageType.*;
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
 
 public abstract class Origin {
@@ -169,6 +172,11 @@ public abstract class Origin {
      */
     public abstract void originParticle(int tickNum);
 
+    public void applyExhaustion(){
+        MainOriginConfig config = getConfig();
+        Player player = getPlayer();
+        player.setExhaustion(player.getExhaustion() + config.getExhaustionAdjustment());
+    }
     /**
      * Sets the players default stats as suggested in the config
      */
@@ -502,10 +510,25 @@ public abstract class Origin {
     public void onHungerChange(FoodLevelChangeEvent event) {
 
     }
-
+    @SuppressWarnings("UnstableApiUsage")
     public void onDamage(EntityDamageEvent event) {
         if (!event.isCancelled()) {
-            event.setCancelled(Math.random() < getDodgeChance());
+            DamageType damageType = event.getDamageSource().getDamageType();
+            if( damageType == IN_FIRE //do nothing if fire or magic
+                || damageType == HOT_FLOOR
+                || damageType == LAVA
+                || damageType == OUTSIDE_BORDER
+                || damageType == MAGIC
+                || damageType == WITHER
+                || damageType == DRAGON_BREATH
+                || damageType == OUT_OF_WORLD
+                || damageType == CAMPFIRE
+                || damageType == INDIRECT_MAGIC
+                || damageType == IN_WALL
+                || damageType == DROWN
+            ){}else{
+                    event.setCancelled(Math.random() < getDodgeChance());
+            }
             if (event.isCancelled()) {
                 getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_WITHER_SHOOT, 1, 2.0f);
             }

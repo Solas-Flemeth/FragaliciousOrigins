@@ -5,9 +5,9 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.spongepowered.configurate.CommentedConfigurationNode;
 
 public class PhantomConfig extends OriginConfig {
-    private int ticksPerHunger, minimumHunger, hauntSlownessDuration, hauntDuration, restDuration, regenLightLevel, nightVisionLevel, disableNightVisionLevel;
+    private int ticksPerHunger, minimumHunger, regenLightLevel, nightVisionLevel, disableNightVisionLevel;
     private int coyoteCharge, coyoteDrain;
-    private double velocity, hauntAttackDamageMultiplier, hauntDamageTakenMultiplier, hauntSlownessRange, restAttackDamageMultiplier, restDamageTakenMultiplier, chanceToNotDrainMax, chanceToNotDrainInterval;
+    private double velocity, secondaryRange, chanceToNotDrainMax, chanceToNotDrainInterval;
     private double speedLightMultiplier, miningMultiplier, attackSpeed, dodgeChance, fireResistanceDamageReduction, miningSpeed, secondaryCooldownMultiplier;
 
     public PhantomConfig() {
@@ -24,17 +24,7 @@ public class PhantomConfig extends OriginConfig {
             primaryAbilityNode.node("chanceToNotDrainInterval").set(0.03);
             primaryAbilityNode.node("chanceToNotDrainMax").set(0.80);
             CommentedConfigurationNode secondaryAbilityNode = getConfigNode().node("secondaryAbility");
-            CommentedConfigurationNode hauntNode = secondaryAbilityNode.node("haunt");
-            hauntNode.node("attackDamageMultiplier").set(1.25);
-            hauntNode.node("damageTakenMultiplier").set(0.8);
-            hauntNode.node("slownessDuration").set(30);
-            hauntNode.node("slownessRange").set(2.5);
-            hauntNode.node("duration").set(10);
-
-            CommentedConfigurationNode restNode = secondaryAbilityNode.node("rest");
-            restNode.node("attackDamageMultiplier").set(0.25);
-            restNode.node("damageTakenMultiplier").set(1.5);
-            restNode.node("duration").set(20);
+            secondaryAbilityNode.node("range").set(5.0);
 
             CommentedConfigurationNode shadowSkinNode = getConfigNode().node("shadowskin");
             shadowSkinNode.node("regenLightLevel").set(5);
@@ -66,15 +56,8 @@ public class PhantomConfig extends OriginConfig {
         velocity = getConfigNode().node("primaryAbility").node("velocity").getDouble();
         chanceToNotDrainMax =  getConfigNode().node("primaryAbility").node("chanceToNotDrainMax").getDouble();
         chanceToNotDrainInterval = getConfigNode().node("primaryAbility").node("chanceToNotDrainInterval").getDouble();
-        hauntAttackDamageMultiplier = getConfigNode().node("secondaryAbility").node("haunt").node("attackDamageMultiplier").getDouble();
-        hauntDamageTakenMultiplier = getConfigNode().node("secondaryAbility").node("haunt").node("damageTakenMultiplier").getDouble();
-        hauntSlownessDuration = getConfigNode().node("secondaryAbility").node("haunt").node("slownessDuration").getInt();
-        hauntSlownessRange = getConfigNode().node("secondaryAbility").node("haunt").node("slownessRange").getDouble();
-        hauntDuration = getConfigNode().node("secondaryAbility").node("haunt").node("duration").getInt();
 
-        restAttackDamageMultiplier = getConfigNode().node("secondaryAbility").node("rest").node("attackDamageMultiplier").getDouble();
-        restDamageTakenMultiplier = getConfigNode().node("secondaryAbility").node("rest").node("damageTakenMultiplier").getDouble();
-        restDuration = getConfigNode().node("secondaryAbility").node("rest").node("duration").getInt();
+        secondaryRange = getConfigNode().node("secondaryAbility").node("range").getDouble();
 
         regenLightLevel = getConfigNode().node("shadowskin").node("regenLightLevel").getInt();
         speedLightMultiplier = getConfigNode().node("shadowskin").node("speedLightMultiplier").getDouble();
@@ -115,37 +98,6 @@ public class PhantomConfig extends OriginConfig {
         return chanceToNotDrainInterval;
     }
 
-    public double getHauntAttackDamageMultiplier() {
-        return hauntAttackDamageMultiplier;
-    }
-
-    public double getHauntDamageTakenMultiplier() {
-        return hauntDamageTakenMultiplier;
-    }
-
-    public int getHauntSlownessDuration() {
-        return hauntSlownessDuration;
-    }
-
-    public double getHauntSlownessRange() {
-        return hauntSlownessRange;
-    }
-
-    public int getHauntDuration() {
-        return hauntDuration;
-    }
-
-    public double getRestAttackDamageMultiplier() {
-        return restAttackDamageMultiplier;
-    }
-
-    public double getRestDamageTakenMultiplier() {
-        return restDamageTakenMultiplier;
-    }
-
-    public int getRestDuration() {
-        return restDuration;
-    }
 
     public int getRegenLightLevel() {
         return regenLightLevel;
@@ -193,5 +145,9 @@ public class PhantomConfig extends OriginConfig {
 
     public int getCoyoteDrain() {
         return coyoteDrain;
+    }
+
+    public double getSecondaryRange() {
+        return secondaryRange;
     }
 }

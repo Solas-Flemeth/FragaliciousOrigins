@@ -151,12 +151,14 @@ public class OriginManager {
                 if(changeTime){ //change time of day
                     origin.onTimeChange(dayCycle, moonCycle);
                 }
-                if (origin.getPlayer().getGameMode().equals(GameMode.SURVIVAL) && !(origin.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))) {
-                    origin.originParticle(tick);
+                if (origin.getPlayer().getGameMode().equals(GameMode.SURVIVAL)){
+                    if(!(origin.getPlayer().hasPotionEffect(PotionEffectType.INVISIBILITY))) {
+                        origin.originParticle(tick);
+                    }
+                    origin.applyExhaustion();
                 } else if (origin instanceof Phantom) {
                     origin.originParticle(tick);
                 }
-
             } else {
                 //if the player is no longer on, remove them
                 iterator.remove();

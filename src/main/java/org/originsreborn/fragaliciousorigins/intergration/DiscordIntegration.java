@@ -147,6 +147,7 @@ public class DiscordIntegration {
         embedBuilder.addField("Mobility", "**Speed:** " + formatPercentage(config.getMovementSpeed()) + " (**Sneaking**: " + formatPercentage(config.getSneakingSpeed()) + ")" + " **Jump Height:**" +formatPercentage(config.getJumpStrength()) + " ( **Gravity:** " + formatPercentage(config.getGravity()) + ")", false);
         embedBuilder.addField("Luck", String.valueOf(config.getLuck()), true);
         embedBuilder.addField("Size", formatPercentage(config.getScale()), true);
+        embedBuilder.addField("Metabolic Adjustment", formatPercentage(config.getExhaustionAdjustment()), true);
         embedBuilder.addField("Mining Capability", "**Base Speed:** " + formatPercentage(config.getBlockBreakSpeed()) + " **Tool Bonus:** " + config.getMiningEfficiency() +
                 "  **Water Efficiency:**" + formatPercentage(config.getSubmergedMiningSpeed()), false);
         embedBuilder.addField("Reach", "**Building:** " + formatPercentage(config.getBlockInteractRange()) + "   **Interact:** " + formatPercentage(config.getPlayerEntityInteractRange()), false);

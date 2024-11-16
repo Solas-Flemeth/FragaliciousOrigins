@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
+import org.originsreborn.fragaliciousorigins.abilities.GhostMaker;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
@@ -55,22 +56,13 @@ public class Phantom extends Origin {
     private int food;
     private float saturation;
     private int coyoteTime = -1;
-    private int restTime = -1;
-    private int huntTime = -1;
     private final String KEY_COYOTE;
-    private final String KEY_HAUNT;
     private final String KEY_FOOD_DRAIN;
     private boolean isNightVisionActive = false;
     private double veilwalkEfficency = 0.0;
     public Phantom(UUID uuid, OriginState state, String customDataString) {
         super(uuid, OriginType.PHANTOM, state, customDataString);
         getPlayer().setGameMode(GameMode.SURVIVAL);
-        if (restTime == -1) {
-            restTime = 0;
-        }
-        if (huntTime == -1) {
-            huntTime = 0;
-        }
         if (coyoteTime == -1) {
             coyoteTime = PHANTOM_CONFIG.getCoyoteMaxCharge();
         }
@@ -80,9 +72,8 @@ public class Phantom extends Origin {
         getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
         getPlayer().removePotionEffect(PotionEffectType.BLINDNESS);
         KEY_COYOTE = getUUID().toString() + "_COYOTE";
-        KEY_HAUNT = getUUID().toString() + "_HAUNT";
         KEY_FOOD_DRAIN = getUUID().toString() + "_FOOD_DRAIN";
-        PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,0);
+        PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,2);
     }
 
     public static void onReload() {
@@ -106,8 +97,10 @@ public class Phantom extends Origin {
         } else {
             if (tickNum % 10 == 0) {
                 coyoteTimeManagement();
+                if(!player.hasPotionEffect(PotionEffectType.INVISIBILITY)){
+                    PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,2);
+                }
             }
-            hauntManagement(tickNum);
             updateAttributes();
         }
     }
@@ -129,8 +122,6 @@ public class Phantom extends Origin {
      */
     @Override
     public void additionalDeserialization(HashMap<String, Serializable> map) throws Exception {
-        restTime = (int) map.get("restTime");
-        huntTime = (int) map.get("huntTime");
         coyoteTime = (int) map.get("coyoteTime");
         super.additionalDeserialization(map);
 
@@ -142,8 +133,6 @@ public class Phantom extends Origin {
      */
     @Override
     public @NotNull HashMap<String, Serializable> additionalSerializationOfCustomData(HashMap<String, Serializable> map) {
-        map.put("restTime",getRestTime());
-        map.put("huntTime", getHuntTime());
         map.put("coyoteTime",getCoyoteTime());
         return super.additionalSerializationOfCustomData(map);
     }
@@ -170,17 +159,22 @@ public class Phantom extends Origin {
     @Override
     public void primaryAbilityLogic() {
         Player player = getPlayer();
-        if (player.getGameMode().equals(GameMode.SURVIVAL) && isHuntMode() == isRestMode() && player.getFoodLevel() > PHANTOM_CONFIG.getMinimumHunger() && !player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
+        if (player.getGameMode().equals(GameMode.SURVIVAL) && player.getFoodLevel() > PHANTOM_CONFIG.getMinimumHunger() && !player.hasPotionEffect(PotionEffectType.WEAKNESS)) {
             player.setGameMode(GameMode.SPECTATOR);
         }
     }
 
     @Override
     public void secondaryAbilityLogic() {
-        getPlayer().getWorld().playSound(getPlayer().getLocation(), Sound.ENTITY_GHAST_SCREAM, 1f, 0.5f);
-        activateHuntMode();
-        huntTime = PHANTOM_CONFIG.getHauntDuration();
-        restTime = PHANTOM_CONFIG.getRestDuration();
+        Player phantom = getPlayer();
+        phantom.getWorld().playSound(phantom.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1f, 0.5f);
+        for(Entity entity : phantom.getNearbyEntities(PHANTOM_CONFIG.getSecondaryRange(), PHANTOM_CONFIG.getSecondaryRange(), PHANTOM_CONFIG.getSecondaryRange())){
+            if(entity instanceof Player target){
+                phantom.addPotionEffects(target.getActivePotionEffects());
+                ParticleUtil.generateSphereParticle(Particle.SMOKE, target.getLocation(), 20, 2.5);
+            }
+        }
+
     }
 
     /**
@@ -193,7 +187,7 @@ public class Phantom extends Origin {
             getPlayer().setGameMode(GameMode.SURVIVAL);
             setCoyoteTime(PHANTOM_CONFIG.getCoyoteMaxCharge());
         }
-        PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,0);
+        PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,2);
     }
 
     /**
@@ -236,19 +230,6 @@ public class Phantom extends Origin {
     }
 
     /**
-     * @param event
-     */
-    @Override
-    public void onDamage(EntityDamageEvent event) {
-        super.onDamage(event);
-        if(isHuntMode()){
-            event.setDamage(event.getDamage()*PHANTOM_CONFIG.getHauntDamageTakenMultiplier());
-        }else if(isRestMode()){
-            event.setDamage(event.getDamage()*PHANTOM_CONFIG.getRestDamageTakenMultiplier());
-        }
-    }
-
-    /**
      *
      */
     @Override
@@ -258,21 +239,7 @@ public class Phantom extends Origin {
         getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
         getPlayer().removePotionEffect(PotionEffectType.INVISIBILITY);
         FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_FOOD_DRAIN);
-        FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_HAUNT);
         FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_COYOTE);
-    }
-
-    /**
-     * @param event
-     */
-    @Override
-    public void onAttackEntity(EntityDamageByEntityEvent event) {
-        super.onAttackEntity(event);
-        if(isHuntMode()){
-            event.setDamage(event.getDamage()*PHANTOM_CONFIG.getHauntAttackDamageMultiplier());
-        }else if(isRestMode()){
-            event.setDamage(event.getDamage()*PHANTOM_CONFIG.getRestAttackDamageMultiplier());
-        }
     }
 
     public int getFood() {
@@ -319,28 +286,6 @@ public class Phantom extends Origin {
             coyoteTime = 0;
         }
         this.coyoteTime = coyoteTime;
-    }
-
-    public int getRestTime() {
-        return restTime;
-    }
-
-    public void setRestTime(int restTime) {
-        if(restTime < 0){
-            restTime = 0;
-        }
-        this.restTime = restTime;
-    }
-
-    public int getHuntTime() {
-        return huntTime;
-    }
-
-    public void setHuntTime(int huntTime) {
-        if(huntTime < 0){
-            huntTime = 0;
-        }
-        this.huntTime = huntTime;
     }
 
     private void updateFood() {
@@ -401,43 +346,6 @@ public class Phantom extends Origin {
             updateFoodDrainBar();
         }
     }
-    private void hauntManagement(int tickNum){
-        if(!FragaliciousOrigins.BOSS_BARS.containsBossBar(KEY_HAUNT)){
-            FragaliciousOrigins.BOSS_BARS.createBossBar(KEY_HAUNT,getHauntComponent(), getHauntPercentage(), BossBar.Color.WHITE, BossBar.Overlay.PROGRESS, getPlayer());
-        }
-        if(isHuntMode()){
-            FragaliciousOrigins.BOSS_BARS.updateBossBar(KEY_HAUNT,getHauntComponent(), getHauntPercentage(),BossBar.Color.RED);
-            if(tickNum%10 == 5){
-                PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY, 0,10);
-            }
-            if(tickNum%10 == 0) {
-                PotionsUtil.addEffect(getPlayer(), PotionEffectType.GLOWING, 0,10);
-                activateHuntMode();
-            }
-
-        }else if(isRestMode()){
-            FragaliciousOrigins.BOSS_BARS.updateBossBar(KEY_HAUNT,getHauntComponent(), getHauntPercentage(),BossBar.Color.RED);
-
-            if(tickNum%10 == 0) {
-                setRestTime(restTime - 1);
-            }
-        }else if(FragaliciousOrigins.BOSS_BARS.containsBossBar(KEY_HAUNT)){
-            FragaliciousOrigins.BOSS_BARS.removeBossBar(KEY_HAUNT);
-        }
-
-    }
-    private void activateHuntMode(){
-        double range = PHANTOM_CONFIG.getHauntSlownessRange();
-        setHuntTime(huntTime-1);
-        Player player = getPlayer();
-        //PlayerUtils.setAttribute(player, Attribute.GENERIC_STEP_HEIGHT, PHANTOM_CONFIG.getCoyoteDrain());
-        List<Entity> entities = player.getNearbyEntities(range, range, range);
-        for(Entity entity : entities){
-            if(entity instanceof LivingEntity livingEntity){
-                PotionsUtil.addEffect(livingEntity, PotionEffectType.SLOWNESS, 1, PHANTOM_CONFIG.getHauntSlownessDuration());
-            }
-        }
-    }
 
     /**
      * @return
@@ -445,13 +353,6 @@ public class Phantom extends Origin {
     @Override
     public double getDodgeChance() {
         return super.getDodgeChance() + PHANTOM_CONFIG.getDodgeChance() * (double) (15 - getPlayer().getEyeLocation().getBlock().getLightLevel());
-    }
-
-    public boolean isHuntMode(){
-        return huntTime > 0;
-    }
-    public boolean isRestMode(){
-        return restTime > 0 && !isHuntMode();
     }
     private void playEtherealSound() {
         if (Math.random() < 0.1) {
@@ -479,25 +380,12 @@ public class Phantom extends Origin {
     private float getCoyotePercentage (){
         return Origin.calculatePercentage(coyoteTime, PHANTOM_CONFIG.getCoyoteMaxCharge());
     }
-    private float getHauntPercentage(){
-        if(isHuntMode()){
-            return Origin.calculatePercentage(huntTime, PHANTOM_CONFIG.getHauntDuration());
-        }else{
-            return Origin.calculatePercentage(restTime, PHANTOM_CONFIG.getRestDuration());
-        }
-    }
+
     private Component getFoodDrainComponent() {
         return Component.text("Energy: " + formatFloatPercentage(getFoodDrainPercentage())).color(TextColor.color(0x8BE6F5));
     }
     private Component getCoyoteComponent() {
         return Component.text("Sunlight Exposure: " + formatFloatPercentage(getCoyotePercentage())).color(TextColor.color(0xF59300));
-    }
-    private Component getHauntComponent(){
-        if(isHuntMode()){
-            return Component.text("Haunting: " + formatFloatPercentage(getHauntPercentage())).color(TextColor.color(0xff5555));
-        }else{
-            return Component.text("Resting: " + formatFloatPercentage(getHauntPercentage())).color(TextColor.color(0x297775));
-        }
     }
     private void updateCoyoteBar(){
         FragaliciousOrigins.BOSS_BARS.updateBossBar(KEY_COYOTE, getCoyoteComponent(), getCoyotePercentage());
@@ -505,6 +393,7 @@ public class Phantom extends Origin {
     private void updateFoodDrainBar(){
         FragaliciousOrigins.BOSS_BARS.updateBossBar(KEY_FOOD_DRAIN, getFoodDrainComponent(), getFoodDrainPercentage());
     }
+
     private void updateAttributes(){
         Player player = getPlayer();
         boolean isOverworld = getPlayer().getWorld().getEnvironment().equals(World.Environment.NORMAL);

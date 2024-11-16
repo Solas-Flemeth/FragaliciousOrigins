@@ -45,6 +45,9 @@ public class OriginPlaceholders extends PlaceholderExpansion {
         if (args[0].equals("icon") && origin != null) {
             return origin.getConfig().getPlaceholdersNodeTitleIcon();
         }
+        if(args[0].equals("name") && origin != null){
+            return  origin.getConfig().getPlaceholdersNodeTitleName();
+        }
         OriginType type = OriginType.getByDisplayName(args[0]);
         if (type.equals(OriginType.HUMAN) && !args[0].equals("human") && args.length == 1) {
             return "Unknown";
@@ -61,7 +64,7 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                         case "description":
                             return config.getPlaceholdersNodeTitleDescription().get(Integer.parseInt(args[3]));
                         case "difficulty":
-                            return convertDifficulty(config.getDifficulty());
+                            return String.valueOf(config.getDifficulty());
                         case "model":
                             return String.valueOf(config.getModel());
                         case "count":
@@ -116,7 +119,7 @@ public class OriginPlaceholders extends PlaceholderExpansion {
                         case "count":
                             return String.valueOf(config.getAbilityDescription(abilityNum).size());
                         case "model":
-                            return String.valueOf(config.getAbilities().get(abilityNum).getCustomModelID());
+                            return String.valueOf(config.getAbilities().get(abilityNum-1).getCustomModelID());
                         case "enabled":
                             return String.valueOf(!config.getPlaceholderAbilityName(abilityNum).equals("abilityName"));
                     }
@@ -124,13 +127,5 @@ public class OriginPlaceholders extends PlaceholderExpansion {
         } catch (Exception ignored) {
         }
         return "";
-    }
-    private static String convertDifficulty(int difficulty){
-        return switch (difficulty) {
-            case 2 -> "2";
-            case 3 -> "3";
-            case 4 -> "4";
-            default -> "1";
-        };
     }
 }

@@ -52,15 +52,11 @@ public class Giant extends Origin {
 
     @Override
     public void originTick(int tickNum) {
-        if(tickNum%60 ==0){
+        if(tickNum%10 == 0){
             Player player = getPlayer();
             if(isSecondaryEnabled()){
-                if(Math.random() < GIANT_CONFIG.getHungerLossChance()*2){
-                    player.setExhaustion(player.getExhaustion()-0.25f);
-                }
             }else{
                 if(Math.random() < GIANT_CONFIG.getHungerLossChance()){
-                    player.setExhaustion(player.getExhaustion()-0.1f);
                     PotionsUtil.addEffect(player, PotionEffectType.REGENERATION, 0, 20);
                 }
             }

@@ -36,13 +36,6 @@ public class Inchling extends Origin {
 
     @Override
     public void originTick(int tickNum) {
-        if(tickNum%60 ==0){
-            Player player = getPlayer();
-            if(Math.random() < INCHLING_CONFIG.getSaturationGainChance()){
-                float saturation = player.getSaturation();
-                player.setSaturation(saturation + 1f);
-            }
-        }
     }
 
     @Override
