@@ -185,14 +185,14 @@ public class Inchling extends Origin {
 
     private void enableFlee(){
         Player player = getPlayer();
-        setAttribute(player, Attribute.GENERIC_SCALE, INCHLING_CONFIG.getSizeModifier());
-        setAttribute(player, Attribute.GENERIC_JUMP_STRENGTH, INCHLING_CONFIG.getJumpHeightModifier());
-        setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, INCHLING_CONFIG.getSpeedModifier());
+        setAttribute(player, Attribute.SCALE, INCHLING_CONFIG.getSizeModifier());
+        setAttribute(player, Attribute.JUMP_STRENGTH, INCHLING_CONFIG.getJumpHeightModifier());
+        setAttribute(player, Attribute.MOVEMENT_SPEED, INCHLING_CONFIG.getSpeedModifier());
     }
     private void disableFlee(){
         Player player = getPlayer();
-        setAttribute(player, Attribute.GENERIC_SCALE, MAIN_ORIGIN_CONFIG.getScale());
-        setAttribute(player, Attribute.GENERIC_JUMP_STRENGTH, MAIN_ORIGIN_CONFIG.getJumpStrength());
-        setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, MAIN_ORIGIN_CONFIG.getMovementSpeed());
+        setAttribute(player, Attribute.SCALE, MAIN_ORIGIN_CONFIG.getScale());
+        setAttribute(player, Attribute.JUMP_STRENGTH, MAIN_ORIGIN_CONFIG.getJumpStrength());
+        setAttribute(player, Attribute.MOVEMENT_SPEED, MAIN_ORIGIN_CONFIG.getMovementSpeed());
     }
 }

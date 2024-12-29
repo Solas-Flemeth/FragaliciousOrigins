@@ -146,7 +146,7 @@ public class DamageUtil {
         }
         list = arrow.getMetadata("huntsman_toughness_multiplier");
         if (!list.isEmpty()) {
-            crossbowToughnessMultiplier = 1.0 + (Huntsman.HUNTSMAN_CONFIG.getCrossbowDamageMultiplierPerToughness() * PlayerUtils.getAttribute(livingEntity, Attribute.GENERIC_ARMOR_TOUGHNESS));
+            crossbowToughnessMultiplier = 1.0 + (Huntsman.HUNTSMAN_CONFIG.getCrossbowDamageMultiplierPerToughness() * PlayerUtils.getAttribute(livingEntity, Attribute.ARMOR_TOUGHNESS));
         }
         double newDamage = event.getDamage() * damageMultiplier * airMultiplier * crossbowToughnessMultiplier;
         if(heal && event.getEntity() instanceof LivingEntity target){

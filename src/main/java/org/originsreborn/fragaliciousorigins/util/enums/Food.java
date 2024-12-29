@@ -44,7 +44,8 @@ public enum Food {
     COOKED_BEEF(Material.COOKED_BEEF, 8, 12.8, true, false, true, false),
     SUSPICIOUS_STEW(Material.SUSPICIOUS_STEW, 6, 7.2, false, true, false, true),
     SWEET_BERRIES(Material.SWEET_BERRIES, 2, 0.4, false, true, false, true),
-    TROPICAL_FISH(Material.TROPICAL_FISH, 1, 0.2, false, false, true, false);
+    TROPICAL_FISH(Material.TROPICAL_FISH, 1, 0.2, false, false, true, false),
+    OMINOUS_BOTTLE(Material.OMINOUS_BOTTLE, 0, 0, true, true, true, true);
 
 
     private final Material type;

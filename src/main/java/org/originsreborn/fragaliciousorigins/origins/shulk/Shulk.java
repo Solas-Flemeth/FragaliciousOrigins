@@ -91,6 +91,17 @@ public class Shulk extends Origin {
         player.getWorld().playSound(player.getLocation(), Sound.ITEM_TRIDENT_THUNDER, 1, 1.5f);
     }
 
+    /**
+     * @return
+     */
+    @Override
+    public int getPrimaryMaxCooldown() {
+        if(getPlayer().hasPermission("fragalicious.origins.enderchest")){
+            return 1;
+        }
+        return super.getPrimaryMaxCooldown();
+    }
+
     @Override
     public void onDeath(PlayerDeathEvent event) {
         super.onDeath(event);

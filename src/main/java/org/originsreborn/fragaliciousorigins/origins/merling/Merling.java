@@ -70,6 +70,8 @@ public class Merling extends Origin {
         MERLING_CONFIG.loadConfig();
     }
 
+
+
     /**
      * @param map
      * @return
@@ -291,15 +293,15 @@ public class Merling extends Origin {
     public void enterWater() {
         Player player = getPlayer();
         player.setGravity(!isSecondaryEnabled());
-        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MERLING_CONFIG.getBlockInteractRange());
-        setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MERLING_CONFIG.getEntityInteractRange());
+        setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, MERLING_CONFIG.getBlockInteractRange());
+        setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, MERLING_CONFIG.getEntityInteractRange());
     }
 
     public void exitWater() {
         Player player = getPlayer();
         player.setGravity(true);
-        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
-        setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
+        setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
+        setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
     }
 
     private float getHydrationPercentage() {

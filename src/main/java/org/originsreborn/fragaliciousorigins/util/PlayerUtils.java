@@ -7,6 +7,7 @@ import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 
 public class PlayerUtils {
     /**
@@ -22,70 +23,103 @@ public class PlayerUtils {
     public static void setAttribute(Player player, Attribute attribute, double amount) {
         try {
             AttributeInstance attributeInstance = player.getAttribute(attribute);
-            switch (attribute) {
+            switch (attribute.getKey().asString()) {
                 //additional
-                case GENERIC_ARMOR:
-                case GENERIC_ARMOR_TOUGHNESS:
+                case "minecraft:attack_damage":
+                case "minecraft:armor_toughness":
+                case "minecraft:armor":
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() + amount);
                     player.updateInventory();
                     break;
                 //multiplicative
-                case GENERIC_ATTACK_SPEED:
-                case GENERIC_SCALE:
-                case GENERIC_STEP_HEIGHT:
-                case GENERIC_JUMP_STRENGTH:
-                case PLAYER_BLOCK_BREAK_SPEED:
-                case GENERIC_GRAVITY:
-                case GENERIC_FALL_DAMAGE_MULTIPLIER:
-                case PLAYER_BLOCK_INTERACTION_RANGE:
-                case PLAYER_ENTITY_INTERACTION_RANGE:
-                case GENERIC_BURNING_TIME:
+                case "minecraft:attack_speed":
+                case "minecraft:scale":
+                case "minecraft:step_height":
+                case "minecraft:jump_strength":
+                case "minecraft:block_break_speed":
+                case "minecraft:gravity":
+                case "minecraft:fall_damage_multiplier":
+                case "minecraft:block_interaction_range":
+                case "minecraft:entity_interaction_range":
+                case "minecraft:burning_time":
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() * amount);
                     break;
-                case GENERIC_MOVEMENT_SPEED:
+                case "minecraft:movement_speed":
                     attributeInstance.setBaseValue(0.1 * amount);
+                    break;
+                case "minecraft:knockback_resistance":
+                case "minecraft:luck":
+                case "minecraft:max_health":
+                case "minecraft:safe_fall_distance":
+                case "minecraft:explosion_knockback_resistance":
+                case "minecraft:mining_efficiency":
+                case "minecraft:movement_efficiency":
+                case "minecraft:oxygen_bonus":
+                case "minecraft:sneaking_speed":
+                case "minecraft:submerged_mining_speed":
+                case "minecraft:sweeping_damage_ratio":
+                case "minecraft:water_movement_efficiency":
+                    attributeInstance.setBaseValue(amount);
                     break;
                 //setters
                 default:
+                    FragaliciousOrigins.INSTANCE.getLogger().warning(attribute.key() + " is not a mapped attribute");
                     attributeInstance.setBaseValue(amount);
                     break;
             }
         } catch (NullPointerException e) {
-            System.err.println(attribute.name() + " is not a valid attribute for players");
+            FragaliciousOrigins.INSTANCE.getLogger().severe(attribute.key() + " is not a valid attribute for players");
         }
     }
+
     public static void setAttribute(LivingEntity entity, Attribute attribute, double amount) {
         try {
             AttributeInstance attributeInstance = entity.getAttribute(attribute);
-            switch (attribute) {
+            switch (attribute.getKey().asString()) {
                 //additional
-                case GENERIC_ARMOR:
-                case GENERIC_ARMOR_TOUGHNESS:
+                case "minecraft:armor":
+                case "attack_damage":
+                case "minecraft:armor_toughness":
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() + amount);
                     break;
                 //multiplicative
-                case GENERIC_ATTACK_SPEED:
-                case GENERIC_SCALE:
-                case GENERIC_STEP_HEIGHT:
-                case GENERIC_JUMP_STRENGTH:
-                case PLAYER_BLOCK_BREAK_SPEED:
-                case GENERIC_GRAVITY:
-                case GENERIC_FALL_DAMAGE_MULTIPLIER:
-                case PLAYER_BLOCK_INTERACTION_RANGE:
-                case PLAYER_ENTITY_INTERACTION_RANGE:
-                case GENERIC_BURNING_TIME:
+                case "minecraft:attack_speed":
+                case "minecraft:scale":
+                case "minecraft:step_height":
+                case "minecraft:jump_strength":
+                case "minecraft:block_break_speed":
+                case "minecraft:gravity":
+                case "minecraft:fall_damage_multiplier":
+                case "minecraft:block_interaction_range":
+                case "minecraft:entity_interaction_range":
+                case "minecraft:burning_time":
                     attributeInstance.setBaseValue(attributeInstance.getDefaultValue() * amount);
                     break;
-                case GENERIC_MOVEMENT_SPEED:
+                case "minecraft:movement_speed":
                     attributeInstance.setBaseValue(0.1 * amount);
                     break;
                 //setters
+                case "minecraft:knockback_resistance":
+                case "minecraft:luck":
+                case "minecraft:max_health":
+                case "minecraft:safe_fall_distance":
+                case "minecraft:explosion_knockback_resistance":
+                case "minecraft:mining_efficiency":
+                case "minecraft:movement_efficiency":
+                case "minecraft:oxygen_bonus":
+                case "minecraft:sneaking_speed":
+                case "minecraft:submerged_mining_speed":
+                case "minecraft:sweeping_damage_ratio":
+                case "minecraft:water_movement_efficiency":
+                    attributeInstance.setBaseValue(amount);
+                    break;
                 default:
+                    FragaliciousOrigins.INSTANCE.getLogger().warning(attribute.key() + " is not a mapped attribute");
                     attributeInstance.setBaseValue(amount);
                     break;
             }
         } catch (NullPointerException e) {
-            System.err.println(attribute.name() + " is not a valid attribute for players");
+            FragaliciousOrigins.INSTANCE.getLogger().severe(attribute.key() + " is not a valid attribute for players");
         }
     }
 
@@ -112,11 +146,12 @@ public class PlayerUtils {
             player.updateInventory();
         }
     }
-    public static double getAttribute(LivingEntity entity, Attribute attribute){
+
+    public static double getAttribute(LivingEntity entity, Attribute attribute) {
         try {
             AttributeInstance attributeInstance = entity.getAttribute(attribute);
             return attributeInstance.getValue();
-        } catch(NullPointerException e){
+        } catch (NullPointerException e) {
             return 0.0;
         }
     }
@@ -130,28 +165,52 @@ public class PlayerUtils {
     }
 
     public static void setSaturation(Player player, float saturation) {
-        player.setSaturation(saturation);
+        if (player.getFoodLevel() < saturation) {
+            player.setSaturation(player.getFoodLevel());
+        } else {
+            player.setSaturation(saturation);
+        }
+
+    }
+
+    public static void addSaturation(Player player, float saturation) {
+        float updatedSaturation = player.getSaturation() + saturation;
+        setSaturation(player, updatedSaturation);
     }
 
     public static void setHunger(Player player, int food) {
-        player.setFoodLevel(food);
+        if (food > 20) {
+            player.setFoodLevel(20);
+        } else {
+            player.setFoodLevel(food);
+        }
+
+    }
+
+    public static void addHunger(Player player, int food) {
+        setHunger(player, player.getFoodLevel() + food);
+    }
+
+    public static void addExhaustion(Player player, float exhaustion) {
+        player.setExhaustion(player.getExhaustion() + exhaustion);
     }
 
     /**
      * Checks if there is a solid block above the player up to the height of roofHeight.
+     *
      * @param player
      * @param roofHeight
      * @return
      */
-    public static boolean isUnderRoof(Player player, int roofHeight){
+    public static boolean isUnderRoof(Player player, int roofHeight) {
         Location location = player.getLocation();
         int xCord = location.getBlockX();
         int zCord = location.getBlockZ();
         int yCord = location.getBlockY();
         World world = location.getWorld();
-        for (int i = 1; i < roofHeight; i++){
-            Location checkLocation = new Location(world, xCord, yCord + 2 + i , zCord);
-            if(checkLocation.getBlock().isSolid()){
+        for (int i = 1; i < roofHeight; i++) {
+            Location checkLocation = new Location(world, xCord, yCord + 2 + i, zCord);
+            if (checkLocation.getBlock().isSolid()) {
                 return true;
             }
         }
@@ -160,37 +219,40 @@ public class PlayerUtils {
 
     /**
      * Returns the total Experience of the player
+     *
      * @param player
      * @return
      */
-    public static int getExperience(Player player){
+    public static int getExperience(Player player) {
         return player.calculateTotalExperiencePoints();
     }
 
     /**
      * Adds experience to the player
+     *
      * @param player
      * @param value
      * @return
      */
-    public static void addExperience(Player player, int value){
+    public static void addExperience(Player player, int value) {
         int total = getExperience(player);
-        if(value >= 0){
-            player.setExperienceLevelAndProgress(total+value);
+        if (value >= 0) {
+            player.setExperienceLevelAndProgress(total + value);
         }
     }
 
     /**
      * Subtracts experience from the player
+     *
      * @param player
      * @param value
      * @return
      */
-    public static void removeExperience(Player player, int value){
+    public static void removeExperience(Player player, int value) {
         int total = getExperience(player);
-        if(total > value){
-            player.setExperienceLevelAndProgress(total-value);
-        }else {
+        if (total > value) {
+            player.setExperienceLevelAndProgress(total - value);
+        } else {
             player.setExperienceLevelAndProgress(0);
 
         }
@@ -198,10 +260,11 @@ public class PlayerUtils {
 
     /**
      * Spawns an item underneath the player
+     *
      * @param player
      * @param item
      */
-    public static void spawnItemOnPlayer(Player player, ItemStack item){
+    public static void spawnItemOnPlayer(Player player, ItemStack item) {
         player.getWorld().dropItem(player.getLocation(), item);
     }
 

@@ -9,18 +9,15 @@ import org.bukkit.block.Block;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
-import org.originsreborn.fragaliciousorigins.abilities.GhostMaker;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
@@ -170,7 +167,11 @@ public class Phantom extends Origin {
         phantom.getWorld().playSound(phantom.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1f, 0.5f);
         for(Entity entity : phantom.getNearbyEntities(PHANTOM_CONFIG.getSecondaryRange(), PHANTOM_CONFIG.getSecondaryRange(), PHANTOM_CONFIG.getSecondaryRange())){
             if(entity instanceof Player target){
-                phantom.addPotionEffects(target.getActivePotionEffects());
+                for(PotionEffect effect : target.getActivePotionEffects()){
+                    if(effect.getDuration() < 24000){ //if less than 20 minutes
+                        effect.apply(phantom);
+                    }
+                }
                 ParticleUtil.generateSphereParticle(Particle.SMOKE, target.getLocation(), 20, 2.5);
             }
         }
@@ -188,6 +189,7 @@ public class Phantom extends Origin {
             setCoyoteTime(PHANTOM_CONFIG.getCoyoteMaxCharge());
         }
         PotionsUtil.addEffect(getPlayer(), PotionEffectType.INVISIBILITY,2);
+        setCoyoteTime(PHANTOM_CONFIG.getCoyoteMaxCharge());
     }
 
     /**
@@ -410,8 +412,8 @@ public class Phantom extends Origin {
         }else{
             miningSpeed = PHANTOM_CONFIG.getMiningSpeed() + (lightLevelMultiplier * PHANTOM_CONFIG.getMiningMultiplier());
         }
-        PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, miningSpeed);
-        PlayerUtils.setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, movementSpeed);
+        PlayerUtils.setAttribute(player, Attribute.BLOCK_BREAK_SPEED, miningSpeed);
+        PlayerUtils.setAttribute(player, Attribute.MOVEMENT_SPEED, movementSpeed);
         if(!isOverworld && player.getFireTicks() > 0){
             player.setFireTicks(0);
         }

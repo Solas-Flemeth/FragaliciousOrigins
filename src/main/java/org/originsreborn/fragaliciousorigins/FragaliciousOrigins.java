@@ -5,12 +5,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.originsreborn.fragaliciousorigins.abilities.AbilityListener;
 import org.originsreborn.fragaliciousorigins.bossbars.BossBarManager;
 import org.originsreborn.fragaliciousorigins.commands.*;
+import org.originsreborn.fragaliciousorigins.commands.supporter.*;
 import org.originsreborn.fragaliciousorigins.intergration.DiscordIntegration;
 import org.originsreborn.fragaliciousorigins.intergration.OriginPlaceholders;
 import org.originsreborn.fragaliciousorigins.intergration.anomaly.AnomalyHook;
+import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseLibHook;
 import org.originsreborn.fragaliciousorigins.jdbc.DataSourceManager;
 import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.OriginManager;
+import org.originsreborn.fragaliciousorigins.origins.phytokin.Phytokin;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
@@ -27,10 +30,8 @@ import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
 import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
-import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.configs.MainConfig;
 import org.originsreborn.fragaliciousorigins.origins.wip.ShapeShifter;
-import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseUtil;
 
 public final class FragaliciousOrigins extends JavaPlugin {
     public static FragaliciousOrigins INSTANCE;
@@ -45,7 +46,7 @@ public final class FragaliciousOrigins extends JavaPlugin {
         INSTANCE = this;
         CONFIG = new MainConfig();//Register as a valid config file
         BOSS_BARS = new BossBarManager();
-        DisguiseUtil disguiseUtil = new DisguiseUtil();
+        DisguiseLibHook disguiseUtil = new DisguiseLibHook();
         ORIGINS = new OriginManager();
         DATASOURCE = new DataSourceManager();
         DISCORD = new DiscordIntegration();
@@ -84,7 +85,6 @@ public final class FragaliciousOrigins extends JavaPlugin {
             Bee.onReload();
             Werewolf.onReload();
             Chicken.onReload();
-
             //DO FIRST - this reloads
             Bukkit.getAsyncScheduler().runNow(this,  scheduledTask -> {
                         FragaliciousOrigins.DISCORD.updateOriginDiscordChannel();
@@ -104,6 +104,12 @@ public final class FragaliciousOrigins extends JavaPlugin {
         this.getCommand("human").setExecutor(new HumanCommand());
         this.getCommand("originchoose").setExecutor(new OriginChooseCommand());
         this.getCommand("origininfo").setExecutor(new OriginInfoCommand());
+        this.getCommand("toggleabilitykey").setExecutor(new ToggleAbilityKeyCommand());
+        this.getCommand("enderchest").setExecutor(new EnderchestCommand());
+        this.getCommand("craft").setExecutor(new CraftCommand());
+        this.getCommand("smithingtable").setExecutor(new SmithingTableCommand());
+        this.getCommand("loom").setExecutor(new LoomCommand());
+        this.getCommand("stonecutter").setExecutor(new StoneCutterCommand());
     }
     private void registerPlaceholderAPI(){
         if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {

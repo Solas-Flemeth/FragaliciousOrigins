@@ -22,6 +22,14 @@ commands:
     aliases:
       - pa
       - a1
+  toggleabilitykey:
+    description: Toggle whether ability key works or not
+    usage: /origintogglekey
+    aliases:
+      - origintogglekey
+      - togglekey
+      - abilitytoggle
+      - otoggle
   secondaryability:
     description: Uses the players secondaryability
     usage: /secondaryability
@@ -30,6 +38,7 @@ commands:
       - a2
   human:
     description: Makes the player human
+    permission: fragalicious.origins.sethuman
     usage: /human
   originchoose:
     description: Sets the player to a new origin when they are human
@@ -43,3 +52,35 @@ commands:
     aliases:
       - oi
       - info
+  enderchest:
+    description: Opens your enderchest
+    permission: fragalicious.origins.enderchest
+    usage: /enderchest
+    aliases:
+      - ec
+      - echest
+  craft:
+    description: Opens your crafting table
+    permission: fragalicious.origins.craftingtable
+    usage: /craft
+    aliases:
+      - ct
+  smithingtable:
+    description: Opens your smithing table
+    permission: fragalicious.origins.smithingtable
+    usage: /smithingtable
+    aliases:
+      - smt
+  loom:
+    description: Opens your loom
+    permission: fragalicious.origins.loom
+    usage: /loom
+    aliases:
+      - lm
+  stonecutter:
+    description: Opens your stonecutter
+    permission: fragalicious.origins.stonecutter
+    usage: /stonecutter
+    aliases:
+      - sc
+      - stonec

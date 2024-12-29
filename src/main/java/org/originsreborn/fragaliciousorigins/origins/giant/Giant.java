@@ -18,23 +18,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class Giant extends Origin {
-    /**
-     * Primary Ability - Roars - All nearby hostile mobs get weakness and slowness. Nearby players get Strength and resistance
-     * 2.5x player size
-     * 1.0x speed
-     * 1.2x gravity
-     * 1.5x Jump height
-     * Increase food usage
-     * Increase 2x fall height requirement
-     * increase 2x jump height
-     * 2.5x build size
-     * 2.5x attack range
-     * Slower attack speed
-     * Increase attack damage
-     * 2x Hearts
-     * 10% Natural Damage Resistance
-     * Bonus damage from Fire & explosions
-     */
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.GIANT);
     public static final MainOriginConfig GIANT_ENALRGED = new MainOriginConfig(OriginType.GIANT, "enlarged");
     public static final GiantConfig GIANT_CONFIG = new GiantConfig();

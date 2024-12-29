@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.originsreborn.fragaliciousanomaly.FragaliciousAnomaly;
 import org.originsreborn.fragaliciousanomaly.events.PlayerJoinAnomalyEvent;
 import org.originsreborn.fragaliciousanomaly.objects.Anomaly;
@@ -30,6 +29,9 @@ public class AnomalyManager implements Listener {
                         Component.text("Reset your origin free").color(TextColor.color(0x9104BF)),
                         "Reset your origin for free"
                 );
+                FragaliciousAnomaly.anomalyAPI().registerAnomaly(anomaly);
+            }else if(originType.equals("VAMPIRE") || originType.equals("SHAPESHIFTER")) {
+                //do nothing
             }else{
                 anomaly = new Anomaly(
                         FragaliciousOrigins.INSTANCE,
@@ -39,8 +41,8 @@ public class AnomalyManager implements Listener {
                         Component.text("Become an " + originType + " temporarily").color(TextColor.color(0x9104BF)),
                         "Become a " + originType + "temporarily"
                 );
+                FragaliciousAnomaly.anomalyAPI().registerAnomaly(anomaly);
             }
-            FragaliciousAnomaly.anomalyAPI().registerAnomaly(anomaly);
         }
     }
     @EventHandler
@@ -51,7 +53,7 @@ public class AnomalyManager implements Listener {
         OriginType type = OriginType.getByDisplayName(event.getAnomaly().getName());
         if(type != OriginType.HUMAN){
             Origin origin = type.generateOrigin(event.getPlayer(), OriginState.EVENT, "");
-            origin.setTempTimeRemaining((int) FragaliciousAnomaly.dayService().timeTillNextDay());
+            origin.setTempTimeRemaining(((int) FragaliciousAnomaly.dayService().timeTillNextDay()/20)+1);
             FragaliciousOrigins.ORIGINS.updateOrigin(origin);
         }
     }

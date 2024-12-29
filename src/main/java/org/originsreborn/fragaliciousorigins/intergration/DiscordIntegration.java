@@ -15,6 +15,7 @@ import org.originsreborn.fragaliciousorigins.origins.Human;
 import org.originsreborn.fragaliciousorigins.origins.alchemist.Alchemist;
 import org.originsreborn.fragaliciousorigins.origins.arachnid.Arachnid;
 import org.originsreborn.fragaliciousorigins.origins.bee.Bee;
+import org.originsreborn.fragaliciousorigins.origins.chicken.Chicken;
 import org.originsreborn.fragaliciousorigins.origins.elytrian.Elytrian;
 import org.originsreborn.fragaliciousorigins.origins.enderian.Enderian;
 import org.originsreborn.fragaliciousorigins.origins.fairy.Fairy;
@@ -24,6 +25,7 @@ import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
 import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
 import org.originsreborn.fragaliciousorigins.origins.phantom.Phantom;
+import org.originsreborn.fragaliciousorigins.origins.phytokin.Phytokin;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
 
@@ -83,9 +85,10 @@ public class DiscordIntegration {
         indexMap.put(sendOriginDiscordEmbeds(Merling.MAIN_ORIGIN_CONFIG), Merling.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Pawsworn.MAIN_ORIGIN_CONFIG), Pawsworn.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Phantom.MAIN_ORIGIN_CONFIG), Phantom.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
-        //sendOriginDiscordEmbeds(Phytokin.MAIN_ORIGIN_CONFIG);
+        indexMap.put(sendOriginDiscordEmbeds(Phytokin.MAIN_ORIGIN_CONFIG), Phytokin.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         //sendOriginDiscordEmbeds(ShapeShifter.MAIN_ORIGIN_CONFIG);
         indexMap.put(sendOriginDiscordEmbeds(Shulk.MAIN_ORIGIN_CONFIG), Shulk.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
+        indexMap.put(sendOriginDiscordEmbeds(Chicken.MAIN_ORIGIN_CONFIG), Chicken.MAIN_ORIGIN_CONFIG.getPlaceholdersNodeTitleName());
         indexMap.put(sendOriginDiscordEmbeds(Werewolf.WEREWOLF_HUMAN_FORM_CONFIG), Werewolf.WEREWOLF_HUMAN_FORM_CONFIG.getPlaceholdersNodeTitleName());
         sendAdditionalForm(Werewolf.WEREWOLF_WOLF_FORM_CONFIG);
         //sendOriginDiscordEmbeds(Stoneborn.MAIN_ORIGIN_CONFIG);
@@ -147,7 +150,7 @@ public class DiscordIntegration {
         embedBuilder.addField("Mobility", "**Speed:** " + formatPercentage(config.getMovementSpeed()) + " (**Sneaking**: " + formatPercentage(config.getSneakingSpeed()) + ")" + " **Jump Height:**" +formatPercentage(config.getJumpStrength()) + " ( **Gravity:** " + formatPercentage(config.getGravity()) + ")", false);
         embedBuilder.addField("Luck", String.valueOf(config.getLuck()), true);
         embedBuilder.addField("Size", formatPercentage(config.getScale()), true);
-        embedBuilder.addField("Metabolic Adjustment", formatPercentage(config.getExhaustionAdjustment()), true);
+        embedBuilder.addField("Metabolic Adjustment", String.valueOf(config.getExhaustionAdjustment()), true);
         embedBuilder.addField("Mining Capability", "**Base Speed:** " + formatPercentage(config.getBlockBreakSpeed()) + " **Tool Bonus:** " + config.getMiningEfficiency() +
                 "  **Water Efficiency:**" + formatPercentage(config.getSubmergedMiningSpeed()), false);
         embedBuilder.addField("Reach", "**Building:** " + formatPercentage(config.getBlockInteractRange()) + "   **Interact:** " + formatPercentage(config.getPlayerEntityInteractRange()), false);

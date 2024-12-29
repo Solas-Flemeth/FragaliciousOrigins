@@ -15,7 +15,7 @@ import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
-import org.originsreborn.fragaliciousorigins.origins.wip.Phytokin;
+import org.originsreborn.fragaliciousorigins.origins.phytokin.Phytokin;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 

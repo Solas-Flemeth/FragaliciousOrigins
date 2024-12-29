@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.jetbrains.annotations.NotNull;
+import org.originsreborn.fragaliciousanomaly.objects.enums.MoonState;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.origins.Origin;
@@ -24,7 +25,6 @@ import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 import org.originsreborn.fragaliciousorigins.util.enums.Food;
-import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
 import java.io.Serializable;
 import java.util.Enumeration;
@@ -107,10 +107,10 @@ public class  Arachnid extends Origin {
      * @param moonCycle
      */
     @Override
-    public void onSunset(MoonCycle moonCycle) {
+    public void onSunset(MoonState moonCycle) {
         super.onSunset(moonCycle);
         Player player = getPlayer();
-        double moonCycleValue = MoonCycle.getPercentageTillFull(moonCycle);
+        double moonCycleValue = MoonState.getPercentageTillFull(moonCycle);
         int potionID = (int) (Math.random()*7.0);
         int amplifier = (int) (Math.random()/1.5 + moonCycleValue*1.25);
         if(moonCycleValue > Math.random()-0.05){

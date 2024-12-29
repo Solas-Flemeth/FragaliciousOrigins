@@ -17,9 +17,9 @@ import org.originsreborn.fragaliciousorigins.origins.giant.Giant;
 import org.originsreborn.fragaliciousorigins.origins.huntsman.Huntsman;
 import org.originsreborn.fragaliciousorigins.origins.inchling.Inchling;
 import org.originsreborn.fragaliciousorigins.origins.merling.Merling;
+import org.originsreborn.fragaliciousorigins.origins.phytokin.Phytokin;
 import org.originsreborn.fragaliciousorigins.origins.shulk.Shulk;
 import org.originsreborn.fragaliciousorigins.origins.werewolf.Werewolf;
-import org.originsreborn.fragaliciousorigins.origins.wip.*;
 import org.originsreborn.fragaliciousorigins.origins.wip.ShapeShifter;
 import org.originsreborn.fragaliciousorigins.origins.wip.postrelease.Vampire;
 
@@ -44,8 +44,8 @@ public enum OriginType {
     PHANTOM("Phantom"),
     PHYTOKIN("Phytokin"),
     SHULK("Shulk"),
-    SHAPESHIFTER("Shapeshifter"),
-    VAMPIRE("Vampire"),
+    SHAPESHIFTER("Shapeshifter"), //TODO: FINISH POST S2
+    VAMPIRE("Vampire"),  //TODO: FINISH POST S2
     WEREWOLF("Werewolf"),
     CHICKEN("Chicken");
 

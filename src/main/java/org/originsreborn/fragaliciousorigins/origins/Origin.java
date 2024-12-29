@@ -17,14 +17,15 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
+import org.originsreborn.fragaliciousanomaly.events.DayStateChangeEvent;
+import org.originsreborn.fragaliciousanomaly.objects.enums.MoonState;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
+import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseLibHook;
 import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseUtil;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.*;
-import org.originsreborn.fragaliciousorigins.util.enums.DayCycle;
-import org.originsreborn.fragaliciousorigins.util.enums.MoonCycle;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -45,6 +46,7 @@ public abstract class Origin {
     private boolean primaryEnabled = false;
     private boolean secondaryEnabled = false;
     private int tempTimeRemaining = 0;
+    private boolean useSwapHand = true;
     private UUID bondedUUID = null;
 
     //Initial creation
@@ -73,7 +75,7 @@ public abstract class Origin {
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
-        DisguiseUtil.undisguisedPlayer(player);
+        DisguiseLibHook.undisguisedPlayer(player);
     }
 
     public static void onReload() {
@@ -190,32 +192,32 @@ public abstract class Origin {
         }
         player.setGravity(true);
         //config
-        setAttribute(player, Attribute.GENERIC_ARMOR, config.getArmor());
-        setAttribute(player, Attribute.GENERIC_ARMOR_TOUGHNESS, config.getArmorToughness());
-        setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, config.getAttackDamage());
-        setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, config.getAttackDamage());
-        setAttribute(player, Attribute.GENERIC_KNOCKBACK_RESISTANCE, config.getKnockbackResistance());
-        setAttribute(player, Attribute.GENERIC_LUCK, config.getLuck());
-        setAttribute(player, Attribute.GENERIC_MAX_HEALTH, config.getMaxHealth());
-        setAttribute(player, Attribute.GENERIC_SCALE, config.getScale());
-        setAttribute(player, Attribute.GENERIC_STEP_HEIGHT, config.getStepHeight());
-        setAttribute(player, Attribute.GENERIC_JUMP_STRENGTH, config.getJumpStrength());
-        setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, config.getMovementSpeed());
-        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, config.getBlockInteractRange());
-        setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, config.getPlayerEntityInteractRange());
-        setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, config.getBlockBreakSpeed());
-        setAttribute(player, Attribute.GENERIC_GRAVITY, config.getGravity());
-        setAttribute(player, Attribute.GENERIC_SAFE_FALL_DISTANCE, config.getSafeFallDistance());
-        setAttribute(player, Attribute.GENERIC_FALL_DAMAGE_MULTIPLIER, config.getFallDamageMultiplier());
-        setAttribute(player, Attribute.GENERIC_BURNING_TIME, config.getBurnDurationMultiplier());
-        setAttribute(player, Attribute.GENERIC_EXPLOSION_KNOCKBACK_RESISTANCE, config.getExplosionKnockbackResistance()); // cap at 1
-        setAttribute(player, Attribute.PLAYER_MINING_EFFICIENCY, config.getMiningEfficiency());
-        setAttribute(player, Attribute.GENERIC_MOVEMENT_EFFICIENCY, config.getMovementEfficiency()); // cap at 1
-        setAttribute(player, Attribute.GENERIC_OXYGEN_BONUS, config.getOxygenBonus());
-        setAttribute(player, Attribute.PLAYER_SNEAKING_SPEED, config.getSneakingSpeed()); // cap at 1
-        setAttribute(player, Attribute.PLAYER_SUBMERGED_MINING_SPEED, config.getSubmergedMiningSpeed());
-        setAttribute(player, Attribute.PLAYER_SWEEPING_DAMAGE_RATIO, config.getSweepingDamageRatio()); // cap at 1
-        setAttribute(player, Attribute.GENERIC_WATER_MOVEMENT_EFFICIENCY, config.getWaterMovementEfficiency()); // cap at 1
+        setAttribute(player, Attribute.ARMOR, config.getArmor());
+        setAttribute(player, Attribute.ARMOR_TOUGHNESS, config.getArmorToughness());
+        setAttribute(player, Attribute.ATTACK_DAMAGE, config.getAttackDamage());
+        setAttribute(player, Attribute.ATTACK_DAMAGE, config.getAttackDamage());
+        setAttribute(player, Attribute.KNOCKBACK_RESISTANCE, config.getKnockbackResistance());
+        setAttribute(player, Attribute.LUCK, config.getLuck());
+        setAttribute(player, Attribute.MAX_HEALTH, config.getMaxHealth());
+        setAttribute(player, Attribute.SCALE, config.getScale());
+        setAttribute(player, Attribute.STEP_HEIGHT, config.getStepHeight());
+        setAttribute(player, Attribute.JUMP_STRENGTH, config.getJumpStrength());
+        setAttribute(player, Attribute.MOVEMENT_SPEED, config.getMovementSpeed());
+        setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, config.getBlockInteractRange());
+        setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, config.getPlayerEntityInteractRange());
+        setAttribute(player, Attribute.BLOCK_BREAK_SPEED, config.getBlockBreakSpeed());
+        setAttribute(player, Attribute.GRAVITY, config.getGravity());
+        setAttribute(player, Attribute.SAFE_FALL_DISTANCE, config.getSafeFallDistance());
+        setAttribute(player, Attribute.FALL_DAMAGE_MULTIPLIER, config.getFallDamageMultiplier());
+        setAttribute(player, Attribute.BURNING_TIME, config.getBurnDurationMultiplier());
+        setAttribute(player, Attribute.EXPLOSION_KNOCKBACK_RESISTANCE, config.getExplosionKnockbackResistance()); // cap at 1
+        setAttribute(player, Attribute.MINING_EFFICIENCY, config.getMiningEfficiency());
+        setAttribute(player, Attribute.MOVEMENT_EFFICIENCY, config.getMovementEfficiency()); // cap at 1
+        setAttribute(player, Attribute.OXYGEN_BONUS, config.getOxygenBonus());
+        setAttribute(player, Attribute.SNEAKING_SPEED, config.getSneakingSpeed()); // cap at 1
+        setAttribute(player, Attribute.SUBMERGED_MINING_SPEED, config.getSubmergedMiningSpeed());
+        setAttribute(player, Attribute.SWEEPING_DAMAGE_RATIO, config.getSweepingDamageRatio()); // cap at 1
+        setAttribute(player, Attribute.WATER_MOVEMENT_EFFICIENCY, config.getWaterMovementEfficiency()); // cap at 1
         PlayerUtils.setFlySpeed(player, (float) config.getFlyingSpeed());
         player.setAllowFlight(false);
         player.setFlying(false);
@@ -247,6 +249,7 @@ public abstract class Origin {
         hashMap.put("secondaryEnabled", isSecondaryEnabled());
         hashMap.put("timeRemaining", getTempTimeRemaining());
         hashMap.put("bondedUUID", getBondedUUID());
+        hashMap.put("useSwapHand", isUseSwapHand());
         try {
             hashMap = additionalSerializationOfCustomData(hashMap);
         } catch (Exception e) {
@@ -277,6 +280,7 @@ public abstract class Origin {
             secondaryToggle((boolean) hashMap.get("secondaryEnabled"));
             setTempTimeRemaining((int) (hashMap.get("timeRemaining")));
             setBondedUUID((UUID) hashMap.get("bondedUUID"));
+            setUseSwapHand((boolean) hashMap.get("useSwapHand"));
             try {
                 additionalDeserialization(hashMap);
             } catch (Exception e) {
@@ -402,6 +406,18 @@ public abstract class Origin {
 
     public int getSecondaryMaxCooldown() {
         return getConfig().getSecondaryMaxCooldown();
+    }
+
+    public boolean isUseSwapHand() {
+        return useSwapHand;
+    }
+
+    public void toggleUseSwapHand() {
+        this.useSwapHand = !useSwapHand;
+    }
+
+    public void setUseSwapHand(boolean useSwapHand) {
+        this.useSwapHand = useSwapHand;
     }
 
     //////////////////////
@@ -736,35 +752,35 @@ public abstract class Origin {
         }
     }
 
-    public void onTimeChange(DayCycle dayCycle, MoonCycle moonCycle) {
-        switch (dayCycle) {
+    public void onTimeChange(DayStateChangeEvent dayStateChangeEvent) {
+        switch (dayStateChangeEvent.getCurrentState()) {
             case SUNRISE:
-                onSunrise(moonCycle);
+                onSunrise(dayStateChangeEvent.getMoonState());
                 break;
             case DAY:
-                onDay(moonCycle);
+                onDay(dayStateChangeEvent.getMoonState());
                 break;
             case SUNSET:
-                onSunset(moonCycle);
+                onSunset(dayStateChangeEvent.getMoonState());
                 break;
             case NIGHT:
-                onNight(moonCycle);
+                onNight(dayStateChangeEvent.getMoonState());
                 break;
         }
     }
 
-    public void onSunrise(MoonCycle moonCycle) {
+    public void onSunrise(MoonState moonCycle) {
     }
 
-    public void onDay(MoonCycle moonCycle) {
-
-    }
-
-    public void onSunset(MoonCycle moonCycle) {
+    public void onDay(MoonState moonCycle) {
 
     }
 
-    public void onNight(MoonCycle moonCycle) {
+    public void onSunset(MoonState moonCycle) {
+
+    }
+
+    public void onNight(MoonState moonCycle) {
 
     }
 

@@ -2,6 +2,7 @@ package org.originsreborn.fragaliciousorigins.abilities;
 
 import com.destroystokyo.paper.event.player.PlayerArmorChangeEvent;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -13,6 +14,7 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.originsreborn.fragaliciousanomaly.events.DayStateChangeEvent;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.jdbc.OriginsDAO;
 import org.originsreborn.fragaliciousorigins.jdbc.SerializedOrigin;
@@ -177,12 +179,14 @@ public class AbilityListener implements Listener {
 
     @EventHandler
     public void onSwapHands(PlayerSwapHandItemsEvent event) {
-        event.setCancelled(true);
         Origin origin = getOrigin(event);
-        if (event.getPlayer().isSneaking()) {
-            origin.secondaryAbility();
-        } else {
-            origin.primaryAbility();
+        if(origin.isUseSwapHand()){
+            event.setCancelled(true);
+            if (event.getPlayer().isSneaking()) {
+                origin.secondaryAbility();
+            } else {
+                origin.primaryAbility();
+            }
         }
     }
 
@@ -368,6 +372,12 @@ public class AbilityListener implements Listener {
     public void onJump(PlayerJumpEvent event){
         if(!event.isCancelled()){
             getOrigin(event).onJump(event);
+        }
+    }
+    @EventHandler
+    public void onDayChange(DayStateChangeEvent event){
+        for(Player player : Bukkit.getOnlinePlayers()){
+            getOrigin(player).onTimeChange(event);
         }
     }
 

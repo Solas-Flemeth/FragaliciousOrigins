@@ -140,17 +140,17 @@ public class Elytrian extends Origin {
     public void onToggleGlide(EntityToggleGlideEvent event) {
         Player player = getPlayer();
         if (event.isGliding()) {
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, ELYTRIAN_CONFIG.getGlidingBlockBreakSpeed());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingEntityInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingBlockInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_SPEED, ELYTRIAN_CONFIG.getGlidingAttackSpeed());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, ELYTRIAN_CONFIG.getGlidingAttackDamage());
+            PlayerUtils.setAttribute(player, Attribute.BLOCK_BREAK_SPEED, ELYTRIAN_CONFIG.getGlidingBlockBreakSpeed());
+            PlayerUtils.setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingEntityInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, ELYTRIAN_CONFIG.getGlidingBlockInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.ATTACK_SPEED, ELYTRIAN_CONFIG.getGlidingAttackSpeed());
+            PlayerUtils.setAttribute(player, Attribute.ATTACK_DAMAGE, ELYTRIAN_CONFIG.getGlidingAttackDamage());
         } else {
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_BREAK_SPEED, MAIN_ORIGIN_CONFIG.getBlockBreakSpeed());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_SPEED, MAIN_ORIGIN_CONFIG.getAttackSpeed());
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_ATTACK_DAMAGE, MAIN_ORIGIN_CONFIG.getAttackDamage());
+            PlayerUtils.setAttribute(player, Attribute.BLOCK_BREAK_SPEED, MAIN_ORIGIN_CONFIG.getBlockBreakSpeed());
+            PlayerUtils.setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
+            PlayerUtils.setAttribute(player, Attribute.ATTACK_SPEED, MAIN_ORIGIN_CONFIG.getAttackSpeed());
+            PlayerUtils.setAttribute(player, Attribute.ATTACK_DAMAGE, MAIN_ORIGIN_CONFIG.getAttackDamage());
         }
     }
 
@@ -211,14 +211,14 @@ public class Elytrian extends Origin {
 
     private void updateArmor() {
         Player player = getPlayer();
-        double armor = PlayerUtils.getAttribute(player, Attribute.GENERIC_ARMOR);
+        double armor = PlayerUtils.getAttribute(player, Attribute.ARMOR);
         if (!isSecondaryEnabled()) { //wings not spread
             armor = armor - ELYTRIAN_CONFIG.getArmorPenaltyMinArmorToApply();
         }
         if (armor > 0.0) {
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, MAIN_ORIGIN_CONFIG.getMovementSpeed() - (armor * ELYTRIAN_CONFIG.getArmorPenaltySlownessPerArmor()));
+            PlayerUtils.setAttribute(player, Attribute.MOVEMENT_SPEED, MAIN_ORIGIN_CONFIG.getMovementSpeed() - (armor * ELYTRIAN_CONFIG.getArmorPenaltySlownessPerArmor()));
         } else {
-            PlayerUtils.setAttribute(player, Attribute.GENERIC_MOVEMENT_SPEED, MAIN_ORIGIN_CONFIG.getMovementSpeed());
+            PlayerUtils.setAttribute(player, Attribute.MOVEMENT_SPEED, MAIN_ORIGIN_CONFIG.getMovementSpeed());
         }
     }
 
@@ -233,8 +233,8 @@ public class Elytrian extends Origin {
     private ItemStack getElytra() {
         ItemStack elytra = new ItemStack(Material.ELYTRA);
         ItemMeta elytraMeta = elytra.getItemMeta();
-        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR, new AttributeModifier(new NamespacedKey("elytra.armor","elytra.armor"), ELYTRIAN_CONFIG.getElytraArmor(), AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST));
-        elytraMeta.addAttributeModifier(Attribute.GENERIC_ARMOR_TOUGHNESS, new AttributeModifier(new NamespacedKey("elytra.toughness", "elytra.toughness"), ELYTRIAN_CONFIG.getElytraToughness(), AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST));
+        elytraMeta.addAttributeModifier(Attribute.ARMOR, new AttributeModifier(new NamespacedKey("elytra.armor","elytra.armor"), ELYTRIAN_CONFIG.getElytraArmor(), AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST));
+        elytraMeta.addAttributeModifier(Attribute.ARMOR_TOUGHNESS, new AttributeModifier(new NamespacedKey("elytra.toughness", "elytra.toughness"), ELYTRIAN_CONFIG.getElytraToughness(), AttributeModifier.Operation.ADD_NUMBER, EquipmentSlotGroup.CHEST));
         elytraMeta.setHideTooltip(true);
         elytraMeta.setUnbreakable(true);
         elytraMeta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);

@@ -28,7 +28,7 @@ import java.util.UUID;
 public class Vampire extends Origin {
     public static final MainOriginConfig MAIN_ORIGIN_CONFIG = new MainOriginConfig(OriginType.VAMPIRE);
     public Vampire(UUID uuid, OriginState state, String customDataString) {
-        super(uuid, OriginType.VAMPIRE, state, customDataString);
+        super(uuid, OriginType.HUMAN, state, customDataString);
     }
 
     @Override

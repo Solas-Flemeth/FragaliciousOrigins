@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -68,6 +69,15 @@ public class Enderian extends Origin {
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
         ENDERIAN_CONFIG.loadConfig();
+    }
+
+    /**
+     * @param event
+     */
+    @Override
+    public void onRespawn(PlayerRespawnEvent event) {
+        super.onRespawn(event);
+        setCapacity(ENDERIAN_CONFIG.getChargeCapacity());
     }
 
     @Override
@@ -291,16 +301,16 @@ public class Enderian extends Origin {
 
     public void enterOverworld() {
         Player player = getPlayer();
-        setAttribute(player, Attribute.GENERIC_MAX_HEALTH, MAIN_ORIGIN_CONFIG.getMaxHealth());
-        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
-        setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
+        setAttribute(player, Attribute.MAX_HEALTH, MAIN_ORIGIN_CONFIG.getMaxHealth());
+        setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getBlockInteractRange());
+        setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, MAIN_ORIGIN_CONFIG.getPlayerEntityInteractRange());
     }
 
     public void enterOtherworld() {
         Player player = getPlayer();
-        setAttribute(player, Attribute.GENERIC_MAX_HEALTH, ENDERIAN_CONFIG.getHealth());
-        setAttribute(player, Attribute.PLAYER_BLOCK_INTERACTION_RANGE, ENDERIAN_CONFIG.getBlockInteractionRange());
-        setAttribute(player, Attribute.PLAYER_ENTITY_INTERACTION_RANGE, ENDERIAN_CONFIG.getEntityInteractionRange());
+        setAttribute(player, Attribute.MAX_HEALTH, ENDERIAN_CONFIG.getHealth());
+        setAttribute(player, Attribute.BLOCK_INTERACTION_RANGE, ENDERIAN_CONFIG.getBlockInteractionRange());
+        setAttribute(player, Attribute.ENTITY_INTERACTION_RANGE, ENDERIAN_CONFIG.getEntityInteractionRange());
     }
 
     private boolean isSolidBlock(Location location) {
