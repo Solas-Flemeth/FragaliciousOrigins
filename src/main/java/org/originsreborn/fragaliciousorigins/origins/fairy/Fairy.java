@@ -17,6 +17,7 @@ import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
+import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 import org.originsreborn.fragaliciousorigins.util.enums.Food;
 
@@ -63,7 +64,7 @@ public class Fairy extends Origin {
     @Override
     public void originTick(int tickNum) {
         Player player = getPlayer();
-        if(player.isFlying()){
+        if(player.isFlying() && !player.hasPotionEffect(PotionEffectType.HASTE) && !FragaliciousOrigins.ANOMALY.getAnomalyManager().getCurrentAnomalyName().equals("Fairy Empowerment")){
             player.setExhaustion(player.getExhaustion()+ FAIRY_CONFIG.getFlightExhaustion());
         }
     }
@@ -166,8 +167,10 @@ public class Fairy extends Origin {
         }else{
             PotionsUtil.addEffect(player, PotionEffectType.SPEED, FAIRY_CONFIG.getSpeedAmplifier(), FAIRY_CONFIG.getSpeedDuration());
             PotionsUtil.addEffect(player, PotionEffectType.HASTE, FAIRY_CONFIG.getHasteAmplifier(), FAIRY_CONFIG.getHasteDuration());
+            PlayerUtils.addSaturation(player, 1);
         }
     }
+
 
     /**
      *

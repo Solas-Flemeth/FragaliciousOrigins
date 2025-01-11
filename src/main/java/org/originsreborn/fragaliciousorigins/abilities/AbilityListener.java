@@ -344,6 +344,20 @@ public class AbilityListener implements Listener {
             getOrigin(event.getEnchanter()).onEnchant(event);
         }
     }
+
+    @EventHandler
+    public void onResurrectionEvent(EntityResurrectEvent event){
+        if(!event.isCancelled() && event.getEntity() instanceof Player player){
+            getOrigin(player).onResurrectionEvent(event);
+        }
+    }
+    @EventHandler (priority = EventPriority.MONITOR)
+    public void postResurrectionEvent(EntityResurrectEvent event){
+        if(!event.isCancelled() && event.getEntity() instanceof Player player){
+            getOrigin(player).postResurrectionEvent(event);
+        }
+    }
+
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
         if(event.isCancelled()){

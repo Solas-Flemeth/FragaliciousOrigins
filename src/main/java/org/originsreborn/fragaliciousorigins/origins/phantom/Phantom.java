@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import static org.originsreborn.fragaliciousorigins.FragaliciousOrigins.ANOMALY;
+
 
 /**
  * Primary Ability - Phase - Shifts through a wall infront of you X blocks until the next safe teleport location. No hunger cost (will fail if no safe spot)
@@ -298,7 +300,7 @@ public class Phantom extends Origin {
     private void coyoteTimeManagement() {
         Player player = getPlayer();
         Block headblock = player.getEyeLocation().getBlock();
-        if (headblock.getLightFromSky() == 15 && headblock.getLightLevel() == 15 && DayCycle.getCurrentTime(player.getWorld()) == DayCycle.DAY) {
+        if (headblock.getLightFromSky() == 15 && headblock.getLightLevel() == 15 && DayCycle.getCurrentTime(player.getWorld()) == DayCycle.DAY && !ANOMALY.getAnomalyManager().getCurrentAnomalyName().equals("Phantom Empowerment")) {
             if(!FragaliciousOrigins.BOSS_BARS.containsBossBar(KEY_COYOTE)){
                 FragaliciousOrigins.BOSS_BARS.createBossBar(KEY_COYOTE, getCoyoteComponent(), getCoyotePercentage(), BossBar.Color.RED, BossBar.Overlay.PROGRESS, getPlayer());
             }

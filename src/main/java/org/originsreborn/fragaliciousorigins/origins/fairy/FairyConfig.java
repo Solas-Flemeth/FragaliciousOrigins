@@ -47,8 +47,8 @@ public class FairyConfig extends OriginConfig {
         primaryRegenDuration = getConfigNode().node("primaryAbility").node("regenDuration").getInt(100);
         primaryAmplifier = getConfigNode().node("primaryAbility").node("regenAmplifier").getInt(1);
         primaryAbilityReduction = getConfigNode().node("primaryAbility").node("abilityReduction").getFloat(0.5f);
-        speedAmplifier = getConfigNode().node("foodConsumeNode").node("speed").node("duration").getInt(100);
-        speedDuration = getConfigNode().node("foodConsumeNode").node("speed").node("amplifier").getInt(2);
+        speedDuration = getConfigNode().node("foodConsumeNode").node("speed").node("duration").getInt(100);
+        speedAmplifier = getConfigNode().node("foodConsumeNode").node("speed").node("amplifier").getInt(2);
         hasteDuration = getConfigNode().node("foodConsumeNode").node("haste").node("duration").getInt(100);
         hasteAmplifier = getConfigNode().node("foodConsumeNode").node("haste").node("amplifier").getInt(2);
         flightExhaustion = getConfigNode().node().getFloat(0.2f);

@@ -3,6 +3,7 @@ package org.originsreborn.fragaliciousorigins.origins.bee;
 import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -99,8 +100,8 @@ public class Bee extends Origin {
         int maxY = playerLocation.getBlockY() + radius;
         int maxZ = playerLocation.getBlockZ() + radius;
         World world = playerLocation.getWorld();
-        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 2, 0.8f);
-        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 1, 1.5f);
+        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 3, 0.7f);
+        world.playSound(getPlayer().getLocation(), Sound.ENTITY_BEE_POLLINATE, 2, 1.5f);
         // Iterate through nearby blocks within the bounding box
         for (int x = minX; x <= maxX; x++) {
             for (int y = minY; y <= maxY; y++) {
@@ -123,9 +124,16 @@ public class Bee extends Origin {
                             ParticleUtil.generateParticleAtLocation(Particle.HAPPY_VILLAGER, blockLocation, 3);
                         }
                         if (Math.random() < BEE_CONFIG.getPrimaryAbilityHoneyBottleChance()) {
-                            world.dropItem(blockLocation, new ItemStack(Material.HONEY_BOTTLE));
-                            ParticleUtil.generateParticleAtLocation(Particle.LANDING_HONEY, blockLocation, 3);
-                            ParticleUtil.generateParticleAtLocation(Particle.HAPPY_VILLAGER, blockLocation, 3);
+                            if(material.equals(Material.WITHER_ROSE)){
+                                AreaEffectCloud cloud = blockLocation.getWorld().spawn(blockLocation, AreaEffectCloud.class);
+                                cloud.addCustomEffect(PotionEffectType.WITHER.createEffect(BEE_CONFIG.getWitherRoseDuration()/2, 0), true);
+                                cloud.setDuration(BEE_CONFIG.getWitherRoseDuration());
+                                cloud.setRadius(BEE_CONFIG.getWitherRoseRadius());
+                            }else{
+                                world.dropItem(blockLocation, new ItemStack(Material.HONEY_BOTTLE));
+                                ParticleUtil.generateParticleAtLocation(Particle.LANDING_HONEY, blockLocation, 3);
+                                ParticleUtil.generateParticleAtLocation(Particle.HAPPY_VILLAGER, blockLocation, 3);
+                            }
                         }
                     }
                 }
@@ -197,87 +205,6 @@ public class Bee extends Origin {
 
     }
 
-    /**
-     * Determines if it is considered a valid plant
-     *
-     * @param material
-     * @return
-     */
-    public boolean isFlower(Material material) {
-        switch (material) {
-            case DANDELION:
-            case POPPY:
-            case BLUE_ORCHID:
-            case ALLIUM:
-            case AZURE_BLUET:
-            case ORANGE_TULIP:
-            case RED_TULIP:
-            case PINK_TULIP:
-            case WHITE_TULIP:
-            case OXEYE_DAISY:
-            case CORNFLOWER:
-            case LILY_OF_THE_VALLEY:
-            case LILY_PAD:
-            case TORCHFLOWER:
-            case ACACIA_SAPLING:
-            case BIRCH_SAPLING:
-            case BAMBOO_SAPLING:
-            case CHERRY_SAPLING:
-            case DARK_OAK_SAPLING:
-            case JUNGLE_SAPLING:
-            case OAK_SAPLING:
-            case SPRUCE_SAPLING:
-            case PITCHER_PLANT:
-            case SWEET_BERRY_BUSH:
-            case BROWN_MUSHROOM:
-            case RED_MUSHROOM:
-            case CRIMSON_FUNGUS:
-            case WARPED_FUNGUS:
-            case ROSE_BUSH:
-            case LILAC:
-            case PEONY:
-            case SUNFLOWER:
-            case WITHER_ROSE:
-            case CACTUS:
-            case SUGAR_CANE:
-                return true;
-            default:
-                return false;
-        }
-    }
-    public boolean isCrop(Material material){
-        switch (material) {
-            case WHEAT:
-            case CARROTS:
-            case POTATOES:
-            case BEETROOTS:
-            case NETHER_WART:
-            case MELON_STEM:
-            case PUMPKIN_STEM:
-            case PITCHER_CROP:
-            case TORCHFLOWER_CROP:
-            case BAMBOO:
-            case SWEET_BERRY_BUSH:
-            case COCOA:
-            case KELP:
-            case OAK_SAPLING:
-            case BIRCH_SAPLING:
-            case SPRUCE_SAPLING:
-            case JUNGLE_SAPLING:
-            case ACACIA_SAPLING:
-            case DARK_OAK_SAPLING:
-            case RED_MUSHROOM:
-            case BROWN_MUSHROOM:
-            case SEA_PICKLE:
-            case POINTED_DRIPSTONE:
-            case TWISTING_VINES:
-            case WEEPING_VINES:
-                return true;
-            default:
-                return false;
-        }
-    }
-
 
     private void phytokinHiveMind(Phytokin phytokin) {
         if (Math.random() < BEE_CONFIG.getHiveMindPhytokinSaturationChance()) {
@@ -306,5 +233,36 @@ public class Bee extends Origin {
                 bee.setPrimaryCooldown(bee.getPrimaryCooldown()-2);
             }
         }
+    }
+    /**
+     * Determines if it is considered a flower
+     *
+     * @param material
+     * @return
+     */
+    public static boolean isFlower(Material material) {
+        return switch (material) {
+            case DANDELION, POPPY, BLUE_ORCHID, ALLIUM, AZURE_BLUET, ORANGE_TULIP, RED_TULIP, PINK_TULIP, WHITE_TULIP,
+                 OXEYE_DAISY, CORNFLOWER, LILY_OF_THE_VALLEY, LILY_PAD, TORCHFLOWER, ACACIA_SAPLING, BIRCH_SAPLING,
+                 BAMBOO_SAPLING, CHERRY_SAPLING, DARK_OAK_SAPLING, JUNGLE_SAPLING, OAK_SAPLING, SPRUCE_SAPLING,
+                 PITCHER_PLANT, SWEET_BERRY_BUSH, BROWN_MUSHROOM, RED_MUSHROOM, CRIMSON_FUNGUS, WARPED_FUNGUS,
+                 ROSE_BUSH, LILAC, PEONY, SUNFLOWER, WITHER_ROSE, CACTUS, SUGAR_CANE -> true;
+            default -> false;
+        };
+    }
+
+    /**
+     * Determine if it is a crop
+     * @param material
+     * @return
+     */
+    public static boolean isCrop(Material material){
+        return switch (material) {
+            case WHEAT, CARROTS, POTATOES, BEETROOTS, NETHER_WART, MELON_STEM, PUMPKIN_STEM, PITCHER_CROP,
+                 TORCHFLOWER_CROP, BAMBOO, SWEET_BERRY_BUSH, COCOA, KELP, OAK_SAPLING, BIRCH_SAPLING, SPRUCE_SAPLING,
+                 JUNGLE_SAPLING, ACACIA_SAPLING, DARK_OAK_SAPLING, RED_MUSHROOM, BROWN_MUSHROOM, SEA_PICKLE,
+                 POINTED_DRIPSTONE, TWISTING_VINES, WEEPING_VINES -> true;
+            default -> false;
+        };
     }
 }

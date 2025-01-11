@@ -23,6 +23,13 @@ public class OriginInfoCommand implements CommandExecutor {
             Origin origin = FragaliciousOrigins.ORIGINS.getOrigin(player.getUniqueId());
             if(origin != null){
                 player.performCommand("cp " + origin.getType().name().toLowerCase());
+                player.sendMessage("Origin Type:" + origin.getType());
+                player.sendMessage("State:" + origin.getState());
+                if(origin.getTempTimeRemaining() > 0){
+                    player.sendMessage("Time Remaining: " + origin.getTempTimeRemaining());
+                }else{
+                    player.sendMessage("Time Remaining: Infinite");
+                }
                 return true;
             }
             commandSender.sendMessage("You do not have an origin. Try logging or report this as a bug");

@@ -1,12 +1,12 @@
 package org.originsreborn.fragaliciousorigins.origins.chicken;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Parrot;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
@@ -62,7 +62,24 @@ public class Chicken extends Origin {
             player.getInventory().addItem(new ItemStack(Material.EGG));
             player.getWorld().playSound(player.getLocation(), Sound.ENTITY_CHICKEN_EGG, 1f, 0.5f);
         }
+    }
 
+    /**
+     * @param event
+     */
+    @Override
+    public void onShootProjectileHit(ProjectileHitEvent event) {
+        super.onShootProjectileHit(event);
+        if(event.getEntity() instanceof Egg egg){
+            if(Math.random() < CHICKEN_CONFIG.getSpecialEggChance()){
+                Location hitLocation = event.getEntity().getLocation();
+                WindCharge windCharge = hitLocation.getWorld().spawn(hitLocation, WindCharge.class);
+                egg.addPassenger(windCharge);
+            }
+            if (event.getHitEntity() instanceof LivingEntity target) {
+                target.damage(CHICKEN_CONFIG.getEggDamage(), getPlayer());
+            }
+        }
     }
 
     /**

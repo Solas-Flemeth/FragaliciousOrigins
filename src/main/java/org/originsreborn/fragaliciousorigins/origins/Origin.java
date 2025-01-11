@@ -9,6 +9,8 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.enchantment.EnchantItemEvent;
@@ -22,7 +24,6 @@ import org.originsreborn.fragaliciousanomaly.objects.enums.MoonState;
 import org.originsreborn.fragaliciousorigins.FragaliciousOrigins;
 import org.originsreborn.fragaliciousorigins.configs.MainOriginConfig;
 import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseLibHook;
-import org.originsreborn.fragaliciousorigins.intergration.disguiselib.DisguiseUtil;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.*;
@@ -332,10 +333,17 @@ public abstract class Origin {
         }
     }
 
+    /**
+     *
+     * @return true if the ability is good to execute or returns false if it should not execute
+     */
     public boolean primaryConditionCheck() {
         return true;
     }
-
+    /**
+     *
+     * @return true if the ability is good to execute or returns false if it should not execute
+     */
     public boolean secondaryConditionCheck() {
         return true;
     }
@@ -384,15 +392,19 @@ public abstract class Origin {
     }
 
     public void cooldownTick() {
+        int cooldownTick = 1;
+        if(FragaliciousOrigins.ANOMALY.getAnomalyManager().getCurrentAnomalyName().equals("Fast Abilities")){
+            cooldownTick = 3;
+        }
         if (getPrimaryCooldown() > 0) {
-            setPrimaryCooldown(getPrimaryCooldown() - 1);
+            setPrimaryCooldown(getPrimaryCooldown() - cooldownTick);
             if (primaryCooldown == 0) {
                 getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 0.3f);
                 getPlayer().sendActionBar(Component.text("Your ability ").color(textColor()).append(Component.text(primaryAbilityName()).color(enableColor())).append(Component.text(" is ready").color(textColor())));
             }
         }
         if (getSecondaryCooldown() > 0) {
-            setSecondaryCooldown(getSecondaryCooldown() - 1);
+            setSecondaryCooldown(getSecondaryCooldown() - cooldownTick);
             if (secondaryCooldown == 0) {
                 getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 0.3f);
                 getPlayer().sendActionBar(Component.text("Your ability ").color(textColor()).append(Component.text(secondaryAbilityName()).color(enableColor())).append(Component.text(" is ready").color(textColor())));
@@ -411,6 +423,7 @@ public abstract class Origin {
     public boolean isUseSwapHand() {
         return useSwapHand;
     }
+
 
     public void toggleUseSwapHand() {
         this.useSwapHand = !useSwapHand;
@@ -767,6 +780,14 @@ public abstract class Origin {
                 onNight(dayStateChangeEvent.getMoonState());
                 break;
         }
+    }
+
+    public void onResurrectionEvent(EntityResurrectEvent event){
+
+    }
+    public void postResurrectionEvent(EntityResurrectEvent event){
+        setSecondaryCooldown(0);
+        setPrimaryCooldown(0);
     }
 
     public void onSunrise(MoonState moonCycle) {

@@ -7,7 +7,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 public class ChickenConfig extends OriginConfig {
     private double eggSpawnChance;
-    private float explosionPower;
+    private float explosionPower, explosiveChance;
     private double eggDamage;
     private double bossEggChance,specialEggChance,hostileEggChance; //otherwise default
     public ChickenConfig() {
@@ -25,6 +25,7 @@ public class ChickenConfig extends OriginConfig {
             CommentedConfigurationNode passiveNode = getConfigNode().node("passive");
                 passiveNode.node("eggSpawnChance").set(0.05f);
                 passiveNode.node("eggDamage").set(1.0f);
+                passiveNode.node("explosiveEggChance").set(0.05f);
             CommentedConfigurationNode eggChanceNode = getConfigNode().node("eggChance");
                 eggChanceNode.node("bossEggChance").set(0.01);
                 eggChanceNode.node("specialEggChance").set(0.29);
@@ -42,9 +43,11 @@ public class ChickenConfig extends OriginConfig {
         eggSpawnChance = getConfigNode().node("passive").node("eggSpawnChance").getDouble(1.0f);
         explosionPower = getConfigNode().node("secondaryAbility").node("explosionPower").getFloat(0.05f);
         eggDamage = getConfigNode().node("passive").node("eggDamage").getDouble(1.0f);
+        explosiveChance = getConfigNode().node("passive").node("explosiveEggChance").getFloat(0.05f);
         bossEggChance = getConfigNode().node("eggChance").node("bossEggChance").getDouble(0.01);
         specialEggChance = getConfigNode().node("eggChance").node("specialEggChance").getDouble(0.29);
         hostileEggChance = getConfigNode().node("eggChance").node("hostileEggChance").getDouble(0.2);
+
     }
 
     public double getEggSpawnChance() {

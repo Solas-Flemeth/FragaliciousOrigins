@@ -282,6 +282,10 @@ public class Merling extends Origin {
     }
 
     public void setHydration(int hydration) {
+        if(FragaliciousOrigins.ANOMALY.getAnomalyManager().getCurrentAnomalyName().equals("Merling Empowerment")){
+            this.hydration = MERLING_CONFIG.getHydrationDuration();
+            return;
+        }
         if (hydration < 0) {
             hydration = 0;
         } else if (hydration > MERLING_CONFIG.getHydrationDuration()) {

@@ -5,11 +5,12 @@ import org.bukkit.*;
 import org.bukkit.entity.*;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.entity.*;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerExpChangeEvent;
-import org.bukkit.inventory.AnvilInventory;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -22,13 +23,9 @@ import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
 import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
-import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 import static org.bukkit.potion.PotionEffectType.*;
 
@@ -121,6 +118,26 @@ public class Alchemist extends Origin {
         player.getWorld().playSound(player.getLocation(), Sound.BLOCK_BREWING_STAND_BREW, 1f, 1.5f);
     }
 
+    /**
+     * @param event
+     */
+    @Override
+    public void consume(PlayerItemConsumeEvent event) {
+        super.consume(event);
+        if (event.getItem().getType().equals(Material.POTION)) {
+            // Get the potion's meta data
+            ItemMeta meta = event.getItem().getItemMeta();
+            if (meta instanceof PotionMeta potionMeta) {
+                // Retrieve the custom potion effects
+                ArrayList<PotionEffect> potionEffects = new ArrayList<>(potionMeta.getCustomEffects());
+                potionMeta.clearCustomEffects();
+                for (PotionEffect effect : potionEffects) {
+                    potionMeta.addCustomEffect(effect.withDuration((int) (effect.getDuration() * 1.5f)), false);
+                }
+            }
+        }
+    }
+
     public static void onReload() {
         MAIN_ORIGIN_CONFIG.loadConfig();
         ALCHEMIST_CONFIG.loadConfig();
@@ -170,34 +187,6 @@ public class Alchemist extends Origin {
             if(arrow.getBasePotionType() != null){
                 createAreaEffectCloudAtSpot(arrow);
             }
-        }
-    }
-
-    /**
-     * @param event
-     */
-    @Override
-    public void onAnvilClick(InventoryClickEvent event) {
-        if (event.getInventory().getType() != InventoryType.ANVIL){
-            return;
-        }
-        if(event.getSlotType() != InventoryType.SlotType.RESULT){
-            return;
-        }
-        if(!event.isLeftClick()){
-            return;
-        }
-        if( !(event.getWhoClicked() instanceof Player player)){
-            return;
-        }
-        if (Math.random() < ALCHEMIST_CONFIG.getRepairFreeChance()) {
-            AnvilInventory anvilInventory = (AnvilInventory) event.getInventory();
-            anvilInventory.setRepairCost(0);
-            // Optionally, send a message to the player
-            ParticleUtil.generateSphereParticle(Particle.END_ROD, player.getLocation(), 20, 2.0);
-            ParticleUtil.generateParticleAtLocation(Particle.ENCHANT, player.getLocation(), 20);
-            player.getWorld().playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.5f, 2);
-            player.sendActionBar(Component.text("Your alchemical background allowed you to use the anvil without using experience").color(Origin.enableColor()));
         }
     }
     public void createAreaEffectCloudAtSpot(Arrow arrow){
@@ -267,7 +256,14 @@ public class Alchemist extends Origin {
     @Override
     public void onPotionLaunch(ProjectileLaunchEvent event) {
         Entity entity = event.getEntity();
-        entity.setVelocity(entity.getVelocity().multiply(ALCHEMIST_CONFIG.getPotionVelocityMultiplier()));
+        if(entity instanceof ThrownPotion potion && event.getEntity().getShooter() instanceof Player shooter){
+            entity.setVelocity(entity.getVelocity().multiply(ALCHEMIST_CONFIG.getPotionVelocityMultiplier()));
+            if(potion.getItem().getType().equals(Material.SPLASH_POTION) && Math.random() < 0.5){
+                shooter.getInventory().addItem(potion.getItem());
+            }
+        }
+
+
     }
 
     /**

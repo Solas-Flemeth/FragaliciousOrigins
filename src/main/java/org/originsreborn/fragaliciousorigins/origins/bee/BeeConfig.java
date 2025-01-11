@@ -8,6 +8,7 @@ import org.spongepowered.configurate.CommentedConfigurationNode;
 public class BeeConfig extends OriginConfig {
     private int radius, phytoAmp, phytoduration;
     private double bottleChance, combChance, flowerChance, bonemealChance;
+    private int witherRoseRadius, witherRoseDuration;
     //secondary
     private double stingChance, stingMultiplier;
     private int hiveradius, hiveBeeAmp, hivePhytoAmp, hivePhytoDuration, hiveBeeDuration;
@@ -30,9 +31,12 @@ public class BeeConfig extends OriginConfig {
                 primaryAbilityNode.node("bonemealChance").set(0.5);
                 primaryAbilityNode.node("phytokinHealthBoostAmplifier").set(1);
                 primaryAbilityNode.node("phytokinHealthBoostDuration").set(20);
+                CommentedConfigurationNode witherRose = primaryAbilityNode.node("witherRose");
+                    witherRose.node("radius").set(2);
+                    witherRose.node("duration").set(10);
             CommentedConfigurationNode secondaryAbilityNode = getConfigNode().node("secondaryAbility");
-                secondaryAbilityNode.node("finalStingChance").set(0.01);
-                secondaryAbilityNode.node("finalStingMultiplier").set(10.0);
+                secondaryAbilityNode.node("finalStingChance").set(0.05);
+                secondaryAbilityNode.node("finalStingMultiplier").set(7.0);
             CommentedConfigurationNode hiveMindNode = getConfigNode().node("hiveMind");
                 hiveMindNode.node("radius").set(6);
                 CommentedConfigurationNode beeRegenNode = hiveMindNode.node("beeRegen");
@@ -60,8 +64,10 @@ public class BeeConfig extends OriginConfig {
         bonemealChance = getConfigNode().node("primaryAbility").node("bonemealChance").getDouble();
         phytoAmp = getConfigNode().node("primaryAbility").node("phytokinHealthBoostAmplifier").getInt();
         phytoduration =getConfigNode().node("primaryAbility").node("phytokinHealthBoostDuration").getInt();
-        stingChance = getConfigNode().node("secondaryAbility").node("finalStingChance").getDouble();
-        stingMultiplier =getConfigNode().node("secondaryAbility").node("finalStingMultiplier").getDouble();
+        witherRoseRadius = getConfigNode().node("primaryAbility").node("witherRose").node("radius").getInt(1);
+        witherRoseDuration = getConfigNode().node("primaryAbility").node("witherRose").node("duration").getInt(1);
+        stingChance = getConfigNode().node("secondaryAbility").node("finalStingChance").getDouble(0.05);
+        stingMultiplier =getConfigNode().node("secondaryAbility").node("finalStingMultiplier").getDouble(7);
         hiveradius = getConfigNode().node("hiveMind").node("radius").getInt();
         hiveBeeChance = getConfigNode().node("hiveMind").node("beeRegen").node("chance").getDouble();
         hiveBeeDuration = getConfigNode().node("hiveMind").node("beeRegen").node("duration").getInt();
@@ -136,4 +142,11 @@ public class BeeConfig extends OriginConfig {
         return hivePhytoAmp;
     }
 
+    public int getWitherRoseDuration() {
+        return witherRoseDuration;
+    }
+
+    public int getWitherRoseRadius() {
+        return witherRoseRadius;
+    }
 }

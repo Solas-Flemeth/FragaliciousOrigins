@@ -23,11 +23,13 @@ import org.originsreborn.fragaliciousorigins.origins.Origin;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginState;
 import org.originsreborn.fragaliciousorigins.origins.enums.OriginType;
 import org.originsreborn.fragaliciousorigins.util.ParticleUtil;
+import org.originsreborn.fragaliciousorigins.util.PlayerUtils;
 import org.originsreborn.fragaliciousorigins.util.PotionsUtil;
 
 import java.io.Serializable;
 import java.util.*;
 
+import static org.originsreborn.fragaliciousorigins.FragaliciousOrigins.ANOMALY;
 import static org.originsreborn.fragaliciousorigins.util.PlayerUtils.setAttribute;
 
 /**
@@ -80,6 +82,18 @@ public class Enderian extends Origin {
         setCapacity(ENDERIAN_CONFIG.getChargeCapacity());
     }
 
+    /**
+     *
+     */
+    @Override
+    public void setDefaultStats() {
+        super.setDefaultStats();
+        if(getPlayer().getName().startsWith(".")){
+            PlayerUtils.setAttribute(getPlayer(), Attribute.SCALE, 1.0);
+        }
+
+    }
+
     @Override
     public MainOriginConfig getConfig() {
         return MAIN_ORIGIN_CONFIG;
@@ -94,8 +108,11 @@ public class Enderian extends Origin {
         if (tickNum % 10 == 0) {
             //deal water damage
             if (player.isInWaterOrRain() && !player.hasPotionEffect(PotionEffectType.CONDUIT_POWER) && !player.isDead()) {
-                player.damage(4, DamageSource.builder(DamageType.OUTSIDE_BORDER).build());
-                player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1f, 1.5f);
+                if(!ANOMALY.getAnomalyManager().getCurrentAnomalyName().equals("Enderian Empowerment")){
+                    player.damage(4, DamageSource.builder(DamageType.OUTSIDE_BORDER).build());
+                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_HURT, 1f, 1.5f);
+                }
+
             }
             if (capacity < ENDERIAN_CONFIG.getChargeCapacity()) {
                 if (player.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
